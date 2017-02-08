@@ -365,7 +365,7 @@ static void pool_block_insert(pool_block_t* block)
 
   while(next != NULL)
   {
-    if(block->size < next->size)
+    if(block->size <= next->size)
       break;
 
     prev = next;
@@ -691,17 +691,17 @@ size_t ponyint_pool_index(size_t size)
   if(size > POOL_MAX)
     return POOL_COUNT;
 
-  size_t bits;
 #ifdef PLATFORM_IS_ILP32
-  bits = 31;
+#define BITS (32 - POOL_MIN_BITS)
 #else
-  bits = 63;
+#define BITS (64 - POOL_MIN_BITS)
 #endif
 
-  size_t index = bits - __pony_clzl(size);
-  if(index != (size_t)__pony_ctzl(size))
-    index++;
-  return index - POOL_MIN_BITS;
+  return (size_t)(BITS - __pony_clzl(size) - (!(size & (size - 1))));
+//  int64_t y = (int64_t)((int64_t)BITS - (int64_t)__pony_clzl(size) - (int64_t)(!(size & (size - 1))));
+//  int64_t r = y ^ ((POOL_COUNT ^ y) & -(POOL_COUNT < y)); // min(x, y)
+//  int64_t z = 0 ^ ((0 ^ r) & -(0 < r)); // max(x, y)
+//  return (size_t)z;
 }
 
 size_t ponyint_pool_size(size_t index)

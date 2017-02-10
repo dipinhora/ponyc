@@ -3,6 +3,9 @@ language: c
 dist: trusty
 sudo: required
 
+#services:
+#  - docker
+
 matrix:
   include:
     - os: linux
@@ -83,6 +86,237 @@ matrix:
         - config=release
         - CC1=gcc-5
         - CXX1=g++-5
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=debug
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-5 -m32'
+        - CROSS_CC=gcc-5
+        - CROSS_CXX=g++-5
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=release
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-5 -m32'
+        - CROSS_CC=gcc-5
+        - CROSS_CXX=g++-5
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=debug
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-5 -m32'
+        - CROSS_CC=gcc-5
+        - CROSS_CXX=g++-5
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=release
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-5 -m32'
+        - CROSS_CC=gcc-5
+        - CROSS_CXX=g++-5
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-5 -m32'
+        - CROSS_CC=gcc-5
+        - CROSS_CXX=g++-5
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-5 -m32'
+        - CROSS_CC=gcc-5
+        - CROSS_CXX=g++-5
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=debug
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=armv7l-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=release
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=armv7l-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=debug
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=armv7l-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=release
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=armv7l-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=armv7l-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CC1=gcc-5
+        - CXX1=g++-5
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=armv7l-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
     - os: osx
       env:
         - LLVM_VERSION="3.7.1"
@@ -129,6 +363,8 @@ matrix:
         - CC1=clang-3.9
         - CXX1=clang++-3.9
 
+# allow failure for the following
+#  allow_failures:
 
 rvm:
   - 2.2.3
@@ -156,6 +392,24 @@ install:
 
   - if [ "${TRAVIS_OS_NAME}" = "linux" ];
     then
+      if [ "${CROSS_ARCH}" == "i686" ];
+      then
+        sudo dpkg --add-architecture i386;
+        sudo apt-get -qq update;
+        sudo apt-get install libc6:i386 libc6-dev:i386 linux-libc-dev:i386 zlib1g:i386 zlib1g-dev:i386;
+        sudo apt-get install g++-5 g++-5-multilib gcc-5-multilib;
+      fi;
+      if [ "${CROSS_ARCH}" == "armv7-a" ];
+      then
+        sudo dpkg --add-architecture armhf;
+        grep -i '^deb http' /etc/apt/sources.list | sed -e 's/archive/ports/' -e 's!/ubuntu!/ubuntu-ports!' -e 's/deb http/deb [arch=armhf] http/' -e 's/us-central1.gce.ports.ubuntu.com/ports.ubuntu.com/' -e 's#security.ubuntu.com/ubuntu-ports#ports.ubuntu.com/ubuntu-ports#' | sudo tee /etc/apt/sources.list.d/armhf.list;
+        sudo sed -i -e 's/deb http/deb [arch=amd64,i386] http/' /etc/apt/sources.list;
+        sudo apt-get -qq update;
+        sudo apt-get install g++-5;
+        sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf;
+        arm-linux-gnueabihf-gcc --version;
+        sudo apt-get install qemu-user;
+      fi;
       if [ "${LLVM_VERSION}" = "3.6.2" ];
       then
         wget "http://llvm.org/releases/${LLVM_VERSION}/clang+llvm-${LLVM_VERSION}-x86_64-linux-gnu-ubuntu-14.04.tar.xz";
@@ -168,8 +422,17 @@ install:
       cd -;
       wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.21.tar.bz2;
       tar -xjvf pcre2-10.21.tar.bz2;
-      cd pcre2-10.21 && ./configure --prefix=/usr && make && sudo make install;
+      cd pcre2-10.21 && ./configure --prefix=/usr CC=$CC1 CXX=$CXX1 && make && sudo make install;
       cd -;
+      if [ "${CROSS_ARCH}" != "" ];
+      then
+        cd pcre2-10.21 && ./configure --prefix=/usr/cross --host=${CROSS_TRIPLE} CC=${CROSS_CC} CXX=${CROSS_CXX} CFLAGS=${CROSS_CFLAGS} LDFLAGS=${CROSS_LDFLAGS} && make && sudo make install;
+        cd -;
+        wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.5.tar.gz";
+        tar -xzvf libressl-2.4.5.tar.gz;
+        cd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host=${CROSS_TRIPLE} CC=${CROSS_CC} CXX=$${CROSS_CXX} CFLAGS=${CROSS_CFLAGS} LDFLAGS=${CROSS_LDFLAGS} && make && sudo make install;
+        cd -;
+      fi;
     fi;
   - if [ "${TRAVIS_OS_NAME}" = "osx" ];
     then
@@ -196,5 +459,9 @@ install:
     fi;
 
 script:
-  - make CC=$CC1 CXX=$CXX1 test-ci
-
+  - make CC=$CC1 CXX=$CXX1 test-ci;
+  - if [ "${CROSS_ARCH}" != "" ];
+    then
+      make  CC=${CROSS_CC} CXX=${CROSS_CXX} arch=${CROSS_ARCH} bits=${CROSS_BITS} CFLAGS=${CROSS_CFLAGS} CXXFLAGS=${CROSS_CFLAGS} LDFLAGS=${CROSS_LDFLAGS} libponyrt;
+      make test-cross-ci PONYPATH=/usr/cross/lib cross_triple=${CROSS_TRIPLE} cross_arch=${CROSS_ARCH} cross_linker='${CROSS_LINKER}';
+    fi;

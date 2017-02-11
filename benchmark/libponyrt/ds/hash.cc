@@ -184,7 +184,7 @@ BENCHMARK_DEFINE_F(HashMapBench, HashPut)(benchmark::State& st) {
     size_t num_elems = testmap_size(&_map);
     for(size_t i = 0; i < num_elems; i++) {
       hash_elem_t* n = testmap_next(&_map, &ind);
-      testmap_removeindex(&_map, ind);
+      testmap_clearindex(&_map, ind);
       if(n == NULL)
       {
         st.SkipWithError("Item shouldn't be NULL!");
@@ -224,7 +224,7 @@ BENCHMARK_DEFINE_F(HashMapBench, HashPutIndex)(benchmark::State& st) {
     size_t num_elems = testmap_size(&_map);
     for(size_t i = 0; i < num_elems; i++) {
       hash_elem_t* n = testmap_next(&_map, &ind);
-      testmap_removeindex(&_map, ind);
+      testmap_clearindex(&_map, ind);
       if(n == NULL)
       {
         st.SkipWithError("Item shouldn't be NULL!");

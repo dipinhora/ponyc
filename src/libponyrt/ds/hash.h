@@ -13,6 +13,14 @@ PONY_EXTERN_C_BEGIN
 #define HASHMAP_BEGIN ((size_t)-1)
 #define HASHMAP_UNKNOWN ((size_t)-1)
 
+#ifdef PLATFORM_IS_ILP32
+  typedef uint32_t bitmap_t;
+  #define HASHMAP_BITMAP_TYPE_SIZE 32
+#else
+  typedef uint64_t bitmap_t;
+  #define HASHMAP_BITMAP_TYPE_SIZE 64
+#endif
+
 /** Definition of a quadratic probing hash map.
  *
  *  Do not access the fields of this type.
@@ -21,6 +29,7 @@ typedef struct hashmap_t
 {
   size_t count;   /* number of elements in the map */
   size_t size;    /* size of the buckets array */
+  bitmap_t* item_bitmap;   /* Item bitarray to keep track items for optimized scanning */
   void** buckets;
 } hashmap_t;
 
@@ -35,6 +44,11 @@ void ponyint_hashmap_init(hashmap_t* map, size_t size, alloc_fn alloc);
  */
 void ponyint_hashmap_destroy(hashmap_t* map, free_size_fn fr,
   free_fn free_elem);
+
+/** Optimize hashmap by iterating hashmap and calling optimize_item for each entry.
+ */
+void ponyint_hashmap_optimize(hashmap_t* map, hash_fn hash, alloc_fn alloc,
+  free_size_fn fr, cmp_fn cmp);
 
 /** Retrieve an element from a hash map.
  *
@@ -72,6 +86,12 @@ void* ponyint_hashmap_remove(hashmap_t* map, void* entry, hash_fn hash,
  */
 void* ponyint_hashmap_removeindex(hashmap_t* map, size_t index);
 
+/** Clears a given entry from a hash map by index.
+ *
+ *  Returns the element clear (if any).
+ */
+void* ponyint_hashmap_clearindex(hashmap_t* map, size_t index);
+
 /** Get the number of elements in the map.
  */
 size_t ponyint_hashmap_size(hashmap_t* map);
@@ -80,17 +100,20 @@ size_t ponyint_hashmap_size(hashmap_t* map);
  *
  *  Set i to HASHMAP_BEGIN, then call until this returns NULL.
  */
-void* ponyint_hashmap_next(hashmap_t* map, size_t* i);
+void* ponyint_hashmap_next(size_t* i, size_t count, bitmap_t* item_bitmap,
+  size_t size, void** buckets);
 
 #define DECLARE_HASHMAP(name, name_t, type) \
   typedef struct name_t { hashmap_t contents; } name_t; \
   void name##_init(name_t* map, size_t size); \
   void name##_destroy(name_t* map); \
+  void name##_optimize(name_t* map); \
   type* name##_get(name_t* map, type* key, size_t* index); \
   type* name##_put(name_t* map, type* entry); \
   type* name##_putindex(name_t* map, type* entry, size_t index); \
   type* name##_remove(name_t* map, type* entry); \
   type* name##_removeindex(name_t* map, size_t index); \
+  type* name##_clearindex(name_t* map, size_t index); \
   size_t name##_size(name_t* map); \
   type* name##_next(name_t* map, size_t* i); \
   void name##_trace(void* map); \
@@ -111,6 +134,13 @@ void* ponyint_hashmap_next(hashmap_t* map, size_t* i);
   { \
     name##_free_fn freef = free_elem; \
     ponyint_hashmap_destroy((hashmap_t*)map, fr, (free_fn)freef); \
+  } \
+  void name##_optimize(name_t* map) \
+  { \
+    name##_hash_fn hashf = hash; \
+    name##_cmp_fn cmpf = cmp; \
+    return ponyint_hashmap_optimize((hashmap_t*)map, \
+      (hash_fn)hashf, alloc, fr, (cmp_fn)cmpf); \
   } \
   type* name##_get(name_t* map, type* key, size_t* index) \
   { \
@@ -144,13 +174,19 @@ void* ponyint_hashmap_next(hashmap_t* map, size_t* i);
   { \
     return (type*)ponyint_hashmap_removeindex((hashmap_t*) map, index); \
   } \
+  type* name##_clearindex(name_t* map, size_t index) \
+  { \
+    return (type*)ponyint_hashmap_clearindex((hashmap_t*) map, index); \
+  } \
   size_t name##_size(name_t* map) \
   { \
     return ponyint_hashmap_size((hashmap_t*)map); \
   } \
   type* name##_next(name_t* map, size_t* i) \
   { \
-    return (type*)ponyint_hashmap_next((hashmap_t*)map, i); \
+    hashmap_t* h = (hashmap_t*)map; \
+    return (type*)ponyint_hashmap_next(i, h->count, h->item_bitmap, \
+      h->size, h->buckets); \
   } \
 
 #define HASHMAP_INIT {0, 0, NULL}

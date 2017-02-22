@@ -26,7 +26,6 @@ static void* search(hashmap_t* map, size_t* pos, void* key, size_t hash,
   for(size_t i = 0; i <= mask; i++)
   {
     elem = map->buckets[index].ptr;
-    elem_hash = map->buckets[index].hash;
 
     if(elem == NULL)
     {
@@ -34,7 +33,11 @@ static void* search(hashmap_t* map, size_t* pos, void* key, size_t hash,
       *pos = index;
       *probe_length = p_length;
       return NULL;
-    } else if(p_length >
+    }
+
+    elem_hash = map->buckets[index].hash;
+
+    if(p_length >
         (oi_p_length = get_probe_length(map, elem_hash, index, mask))) {
       // our probe length is greater than the elements probe length
       // we would normally have swapped so return this position
@@ -42,11 +45,15 @@ static void* search(hashmap_t* map, size_t* pos, void* key, size_t hash,
       *probe_length = p_length;
       *oi_probe_length = oi_p_length;
       return NULL;
-    } else if((hash == elem_hash) && cmp(key, elem)) {
-      // element found
-      *pos = index;
-      *probe_length = p_length;
-      return elem;
+    }
+
+    if(hash == elem_hash) {
+      if(cmp(key, elem)) {
+        // element found
+        *pos = index;
+        *probe_length = p_length;
+        return elem;
+      }
     }
 
     index = (index + 1) & mask;

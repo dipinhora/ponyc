@@ -71,8 +71,8 @@ static void resize(hashmap_t* map, cmp_fn cmp, alloc_fn alloc,
   map->size = (s < MIN_HASHMAP_SIZE) ? MIN_HASHMAP_SIZE : s << 3;
 
   // use a single memory allocation to exploit spatial memory/cache locality
-  size_t bitmap_size = map->size/HASHMAP_BITMAP_TYPE_SIZE +
-    (map->size%HASHMAP_BITMAP_TYPE_SIZE==0?0:1);
+  size_t bitmap_size = (map->size >> HASHMAP_BITMAP_TYPE_BITS) +
+    ((map->size& HASHMAP_BITMAP_TYPE_MASK)==0?0:1);
   void* mem_alloc = alloc((bitmap_size * sizeof(bitmap_t)) +
     (map->size * sizeof(hashmap_entry_t)));
   memset(mem_alloc, 0, (bitmap_size * sizeof(bitmap_t)) +
@@ -91,8 +91,8 @@ static void resize(hashmap_t* map, cmp_fn cmp, alloc_fn alloc,
 
   if((fr != NULL) && (b != NULL))
   {
-    size_t old_bitmap_size = s/HASHMAP_BITMAP_TYPE_SIZE +
-      (s%HASHMAP_BITMAP_TYPE_SIZE==0?0:1);
+    size_t old_bitmap_size = (s >> HASHMAP_BITMAP_TYPE_BITS) +
+      ((s & HASHMAP_BITMAP_TYPE_MASK)==0?0:1);
     fr((old_bitmap_size * sizeof(bitmap_t)) +
       (s * sizeof(hashmap_entry_t)), old_item_bitmap);
   }
@@ -150,22 +150,16 @@ void ponyint_hashmap_init(hashmap_t* map, size_t size, alloc_fn alloc)
   map->count = 0;
   map->size = size;
 
-  if(size > 0)
-  {
-    // use a single memory allocation to exploit spatial memory/cache locality
-    size_t bitmap_size = size/HASHMAP_BITMAP_TYPE_SIZE +
-      (size%HASHMAP_BITMAP_TYPE_SIZE==0?0:1);
-    void* mem_alloc = alloc((bitmap_size * sizeof(bitmap_t)) +
-      (size * sizeof(hashmap_entry_t)));
-    memset(mem_alloc, 0, (bitmap_size * sizeof(bitmap_t)) +
-      (size * sizeof(hashmap_entry_t)));
-    map->item_bitmap = (bitmap_t*)mem_alloc;
-    map->buckets = (hashmap_entry_t*)((char *)mem_alloc +
-      (bitmap_size * sizeof(bitmap_t)));
-  } else {
-    map->buckets = NULL;
-    map->item_bitmap = NULL;
-  }
+  // use a single memory allocation to exploit spatial memory/cache locality
+  size_t bitmap_size = (size >> HASHMAP_BITMAP_TYPE_BITS) +
+    ((size & HASHMAP_BITMAP_TYPE_MASK)==0?0:1);
+  void* mem_alloc = alloc((bitmap_size * sizeof(bitmap_t)) +
+    (size * sizeof(hashmap_entry_t)));
+  memset(mem_alloc, 0, (bitmap_size * sizeof(bitmap_t)) +
+   (map->size * sizeof(hashmap_entry_t)));
+  map->item_bitmap = (bitmap_t*)mem_alloc;
+  map->buckets = (hashmap_entry_t*)((char *)mem_alloc +
+    (bitmap_size * sizeof(bitmap_t)));
 }
 
 void ponyint_hashmap_destroy(hashmap_t* map, free_size_fn fr, free_fn free_elem)
@@ -185,8 +179,8 @@ void ponyint_hashmap_destroy(hashmap_t* map, free_size_fn fr, free_fn free_elem)
 
   if((fr != NULL) && (map->size > 0))
   {
-    size_t bitmap_size = map->size/HASHMAP_BITMAP_TYPE_SIZE +
-      (map->size%HASHMAP_BITMAP_TYPE_SIZE==0?0:1);
+    size_t bitmap_size = (map->size >> HASHMAP_BITMAP_TYPE_BITS) +
+      ((map->size & HASHMAP_BITMAP_TYPE_MASK)==0?0:1);
     fr((bitmap_size * sizeof(bitmap_t)) +
       (map->size * sizeof(hashmap_entry_t)), map->item_bitmap);
   }
@@ -264,8 +258,8 @@ static void shift_put(hashmap_t* map, void* entry, size_t hash, cmp_fn cmp,
       map->count++;
 
       // update item bitmap
-      size_t ib_index = pos/HASHMAP_BITMAP_TYPE_SIZE;
-      size_t ib_offset = pos%HASHMAP_BITMAP_TYPE_SIZE;
+      size_t ib_index = pos >> HASHMAP_BITMAP_TYPE_BITS;
+      size_t ib_offset = pos & HASHMAP_BITMAP_TYPE_MASK;
       map->item_bitmap[ib_index] |= ((bitmap_t)1 << ib_offset);
 
       if((map->count << 1) > map->size)
@@ -317,8 +311,8 @@ void ponyint_hashmap_putindex(hashmap_t* map, void* entry, size_t hash,
     map->count++;
 
     // update item bitmap
-    size_t ib_index = pos/HASHMAP_BITMAP_TYPE_SIZE;
-    size_t ib_offset = pos%HASHMAP_BITMAP_TYPE_SIZE;
+    size_t ib_index = pos >> HASHMAP_BITMAP_TYPE_BITS;
+    size_t ib_offset = pos & HASHMAP_BITMAP_TYPE_MASK;
     map->item_bitmap[ib_index] |= ((bitmap_t)1 << ib_offset);
 
 
@@ -378,8 +372,8 @@ static void shift_delete(hashmap_t* map, size_t index)
   map->count--;
 
   // update item bitmap
-  size_t ib_index = pos/HASHMAP_BITMAP_TYPE_SIZE;
-  size_t ib_offset = pos%HASHMAP_BITMAP_TYPE_SIZE;
+  size_t ib_index = pos >> HASHMAP_BITMAP_TYPE_BITS;
+  size_t ib_offset = pos & HASHMAP_BITMAP_TYPE_MASK;
   map->item_bitmap[ib_index] &= ~((bitmap_t)1 << ib_offset);
 }
 
@@ -419,8 +413,8 @@ void* ponyint_hashmap_next(size_t* i, size_t count, bitmap_t* item_bitmap,
     return NULL;
 
   size_t index = *i + 1;
-  size_t ib_index = index/HASHMAP_BITMAP_TYPE_SIZE;
-  size_t ib_offset = index%HASHMAP_BITMAP_TYPE_SIZE;
+  size_t ib_index = index >> HASHMAP_BITMAP_TYPE_BITS;
+  size_t ib_offset = index & HASHMAP_BITMAP_TYPE_MASK;
   size_t ffs_offset = 0;
 
   // get bitmap entry
@@ -476,8 +470,8 @@ void ponyint_hashmap_clearindex(hashmap_t* map, size_t index)
   map->count--;
 
   // update item bitmap
-  size_t ib_index = index/HASHMAP_BITMAP_TYPE_SIZE;
-  size_t ib_offset = index%HASHMAP_BITMAP_TYPE_SIZE;
+  size_t ib_index = index >> HASHMAP_BITMAP_TYPE_BITS;
+  size_t ib_offset = index & HASHMAP_BITMAP_TYPE_MASK;
   map->item_bitmap[ib_index] &= ~((bitmap_t)1 << ib_offset);
 }
 

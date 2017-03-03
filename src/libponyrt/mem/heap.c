@@ -17,6 +17,7 @@ typedef struct chunk_t
   // mutable
   uint32_t slots;
   uint32_t shallow;
+  bool gc_free;
 
   struct chunk_t* next;
 } chunk_t;
@@ -101,17 +102,18 @@ static size_t sweep_small(chunk_t* chunk, chunk_t** avail, chunk_t** full,
     next = chunk->next;
     chunk->slots &= chunk->shallow;
 
-    if(chunk->slots == 0)
+    if(chunk->gc_free || (chunk->slots == empty))
     {
+      destroy_small(chunk, 0);
+    } else if(chunk->slots == 0) {
       used += sizeof(block_t);
       chunk->next = *full;
       *full = chunk;
-    } else if(chunk->slots == empty) {
-      destroy_small(chunk, 0);
     } else {
       used += sizeof(block_t) -
         (__pony_popcount(chunk->slots) * size);
       chunk->next = *avail;
+      chunk->gc_free = true;
       *avail = chunk;
     }
 
@@ -131,9 +133,10 @@ static chunk_t* sweep_large(chunk_t* chunk, size_t* used)
     next = chunk->next;
     chunk->slots &= chunk->shallow;
 
-    if(chunk->slots == 0)
+    if((chunk->slots == 0) && !chunk->gc_free)
     {
       chunk->next = list;
+      chunk->gc_free = true;
       list = chunk;
       *used += chunk->size;
     } else {
@@ -240,6 +243,7 @@ void* ponyint_heap_alloc_small(pony_actor_t* actor, heap_t* heap,
     // Clear the first bit.
     n->shallow = n->slots = sizeclass_init[sizeclass];
     n->next = NULL;
+    n->gc_free = true;
 
     ponyint_pagemap_set(n->m, n);
 
@@ -264,6 +268,7 @@ void* ponyint_heap_alloc_large(pony_actor_t* actor, heap_t* heap, size_t size)
   chunk->m = (char*) ponyint_pool_alloc_size(size);
   chunk->slots = 0;
   chunk->shallow = 0;
+  chunk->gc_free = true;
 
   large_pagemap(chunk->m, size, chunk);
 
@@ -348,11 +353,11 @@ bool ponyint_heap_startgc(heap_t* heap)
   for(int i = 0; i < HEAP_SIZECLASSES; i++)
   {
     uint32_t mark = sizeclass_empty[i];
-    chunk_list(clear_chunk, heap->small_free[i], mark);
+//    chunk_list(clear_chunk, heap->small_free[i], mark);
     chunk_list(clear_chunk, heap->small_full[i], mark);
   }
 
-  chunk_list(clear_chunk, heap->large, 1);
+//  chunk_list(clear_chunk, heap->large, 1);
 
   // reset used to zero
   heap->used = 0;
@@ -368,6 +373,12 @@ bool ponyint_heap_mark(chunk_t* chunk, void* p)
 
   if(chunk->size >= HEAP_SIZECLASSES)
   {
+    if(chunk->gc_free)
+    {
+      chunk->gc_free = false;
+      clear_chunk(chunk, 1);
+    }
+
     marked = chunk->slots == 0;
 
     if(p == chunk->m)
@@ -375,6 +386,12 @@ bool ponyint_heap_mark(chunk_t* chunk, void* p)
     else
       chunk->shallow = 0;
   } else {
+    if(chunk->gc_free)
+    {
+      chunk->gc_free = false;
+      clear_chunk(chunk, sizeclass_empty[chunk->size]);
+    }
+
     // Calculate the external pointer.
     void* ext = EXTERNAL_PTR(p, chunk->size);
 
@@ -398,8 +415,20 @@ void ponyint_heap_mark_shallow(chunk_t* chunk, void* p)
 {
   if(chunk->size >= HEAP_SIZECLASSES)
   {
+    if(chunk->gc_free)
+    {
+      chunk->gc_free = false;
+      clear_chunk(chunk, 1);
+    }
+
     chunk->shallow = 0;
   } else {
+    if(chunk->gc_free)
+    {
+      chunk->gc_free = false;
+      clear_chunk(chunk, sizeclass_empty[chunk->size]);
+    }
+
     // Calculate the external pointer.
     void* ext = EXTERNAL_PTR(p, chunk->size);
 
@@ -414,7 +443,21 @@ void ponyint_heap_mark_shallow(chunk_t* chunk, void* p)
 bool ponyint_heap_ismarked(chunk_t* chunk, void* p)
 {
   if(chunk->size >= HEAP_SIZECLASSES)
+  {
+    if(chunk->gc_free)
+    {
+      chunk->gc_free = false;
+      clear_chunk(chunk, 1);
+    }
+
     return (chunk->slots & chunk->shallow) == 0;
+  }
+
+  if(chunk->gc_free)
+  {
+    chunk->gc_free = false;
+    clear_chunk(chunk, sizeclass_empty[chunk->size]);
+  }
 
   // Shift to account for smallest allocation size.
   uint32_t slot = FIND_SLOT(p, chunk->m);

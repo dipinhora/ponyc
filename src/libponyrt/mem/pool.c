@@ -16,6 +16,7 @@
 
 #ifdef USE_VALGRIND
 #include <valgrind/valgrind.h>
+#include <valgrind/memcheck.h>
 #include <valgrind/helgrind.h>
 #endif
 
@@ -80,6 +81,7 @@ typedef struct pool_block_header_t
   size_t largest_size;
 } pool_block_header_t;
 
+#ifndef USE_MALLOC_FREE
 static pool_global_t pool_global[POOL_COUNT] =
 {
   {POOL_MIN << 0, POOL_MAX / (POOL_MIN << 0), NULL, 0, 0},
@@ -102,6 +104,7 @@ static pool_global_t pool_global[POOL_COUNT] =
 
 static __pony_thread_local pool_local_t pool_local[POOL_COUNT];
 static __pony_thread_local pool_block_header_t pool_block_header;
+#endif
 
 #ifdef USE_POOLTRACK
 #include "../ds/stack.h"
@@ -347,6 +350,7 @@ static void track_pull(pool_item_t* p, size_t length, size_t size)
 
 #endif
 
+#ifndef USE_MALLOC_FREE
 static void pool_block_remove(pool_block_t* block)
 {
   if(block->prev != NULL)
@@ -587,9 +591,13 @@ static void* pool_get(pool_local_t* pool, size_t index)
   // free block.
   return pool_alloc_pages(global->size);
 }
+#endif
 
 void* ponyint_pool_alloc(size_t index)
 {
+#ifdef USE_MALLOC_FREE
+  return malloc(ponyint_pool_size(index));
+#else
 #ifdef USE_VALGRIND
   VALGRIND_DISABLE_ERROR_REPORTING;
 #endif
@@ -606,10 +614,15 @@ void* ponyint_pool_alloc(size_t index)
 #endif
 
   return p;
+#endif
 }
 
 void ponyint_pool_free(size_t index, void* p)
 {
+#ifdef USE_MALLOC_FREE
+  (void) index;
+  free(p);
+#else
 #ifdef USE_VALGRIND
   VALGRIND_HG_CLEAN_MEMORY(p, ponyint_pool_size(index));
   VALGRIND_DISABLE_ERROR_REPORTING;
@@ -633,10 +646,14 @@ void ponyint_pool_free(size_t index, void* p)
   VALGRIND_ENABLE_ERROR_REPORTING;
   VALGRIND_FREELIKE_BLOCK(p, 0);
 #endif
+#endif
 }
 
 void* ponyint_pool_alloc_size(size_t size)
 {
+#ifdef USE_MALLOC_FREE
+  return malloc(size);
+#else
   size_t index = ponyint_pool_index(size);
 
   if(index < POOL_COUNT)
@@ -658,10 +675,15 @@ void* ponyint_pool_alloc_size(size_t size)
 #endif
 
   return p;
+#endif
 }
 
 void ponyint_pool_free_size(size_t size, void* p)
 {
+#ifdef USE_MALLOC_FREE
+  (void) size;
+  free(p);
+#else
   size_t index = ponyint_pool_index(size);
 
   if(index < POOL_COUNT)
@@ -680,6 +702,7 @@ void ponyint_pool_free_size(size_t size, void* p)
 #ifdef USE_VALGRIND
   VALGRIND_ENABLE_ERROR_REPORTING;
   VALGRIND_FREELIKE_BLOCK(p, 0);
+#endif
 #endif
 }
 

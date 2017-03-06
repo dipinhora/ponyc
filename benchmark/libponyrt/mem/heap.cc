@@ -36,11 +36,12 @@ BENCHMARK_DEFINE_F(HeapBench, HeapAlloc)(benchmark::State& st) {
     if(st.range(0) > HEAP_MAX)
     {
       st.ResumeTiming();
-      ponyint_heap_alloc_large(actor, &_heap, st.range(0));
+      ponyint_heap_alloc_large(actor, &_heap, st.range(0), false);
       st.PauseTiming();
     } else {
       st.ResumeTiming();
-      ponyint_heap_alloc_small(actor, &_heap, ponyint_heap_index(st.range(0)));
+      ponyint_heap_alloc_small(actor, &_heap, ponyint_heap_index(st.range(0)),
+        false);
       st.PauseTiming();
     }
     ponyint_heap_destroy(&_heap);
@@ -58,9 +59,10 @@ BENCHMARK_DEFINE_F(HeapBench, HeapDestroy)(benchmark::State& st) {
   while (st.KeepRunning()) {
     st.PauseTiming();
     if(st.range(0) > HEAP_MAX)
-      ponyint_heap_alloc_large(actor, &_heap, st.range(0));
+      ponyint_heap_alloc_large(actor, &_heap, st.range(0), false);
     else
-      ponyint_heap_alloc_small(actor, &_heap, ponyint_heap_index(st.range(0)));
+      ponyint_heap_alloc_small(actor, &_heap, ponyint_heap_index(st.range(0)),
+        false);
     st.ResumeTiming();
     ponyint_heap_destroy(&_heap);
     st.PauseTiming();

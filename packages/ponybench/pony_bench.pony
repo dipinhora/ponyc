@@ -64,15 +64,38 @@ sub         10000000             2 ns/op
 """
 use "collections"
 use "format"
+use "options"
 use "promises"
 use "term"
 
 actor PonyBench
   embed _bs: Array[(String, _Benchmark)] = Array[(String, _Benchmark)]
   let _env: Env
+  var _autobench_time: U64 = 1_000_000_000
+  var _autobench_max_ops: U64 = 100_000_000
+  var _do_nothing: Bool = false
 
-  new create(env: Env) =>
+  new create(env: Env)
+  =>
     _env = env
+    var options = Options(_env.args)
+    options
+      .add("autobench_time", "t", I64Argument)
+      .add("autobench_max_ops", "o", I64Argument)
+    for option in options do
+      match option
+      | ("autobench_time", let arg: I64) => _autobench_time = arg.u64()
+      | ("autobench_max_ops", let arg: I64) => _autobench_max_ops = arg.u64()
+      | let err: ParseError => err.report(_env.out); usage(); _do_nothing = true
+      end
+    end
+
+  fun ref usage() =>
+    _env.out.print(
+      "program [OPTIONS]\n" +
+      "  --autobench_time    N   Time to run autobench for. Defaults to '1_000_000_000'.\n" +
+      "  --autobench_max_ops N   Maximum ops to run autobench for. Defaults to '100_000_000'."
+      )
 
   be apply[A: Any #share](name: String, f: {(): A ?} val, ops: U64 = 0) =>
     """
@@ -82,10 +105,14 @@ actor PonyBench
     trigger the benchmark runner to increase the value of `ops` until it is
     satisfied with the stability of the benchmark.
     """
+    if _do_nothing then
+      return
+    end
+
     _add(
       name,
       if ops == 0 then
-        _AutoBench[A](name, this, f)
+        _AutoBench[A](name, this, f, _autobench_time, _autobench_max_ops)
       else
         _Bench[A](name, this, f, ops)
       end
@@ -103,10 +130,15 @@ actor PonyBench
     not fulfilled within the time given. This check for timeout is done before
     the benchmarks are counted towards an average run time.
     """
+    if _do_nothing then
+      return
+    end
+
     _add(
       name,
       if ops == 0 then
-        _AutoBenchAsync[A](name, this, f, timeout)
+        _AutoBenchAsync[A](name, this, f, timeout, _autobench_time,
+          _autobench_max_ops)
       else
         _BenchAsync[A](name, this, f, ops, timeout)
       end

@@ -85,7 +85,7 @@ class _AutoOps
         _bench_time / nspo
       end
       ops' = (ops' + (ops' / 5)).min(ops * 100).max(ops + 1)
-      _round_up(ops')
+      _round_up(ops').min(_max_ops)
     else
       None
     end

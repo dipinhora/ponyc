@@ -6,8 +6,8 @@
 
 PONY_EXTERN_C_BEGIN
 
-#if defined(PONY_NO_ASSERT)
-#  define pony_assert(expr) assert(expr)
+#if defined(NDEBUG) && defined(PONY_NO_ASSERT)
+#  define pony_assert(expr) ((void)0)
 #else
 #  define pony_assert(expr) \
     ((expr) ? (void)0 : \

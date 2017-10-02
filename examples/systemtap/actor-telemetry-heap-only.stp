@@ -1,0 +1,103 @@
+global actor_gc_passes, time_in_gc, alloc
+global tot_intervals, sec_counter
+
+// runtime configuration options:
+// -G summary_interval=#
+// -G print_summary=[y|n]
+// -G print_details=[y|n]
+global summary_interval=60, print_details="n", print_summary="y"
+
+
+probe process.mark("gc-start")
+{
+    time_in_gc[$arg2, "heapsize"] = $arg3
+    if(time_in_gc[$arg2, "max_heapsize"] < $arg3 )
+      time_in_gc[$arg2, "max_heapsize"] = $arg3
+    time_in_gc[$arg2, "foreign_heapsize"] = $arg4
+}
+
+probe process.mark("gc-end")
+{
+    time_in_gc[$arg2, "heapsize"] = $arg3
+    if(time_in_gc[$arg2, "max_heapsize"] < $arg3 )
+      time_in_gc[$arg2, "max_heapsize"] = $arg3
+    time_in_gc[$arg2, "foreign_heapsize"] = $arg4
+    if(time_in_gc[$arg2, "initial_foreign_heapsize"] == 0)
+      time_in_gc[$arg2, "initial_foreign_heapsize"] = $arg4
+    if(time_in_gc[$arg2, "initial_heapsize"] == 0)
+      time_in_gc[$arg2, "initial_heapsize"] = $arg3
+    time_in_gc[$arg2, "last_timestamp"] = gettimeofday_us()
+}
+
+probe process.mark("heap-alloc")
+{
+    alloc[$arg3, "heapsize"] = $arg4
+    if(alloc[$arg3, "max_heapsize"] < $arg4 )
+      alloc[$arg3, "max_heapsize"] = $arg4
+    alloc[$arg3, "last_timestamp"] = gettimeofday_us()
+}
+
+probe process.mark("actor-alloc")
+{
+    alloc[$arg2, "type_id"] = $arg3;
+    actor_gc_passes[$arg2] ++;
+}
+
+probe end
+{
+  if (print_details == "y")
+    print_info()
+}
+
+function print_info ()
+{
+    printf("\"telemetry\" : [\n");
+    foreach (actor in actor_gc_passes) {
+      printf("  {\n");
+      printf("    \"actor_id\": %d,\n", actor);
+      printf("    \"type_id\": %d,\n", alloc[actor, "type_id"]);
+      printf("    \"last_alloc_timestamp\": %d,\n", alloc[actor, "last_timestamp"]);
+      printf("    \"last_alloc_heapsize\": %d,\n", alloc[actor, "heapsize"]);
+      printf("    \"max_alloc_heapsize\": %d,\n", alloc[actor, "max_heapsize"]);
+      printf("    \"last_gc_timestamp\": %d,\n", alloc[actor, "last_timestamp"]);
+      printf("    \"max_gc_heapsize\": %d,\n", time_in_gc[actor, "max_heapsize"]);
+      printf("    \"last_gc_heapsize\": %d,\n", time_in_gc[actor, "heapsize"]);
+      printf("    \"last_gc_local_heapsize\": %d,\n", time_in_gc[actor, "heapsize"] - time_in_gc[actor, "foreign_heapsize"]);
+      printf("    \"last_gc_foreign_heapsize\": %d,\n", time_in_gc[actor, "foreign_heapsize"]);
+      printf("    \"initial_gc_heapsize\": %d,\n", time_in_gc[actor, "initial_heapsize"]);
+      printf("    \"initial_gc_local_heapsize\": %d,\n", time_in_gc[actor, "initial_heapsize"] - time_in_gc[actor, "initial_foreign_heapsize"]);
+      printf("    \"initial_gc_foreign_heapsize\": %d,\n", time_in_gc[actor, "initial_foreign_heapsize"]);
+      printf("  },\n");
+    }
+    printf("]\n");
+}
+
+function print_summary ()
+{
+    last_alloc_heapsize = 0;
+    last_gc_heapsize = 0;
+    max_alloc_heapsize = 0;
+    max_gc_heapsize = 0;
+    foreach (actor in actor_gc_passes) {
+      last_alloc_heapsize += alloc[actor, "heapsize"];
+      last_gc_heapsize += time_in_gc[actor, "heapsize"];
+      max_alloc_heapsize += alloc[actor, "max_heapsize"];
+      max_gc_heapsize += time_in_gc[actor, "max_heapsize"];
+    }
+    printf("last_alloc_heapsize: %d\n", last_alloc_heapsize);
+    printf("last_gc_heapsize: %d\n", last_gc_heapsize);
+    printf("max_alloc_heapsize: %d\n", max_alloc_heapsize);
+    printf("max_gc_heapsize: %d\n", max_gc_heapsize);
+}
+
+probe timer.s(1) {
+  if (print_summary == "y")
+  {
+    if (++sec_counter >= summary_interval)
+    {
+      tot_intervals++
+      print_summary()
+      sec_counter = 0;
+    }
+  }
+}

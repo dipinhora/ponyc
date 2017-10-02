@@ -535,6 +535,7 @@ bool ponyint_heap_startgc(heap_t* heap)
 
   // reset used to zero
   heap->used = 0;
+  heap->foreign_used = 0;
   return true;
 }
 
@@ -668,6 +669,7 @@ void ponyint_heap_endgc(heap_t* heap)
   // Foreign object sizes will have been added to heap->used already. Here we
   // add local object sizes as well and set the next gc point for when memory
   // usage has increased.
+  heap->foreign_used = heap->used;
   heap->used += used;
   heap->next_gc = (size_t)((double)heap->used * heap_nextgc_factor);
 

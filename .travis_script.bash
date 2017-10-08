@@ -11,7 +11,7 @@ fi
 
 ponyc-test(){
   echo "Building and testing ponyc..."
-  make CC="$CC1" CXX="$CXX1" test-ci
+  make CC="$CC1" CXX="$CXX1" verbose=true test-ci
 }
 
 verify-changelog(){

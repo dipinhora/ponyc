@@ -786,6 +786,7 @@ $(foreach target,$(targets),$(eval $(call EXPAND_COMMAND,$(target))))
 
 
 define EXPAND_INSTALL
+ifeq ($(OSTYPE),linux)
 install-libponyrt-pic: libponyrt-pic
 	@mkdir -p $(destdir)/lib/$(arch)
 	$(SILENT)cp $(lib)/libponyrt-pic.a $(destdir)/lib/$(arch)

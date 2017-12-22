@@ -911,7 +911,7 @@ test-cross-ci: all
 	@$(PONY_BUILD_DIR)/libponyc.tests
 	@$(PONY_BUILD_DIR)/libponyrt.tests
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --triple=$(cross_triple) \
-          --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s
+          --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s \
 	  --checktree --verify packages/stdlib
 	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
 	$(SILENT)rm stdlib

@@ -743,7 +743,7 @@ static bool add_exec_dir(pass_opt_t* opt)
   char* lib_path = (char*)ponyint_pool_alloc_size(lib_len);
   snprintf(lib_path, lib_len, "../lib/%s", link_arch);
 
-  success = add_relative_path(path, lib_path);
+  success = add_relative_path(path, lib_path, opt);
 
   ponyint_pool_free_size(lib_len, lib_path);
 
@@ -755,7 +755,7 @@ static bool add_exec_dir(pass_opt_t* opt)
   lib_path = (char*)ponyint_pool_alloc_size(lib_len);
   snprintf(lib_path, lib_len, "lib/%s", link_arch);
 
-  success = add_relative_path(path, lib_path);
+  success = add_relative_path(path, lib_path, opt);
 
   ponyint_pool_free_size(lib_len, lib_path);
 #endif

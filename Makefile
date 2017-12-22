@@ -651,7 +651,7 @@ endef
 
 define CONFIGURE_LIBS_WHOLE
   ifeq ($(OSTYPE),osx)
-    wholelibs += -Wl,-force_load,$(PONY_BUILD_DIR)/$(1).a
+    wholelibs += -Wl,-force_load,$(lib)/$(1).a
   else
     wholelibs += $(subst lib,-l,$(1))
   endif

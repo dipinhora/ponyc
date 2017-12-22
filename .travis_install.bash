@@ -57,16 +57,9 @@ case "${CROSS_ARCH}" in
   ;;
 
   "armv7-a")
-#    sudo dpkg --add-architecture armhf
-#    grep -i '^deb http' /etc/apt/sources.list | sed -e 's/archive/ports/' -e 's!/ubuntu!/ubuntu-ports!' -e 's/deb http/deb [arch=armhf] http/' -e 's/us-central1.gce.ports.ubuntu.com/ports.ubuntu.com/' -e 's#security.ubuntu.com/ubuntu-ports#ports.ubuntu.com/ubuntu-ports#' | sudo tee /etc/apt/sources.list.d/armhf.list
-#    sudo sed -i -e 's/deb http/deb [arch=amd64,i386] http/' /etc/apt/sources.list
-#    sudo apt-get -qq update
-#    sudo apt-get install g++-6 gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
     pushd /tmp
     wget "https://releases.linaro.org/components/toolchain/binaries/6.4-2017.11/arm-linux-gnueabihf/gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz"
-    tar xJvf gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz
-    cd gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf
-    sudo mv * /usr/local/
+    sudo tar xJvf gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /usr/local --strip 1
     arm-linux-gnueabihf-gcc --version
     popd
   ;;

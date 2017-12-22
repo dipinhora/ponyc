@@ -120,8 +120,10 @@ matrix:
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
-        - CC1=gcc-6
-        - CXX1=g++-6
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
 
     - os: linux
       addons:
@@ -135,8 +137,10 @@ matrix:
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
-        - CC1=gcc-6
-        - CXX1=g++-6
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
 
     - os: linux
       addons:
@@ -150,8 +154,10 @@ matrix:
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
-        - CC1=gcc-6
-        - CXX1=g++-6
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
 
     - os: linux
       addons:
@@ -165,8 +171,512 @@ matrix:
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
-        - CC1=gcc-6
-        - CXX1=g++-6
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+
+    # i686
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=i686
+        - CROSS_CFLAGS=-m32
+        - CROSS_CXXFLAGS=-m32
+        - CROSS_LDFLAGS=-m32
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+
+    # armv7-a
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - FAVORITE_CONFIG=no
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CC1=gcc
+        - CXX1=g++
+        - ICC1=gcc-6
+        - ICXX1=g++-6
+        - CROSS_ARCH=armv7-a
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
 
     - os: osx
       env:

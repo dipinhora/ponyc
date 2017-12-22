@@ -29,12 +29,12 @@ download_pcre(){
   if [[ "${CROSS_ARCH}" != "" ]]
   then
     echo "Cross building PCRE2..."
-    pushd pcre2-10.21 && ./configure --prefix=/usr/cross --host=${CROSS_TRIPLE} CC=${CROSS_CC} CXX=${CROSS_CXX} CFLAGS=${CROSS_CFLAGS} LDFLAGS=${CROSS_LDFLAGS} && make && sudo make install
+    pushd pcre2-10.21 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
     popd
     echo "Downloading and cross building libressl..."
     wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.5.tar.gz"
     tar -xzvf libressl-2.4.5.tar.gz
-    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host=${CROSS_TRIPLE} CC=${CROSS_CC} CXX=$${CROSS_CXX} CFLAGS=${CROSS_CFLAGS} LDFLAGS=${CROSS_LDFLAGS} && make && sudo make install
+    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
     popd
   fi
 }
@@ -61,8 +61,7 @@ case "${CROSS_ARCH}" in
     grep -i '^deb http' /etc/apt/sources.list | sed -e 's/archive/ports/' -e 's!/ubuntu!/ubuntu-ports!' -e 's/deb http/deb [arch=armhf] http/' -e 's/us-central1.gce.ports.ubuntu.com/ports.ubuntu.com/' -e 's#security.ubuntu.com/ubuntu-ports#ports.ubuntu.com/ubuntu-ports#' | sudo tee /etc/apt/sources.list.d/armhf.list
     sudo sed -i -e 's/deb http/deb [arch=amd64,i386] http/' /etc/apt/sources.list
     sudo apt-get -qq update
-    sudo apt-get install g++-6
-    sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+    sudo apt-get install g++-6 gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
     arm-linux-gnueabihf-gcc --version
   ;;
 
@@ -93,11 +92,13 @@ case "${TRAVIS_OS_NAME}:${LLVM_CONFIG}" in
   "linux:llvm-config-4.0")
     download_llvm
     download_pcre
+    set_linux_compiler
   ;;
 
   "linux:llvm-config-5.0")
     download_llvm
     download_pcre
+    set_linux_compiler
   ;;
 
   "osx:llvm-config-3.7")

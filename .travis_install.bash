@@ -62,6 +62,8 @@ case "${CROSS_ARCH}" in
     sudo tar xJvf gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /usr/local --strip 1
     arm-linux-gnueabihf-gcc --version
     popd
+    sudo apt-get -qq update
+    sudo apt-get install qemu-user
   ;;
 
 esac

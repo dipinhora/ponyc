@@ -93,7 +93,7 @@ destdir ?= $(prefix)/lib/pony/$(tag)
 LIB_EXT ?= a
 BUILD_FLAGS = -march=$(arch) -Werror -Wconversion \
   -Wno-sign-conversion -Wextra -Wall
-LINKER_FLAGS = -march=$(arch)
+LINKER_FLAGS = -march=$(arch) $(LINKFLAGS)
 AR_FLAGS ?= rcs
 ALL_CFLAGS = -std=gnu11 -fexceptions \
   -DPONY_VERSION=\"$(tag)\" -DLLVM_VERSION=\"$(llvm_version)\" \

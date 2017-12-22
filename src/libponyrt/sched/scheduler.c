@@ -336,7 +336,10 @@ static DECLARE_THREAD_FN(run_thread)
   this_scheduler = sched;
   ponyint_cpu_affinity(sched->cpu);
   run(sched);
+
+#ifndef USE_MALLOC_FREE
   ponyint_pool_thread_cleanup();
+#endif
 
   return 0;
 }
@@ -473,7 +476,9 @@ PONY_API void pony_unregister_thread()
   POOL_FREE(scheduler_t, this_scheduler);
   this_scheduler = NULL;
 
+#ifndef USE_MALLOC_FREE
   ponyint_pool_thread_cleanup();
+#endif
 }
 
 PONY_API pony_ctx_t* pony_ctx()

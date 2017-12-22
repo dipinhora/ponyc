@@ -852,7 +852,9 @@ static void* pool_get(pool_local_t* pool, size_t index)
 void* ponyint_pool_alloc(size_t index)
 {
 #ifdef USE_MALLOC_FREE
-  return malloc(ponyint_pool_size(index));
+  void* p;
+  posix_memalign(&p, 1024, ponyint_pool_size(index));
+  return p;
 #else
 #ifdef USE_VALGRIND
   VALGRIND_DISABLE_ERROR_REPORTING;
@@ -908,7 +910,9 @@ void ponyint_pool_free(size_t index, void* p)
 void* ponyint_pool_alloc_size(size_t size)
 {
 #ifdef USE_MALLOC_FREE
-  return malloc(size);
+  void* p;
+  posix_memalign(&p, 1024, size);
+  return p;
 #else
   size_t index = ponyint_pool_index(size);
 
@@ -962,6 +966,7 @@ void ponyint_pool_free_size(size_t size, void* p)
 #endif
 }
 
+#ifndef USE_MALLOC_FREE
 void ponyint_pool_thread_cleanup()
 {
   for(size_t index = 0; index < POOL_COUNT; index++)
@@ -1000,6 +1005,7 @@ void ponyint_pool_thread_cleanup()
   pool_block_header.total_size = 0;
   pool_block_header.largest_size = 0;
 }
+#endif
 
 size_t ponyint_pool_index(size_t size)
 {

@@ -164,6 +164,8 @@ TEST_F(HashMapTest, TryGetNonExistent)
   hash_elem_t* n = testmap_get(&_map, e2, &index);
 
   ASSERT_EQ(NULL, n);
+
+  free_elem(e2);
 }
 
 /** Replacing elements with equivalent keys
@@ -185,6 +187,8 @@ TEST_F(HashMapTest, ReplacingElementReturnsReplaced)
 
   hash_elem_t* m = testmap_get(&_map, e2, &index);
   ASSERT_EQ(m, e2);
+
+  free_elem(n);
 }
 
 /** Deleting an element in a hash map returns it.
@@ -218,6 +222,8 @@ TEST_F(HashMapTest, DeleteElement)
   hash_elem_t* n2 = testmap_get(&_map, e2, &index);
 
   ASSERT_EQ(n2, e2);
+
+  free_elem(n1);
 }
 
 /** Iterating over a hash map returns every element
@@ -280,6 +286,8 @@ TEST_F(HashMapTest, RemoveByIndex)
   testmap_removeindex(&_map, i);
 
   ASSERT_EQ(NULL, testmap_get(&_map, p, &index));
+
+  free_elem(curr);
 }
 
 /** An element not found can be put by index into

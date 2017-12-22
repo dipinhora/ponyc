@@ -76,6 +76,9 @@ static void destroy_small(chunk_t* chunk, uint32_t mark)
 {
   (void)mark;
   ponyint_pagemap_set(chunk->m, NULL);
+#ifdef USE_VALGRIND
+  VALGRIND_DESTROY_MEMPOOL(chunk-m);
+#endif
   POOL_FREE(block_t, chunk->m);
   POOL_FREE(chunk_t, chunk);
 }
@@ -240,6 +243,10 @@ void* ponyint_heap_alloc_small(pony_actor_t* actor, heap_t* heap,
     n->m = (char*) POOL_ALLOC(block_t);
     n->size = sizeclass;
 
+#ifdef USE_VALGRIND
+    VALGRIND_CREATE_MEMPOOL_EXT(n->m, 0, 0, 0);
+#endif
+
     // Clear the first bit.
     n->shallow = n->slots = sizeclass_init[sizeclass];
     n->next = NULL;
@@ -253,6 +260,10 @@ void* ponyint_heap_alloc_small(pony_actor_t* actor, heap_t* heap,
     // Use the first slot.
     m = chunk->m;
   }
+
+#ifdef USE_VALGRIND
+  VALGRIND_MEMPOOL_ALLOC(chunk, m, SIZECLASS_SIZE(sizeclass);
+#endif
 
   heap->used += SIZECLASS_SIZE(sizeclass);
   return m;
@@ -350,12 +361,12 @@ bool ponyint_heap_startgc(heap_t* heap)
   if(heap->used <= heap->next_gc)
     return false;
 
-  for(int i = 0; i < HEAP_SIZECLASSES; i++)
-  {
-    uint32_t mark = sizeclass_empty[i];
+//  for(int i = 0; i < HEAP_SIZECLASSES; i++)
+//  {
+//    uint32_t mark = sizeclass_empty[i];
 //    chunk_list(clear_chunk, heap->small_free[i], mark);
-    chunk_list(clear_chunk, heap->small_full[i], mark);
-  }
+//    chunk_list(clear_chunk, heap->small_full[i], mark);
+//  }
 
 //  chunk_list(clear_chunk, heap->large, 1);
 
@@ -484,6 +495,9 @@ void ponyint_heap_free(chunk_t* chunk, void* p)
 
   if(p == ext)
   {
+#ifdef USE_VALGRIND
+    VALGRIND_MEMPOOL_FREE(chunk, p);
+#endif
     // Shift to account for smallest allocation size.
     uint32_t slot = FIND_SLOT(ext, chunk->m);
 

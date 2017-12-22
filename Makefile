@@ -908,8 +908,6 @@ test-ci: all
 
 test-cross-ci: all
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --version
-	@$(PONY_BUILD_DIR)/libponyc.tests
-	@$(PONY_BUILD_DIR)/libponyrt.tests
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --triple=$(cross_triple) \
           --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s \
 	  --checktree --verify packages/stdlib

@@ -26,6 +26,17 @@ download_pcre(){
   tar -xjvf pcre2-10.21.tar.bz2
   pushd pcre2-10.21 && ./configure --prefix=/usr && make && sudo make install
   popd
+  if [[ "${CROSS_ARCH}" != "" ]]
+  then
+    echo "Cross building PCRE2..."
+    pushd pcre2-10.21 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    popd
+    echo "Downloading and cross building libressl..."
+    wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.5.tar.gz"
+    tar -xzvf libressl-2.4.5.tar.gz
+    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    popd
+  fi
 }
 
 set_linux_compiler(){
@@ -33,6 +44,27 @@ set_linux_compiler(){
 
   sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/$ICC1" 60 --slave /usr/bin/g++ g++ "/usr/bin/$ICXX1"
 }
+
+echo "Installing ponyc cross build dependencies..."
+
+case "${CROSS_ARCH}" in
+
+  "i686")
+    sudo dpkg --add-architecture i386
+    sudo apt-get -qq update
+    sudo apt-get install libc6:i386 libc6-dev:i386 linux-libc-dev:i386 zlib1g:i386 zlib1g-dev:i386
+    sudo apt-get install g++-6 g++-6-multilib gcc-6-multilib
+  ;;
+
+  "armv7-a")
+    pushd /tmp
+    wget "https://releases.linaro.org/components/toolchain/binaries/6.4-2017.11/arm-linux-gnueabihf/gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz"
+    sudo tar xJvf gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /usr/local --strip 1
+    arm-linux-gnueabihf-gcc --version
+    popd
+  ;;
+
+esac
 
 echo "Installing ponyc build dependencies..."
 
@@ -59,11 +91,13 @@ case "${TRAVIS_OS_NAME}:${LLVM_CONFIG}" in
   "linux:llvm-config-4.0")
     download_llvm
     download_pcre
+    set_linux_compiler
   ;;
 
   "linux:llvm-config-5.0")
     download_llvm
     download_pcre
+    set_linux_compiler
   ;;
 
   "osx:llvm-config-3.7")
@@ -81,7 +115,7 @@ case "${TRAVIS_OS_NAME}:${LLVM_CONFIG}" in
 
     brew install llvm38
   ;;
-  
+
   "osx:llvm-config-3.9")
     brew update
     brew install shellcheck

@@ -92,7 +92,7 @@ destdir ?= $(prefix)/lib/pony/$(tag)
 LIB_EXT ?= a
 BUILD_FLAGS = -march=$(arch) -mtune=$(tune) -Werror -Wconversion \
   -Wno-sign-conversion -Wextra -Wall
-LINKER_FLAGS = -march=$(arch) -mtune=$(tune)
+LINKER_FLAGS = -march=$(arch) -mtune=$(tune) $(LDFLAGS)
 AR_FLAGS ?= rcs
 ALL_CFLAGS = -std=gnu11 -fexceptions \
   -DPONY_VERSION=\"$(tag)\" -DLLVM_VERSION=\"$(llvm_version)\" \
@@ -321,11 +321,11 @@ packages_abs_src := $(shell dirname $(makefile_abs_path))/packages
 
 $(shell mkdir -p $(PONY_BUILD_DIR))
 
-lib   := $(PONY_BUILD_DIR)
+lib   := $(PONY_BUILD_DIR)/lib/$(arch)
 bin   := $(PONY_BUILD_DIR)
 tests := $(PONY_BUILD_DIR)
 benchmarks := $(PONY_BUILD_DIR)
-obj   := $(PONY_BUILD_DIR)/obj
+obj   := $(PONY_BUILD_DIR)/obj-$(arch)
 
 # Libraries. Defined as
 # (1) a name and output directory
@@ -651,7 +651,7 @@ endef
 
 define CONFIGURE_LIBS_WHOLE
   ifeq ($(OSTYPE),osx)
-    wholelibs += -Wl,-force_load,$(PONY_BUILD_DIR)/$(1).a
+    wholelibs += -Wl,-force_load,$(lib)/$(1).a
   else
     wholelibs += $(subst lib,-l,$(1))
   endif
@@ -732,6 +732,7 @@ $(foreach d,$($(1).depends),$(eval depends += $($(d))/$(d).$(LIB_EXT)))
 
 ifeq ($(1),libponyrt)
 $($(1))/libponyrt.$(LIB_EXT): $(depends) $(ofiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Linking libponyrt'
     ifneq (,$(DTRACE))
     ifeq ($(OSTYPE), linux)
@@ -752,6 +753,7 @@ $($(1))/libponyrt.$(LIB_EXT): $(depends) $(ofiles)
     endif
   ifeq ($(runtime-bitcode),yes)
 $($(1))/libponyrt.bc: $(depends) $(bcfiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Generating bitcode for libponyrt'
 	$(SILENT)$(LLVM_LINK) -o $$@ $(bcfiles)
     ifeq ($(config),release)
@@ -763,11 +765,13 @@ libponyrt: $($(1))/libponyrt.$(LIB_EXT)
   endif
 else ifneq ($(filter $(1),$(libraries)),)
 $($(1))/$(1).$(LIB_EXT): $(depends) $(ofiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Linking $(1)'
 	$(SILENT)$(AR) $(AR_FLAGS) $$@ $(ofiles)
 $(1): $($(1))/$(1).$(LIB_EXT)
 else
 $($(1))/$(1): $(depends) $(ofiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Linking $(1)'
 	$(SILENT)$(linker) -o $$@ $(ofiles) $(linkcmd)
 $(1): $($(1))/$(1)
@@ -783,25 +787,33 @@ $(foreach target,$(targets),$(eval $(call EXPAND_COMMAND,$(target))))
 
 define EXPAND_INSTALL
 ifeq ($(OSTYPE),linux)
+install-libponyrt-pic: libponyrt-pic
+	@mkdir -p $(destdir)/lib/$(arch)
+	$(SILENT)cp $(lib)/libponyrt-pic.a $(destdir)/lib/$(arch)
+endif
+install-libponyrt: libponyrt
+	@mkdir -p $(destdir)/lib/$(arch)
+	$(SILENT)cp $(lib)/libponyrt.a $(destdir)/lib/$(arch)
+ifeq ($(OSTYPE),linux)
 install: libponyc libponyrt libponyrt-pic ponyc
 else
 install: libponyc libponyrt ponyc
 endif
 	@mkdir -p $(destdir)/bin
 	@mkdir -p $(destdir)/docs-support
-	@mkdir -p $(destdir)/lib
+	@mkdir -p $(destdir)/lib/$(arch)
 	@mkdir -p $(destdir)/include/pony/detail
-	$(SILENT)cp $(PONY_BUILD_DIR)/libponyrt.a $(destdir)/lib
+	$(SILENT)cp $(lib)/libponyrt.a $(destdir)/lib/$(arch)
 ifeq ($(OSTYPE),linux)
-	$(SILENT)cp $(PONY_BUILD_DIR)/libponyrt-pic.a $(destdir)/lib
+	$(SILENT)cp $(lib)/libponyrt-pic.a $(destdir)/lib/$(arch)
 endif
 ifneq ($(wildcard $(PONY_BUILD_DIR)/libponyrt.bc),)
 	$(SILENT)cp $(PONY_BUILD_DIR)/libponyrt.bc $(destdir)/lib
 endif
-ifneq ($(wildcard $(PONY_BUILD_DIR)/libdtrace_probes.a),)
-	$(SILENT)cp $(PONY_BUILD_DIR)/libdtrace_probes.a $(destdir)/lib
+ifneq ($(wildcard $(lib)/libdtrace_probes.a),)
+	$(SILENT)cp $(lib)/libdtrace_probes.a $(destdir)/lib/$(arch)
 endif
-	$(SILENT)cp $(PONY_BUILD_DIR)/libponyc.a $(destdir)/lib
+	$(SILENT)cp $(lib)/libponyc.a $(destdir)/lib/$(arch)
 	$(SILENT)cp $(PONY_BUILD_DIR)/ponyc $(destdir)/bin
 	$(SILENT)cp src/libponyrt/pony.h $(destdir)/include
 	$(SILENT)cp src/common/pony/detail/atomics.h $(destdir)/include/pony/detail
@@ -812,17 +824,17 @@ ifeq ($$(symlink),yes)
 	@mkdir -p $(prefix)/lib
 	@mkdir -p $(prefix)/include/pony/detail
 	$(SILENT)ln $(symlink.flags) $(destdir)/bin/ponyc $(prefix)/bin/ponyc
-	$(SILENT)ln $(symlink.flags) $(destdir)/lib/libponyrt.a $(prefix)/lib/libponyrt.a
+	$(SILENT)ln $(symlink.flags) $(destdir)/lib/$(arch)/libponyrt.a $(prefix)/lib/libponyrt.a
 ifeq ($(OSTYPE),linux)
-	$(SILENT)ln $(symlink.flags) $(destdir)/lib/libponyrt-pic.a $(prefix)/lib/libponyrt-pic.a
+	$(SILENT)ln $(symlink.flags) $(destdir)/lib/$(arch)/libponyrt-pic.a $(prefix)/lib/libponyrt-pic.a
 endif
 ifneq ($(wildcard $(destdir)/lib/libponyrt.bc),)
 	$(SILENT)ln $(symlink.flags) $(destdir)/lib/libponyrt.bc $(prefix)/lib/libponyrt.bc
 endif
 ifneq ($(wildcard $(PONY_BUILD_DIR)/libdtrace_probes.a),)
-	$(SILENT)ln $(symlink.flags) $(destdir)/lib/libdtrace_probes.a $(prefix)/lib/libdtrace_probes.a
+	$(SILENT)ln $(symlink.flags) $(destdir)/lib/$(arch)/libdtrace_probes.a $(prefix)/lib/libdtrace_probes.a
 endif
-	$(SILENT)ln $(symlink.flags) $(destdir)/lib/libponyc.a $(prefix)/lib/libponyc.a
+	$(SILENT)ln $(symlink.flags) $(destdir)/lib/$(arch)/libponyc.a $(prefix)/lib/libponyc.a
 	$(SILENT)ln $(symlink.flags) $(destdir)/include/pony.h $(prefix)/include/pony.h
 	$(SILENT)ln $(symlink.flags) $(destdir)/include/pony/detail/atomics.h $(prefix)/include/pony/detail/atomics.h
 endif
@@ -873,7 +885,7 @@ test: all
 	@rm stdlib
 
 test-examples: all
-	@PONYPATH=. $(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify examples
+	@PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify examples
 	@./examples1
 	@rm examples1
 
@@ -887,9 +899,29 @@ test-ci: all
 	@$(PONY_BUILD_DIR)/ponyc --checktree --verify packages/stdlib
 	@./stdlib --sequential
 	@rm stdlib
-	@PONYPATH=. $(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify examples
+	@PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify examples
 	@./examples1
 	@rm examples1
+	@$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
+	@diff pony.g pony.g.new
+	@rm pony.g.new
+
+test-cross-ci: all
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --version
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --triple=$(cross_triple) \
+          --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s \
+	  --checktree --verify packages/stdlib
+	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
+	$(SILENT)rm stdlib
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --checktree --triple=$(cross_triple) \
+          --link-arch=$(cross_arch) --linker='$(cross_linker)' --verify \
+          packages/stdlib
+	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
+	$(SILENT)rm stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc  --triple=$(cross_triple) \
+          --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s examples
+	$(SILENT)$(QEMU_RUNNER) ./examples1
+	$(SILENT)rm examples1
 	@$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
 	@diff pony.g pony.g.new
 	@rm pony.g.new
@@ -1013,6 +1045,10 @@ help:
 	@echo '  test                   Run test suite'
 	@echo '  benchmark              Build and run benchmark suite'
 	@echo '  install                Install ponyc'
+	@echo '  install-libponyrt      Install libponyrt only (for cross'
+	@echo '                         linking)'
+	@echo '  install-libponyrt-pic  Install libponyrt-pic only (for cross'
+	@echo '                         linking)'
 	@echo '  uninstall              Remove all versions of ponyc'
 	@echo '  stats                  Print Pony cloc statistics'
 	@echo '  clean                  Delete all build files'

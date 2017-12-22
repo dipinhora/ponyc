@@ -2,11 +2,6 @@ version: "{build}"
 
 image: Visual Studio 2017
 
-branches:
-  only:
-    - master
-    - release
-
 environment:
   matrix:
   - llvm: 3.7.1
@@ -62,26 +57,6 @@ build_script:
       copy -recurse packages "${ponydir}\packages"
       copy -recurse ".docs" "${ponydir}\docs-support"
       7z a -tzip "C:\projects\ponyc\${ponydir}.zip" "${ponydir}"
-
-artifacts:
-  - path: 'ponyc-*.zip'
-
-deploy:
-  # On branche `release`, deploy (and publish) artifacts
-  # to the ponyc-win projects on Bintray.
-  - provider: BinTray
-    username: pony-buildbot-2
-    api_key:
-        secure: 4KgdDQLp2kX816XH27d5xdJBPlKGhYXN6ttdHTSt5qe1MVIF+/VResUstg0zuJ6m
-    subject: pony-language
-    repo: ponyc-win
-    package: ponyc
-    version: ponyc-$(package_version)
-    on:
-        branch: release
-        llvm: 3.9.1
-        configuration: release
-    publish: true
 
 test_script:
   - cd C:\projects\ponyc

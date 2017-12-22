@@ -916,7 +916,8 @@ test-cross-ci: all
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --checktree --triple=$(cross_triple) \
           --link-arch=$(cross_arch) --linker='$(cross_linker)' --verify \
           packages/stdlib
-	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
+	## Don't run `serialise` tests in stdlib if cross compiling for i686; see #1576
+	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
 	$(SILENT)rm stdlib
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc  --triple=$(cross_triple) \
           --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s examples

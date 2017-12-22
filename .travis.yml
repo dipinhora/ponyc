@@ -465,6 +465,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -489,6 +492,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -513,6 +519,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -537,6 +546,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -561,6 +573,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -585,6 +600,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -609,6 +627,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -633,6 +654,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -657,6 +681,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
@@ -681,6 +708,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+        - CROSS_CFLAGS=
+        - CROSS_CXXFLAGS=
+        - CROSS_LDFLAGS=
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc

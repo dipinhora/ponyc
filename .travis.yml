@@ -3,6 +3,9 @@ language: c
 dist: trusty
 sudo: required
 
+services:
+  - docker
+
 matrix:
   include:
 
@@ -483,7 +486,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -511,7 +514,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -539,7 +542,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -567,7 +570,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -595,7 +598,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -623,7 +626,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -651,7 +654,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -679,7 +682,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -707,7 +710,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
@@ -735,7 +738,7 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
 
     - os: osx

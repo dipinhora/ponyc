@@ -62,6 +62,8 @@ case "${CROSS_ARCH}" in
     sudo tar xJvf gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /usr/local --strip 1
     arm-linux-gnueabihf-gcc --version
     popd
+    sudo wget https://github.com/multiarch/qemu-user-static/releases/download/v2.9.1-1/qemu-arm-static -O /usr/bin/qemu-arm-static
+    sudo chmod +x /usr/bin/qemu-arm-static
   ;;
 
 esac

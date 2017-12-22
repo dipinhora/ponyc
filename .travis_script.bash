@@ -15,7 +15,7 @@ ponyc-test(){
   if [[ "${CROSS_ARCH}" != "" ]]
   then
     echo "Building and testing cross ponyc..."
-    make verbose=1 CC="${CROSS_CC}" CXX="${CROSS_CXX}" arch="${CROSS_ARCH}" bits="${CROSS_BITS}" CFLAGS="${CROSS_CFLAGS}" CXXFLAGS="${CROSS_CXXFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" libponyrt
+    make verbose=1 CC="${CROSS_CC}" CXX="${CROSS_CXX}" arch="${CROSS_ARCH}" tune="${CROSS_TUNE}" bits="${CROSS_BITS}" CFLAGS="${CROSS_CFLAGS}" CXXFLAGS="${CROSS_CXXFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" libponyrt
     make verbose=1 test-cross-ci PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}"
   fi
 }

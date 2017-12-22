@@ -212,6 +212,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -238,6 +239,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -264,6 +266,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -290,6 +293,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -316,6 +320,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -342,6 +347,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -368,6 +374,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -394,6 +401,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -420,6 +428,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     - os: linux
       addons:
@@ -446,6 +455,7 @@ matrix:
         - CROSS_LINKER='gcc-6 -m32'
         - CROSS_CC=gcc-6
         - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
 
     # armv7-a
     - os: linux
@@ -474,6 +484,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -501,6 +512,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -528,6 +540,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -555,6 +568,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -582,6 +596,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -609,6 +624,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -636,6 +652,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -663,6 +680,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -690,6 +708,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: linux
       addons:
@@ -717,6 +736,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm -L /usr/arm-linux-gnueabihf/'
+        - CROSS_TUNE=generic-armv7-a
 
     - os: osx
       env:

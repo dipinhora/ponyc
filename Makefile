@@ -471,6 +471,7 @@ libponyrt.buildoptions = -DPONY_NO_ASSERT
 libponyrt-pic.buildoptions = -DPONY_NO_ASSERT
 
 libponyrt.tests.linkoptions += -rdynamic
+libponyrt.benchmarks.linkoptions += -rdynamic
 
 libponyc.buildoptions = -D__STDC_CONSTANT_MACROS
 libponyc.buildoptions += -D__STDC_FORMAT_MACROS
@@ -482,6 +483,7 @@ libponyc.tests.buildoptions += -D__STDC_LIMIT_MACROS
 libponyc.tests.buildoptions += -DPONY_PACKAGES_DIR=\"$(packages_abs_src)\"
 
 libponyc.tests.linkoptions += -rdynamic
+libponyc.benchmarks.linkoptions += -rdynamic
 
 libponyc.benchmarks.buildoptions = -D__STDC_CONSTANT_MACROS
 libponyc.benchmarks.buildoptions += -D__STDC_FORMAT_MACROS
@@ -509,11 +511,7 @@ libgbenchmark.disable = -Wconversion -Wno-sign-conversion -Wextra
 libblake2.disable = -Wconversion -Wno-sign-conversion -Wextra
 
 # Link relationships.
-ponyc.links = libponyc libponyrt
-ifeq ($(OSTYPE),linux)
-ponyc.links += libunwind
-endif
-ponyc.links += llvm libblake2
+ponyc.links = libponyc libponyrt llvm libblake2
 libponyc.tests.links = libgtest libponyc llvm libblake2
 libponyc.tests.links.whole = libponyrt
 libponyrt.tests.links = libgtest libponyrt

@@ -911,17 +911,17 @@ test-cross-ci: all
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --triple=$(cross_triple) \
           --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s \
 	  --checktree --verify packages/stdlib
-	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
+	$(SILENT)$(QEMU_RUNNERD) ./stdlib --sequential
 	$(SILENT)rm stdlib
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --checktree --triple=$(cross_triple) \
           --link-arch=$(cross_arch) --linker='$(cross_linker)' --verify \
           packages/stdlib
 	## Don't run `serialise` tests in stdlib if cross compiling for i686; see #1576
-	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
+	$(SILENT)$(QEMU_RUNNERD) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
 	$(SILENT)rm stdlib
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc  --triple=$(cross_triple) \
           --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s examples
-	$(SILENT)$(QEMU_RUNNER) ./examples1
+	$(SILENT)$(QEMU_RUNNERD) ./examples1
 	$(SILENT)rm examples1
 	@$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
 	@diff pony.g pony.g.new

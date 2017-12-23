@@ -509,13 +509,7 @@ libgbenchmark.disable = -Wconversion -Wno-sign-conversion -Wextra
 libblake2.disable = -Wconversion -Wno-sign-conversion -Wextra
 
 # Link relationships.
-ifeq ($(OSTYPE),linux)
-ponyc.links = libunwind
-else
-ponyc.links =
-endif
-
-ponyc.links += libponyc libponyrt llvm libblake2
+ponyc.links = libponyc libponyrt llvm libblake2
 libponyc.tests.links = libgtest libponyc llvm libblake2
 libponyc.tests.links.whole = libponyrt
 libponyrt.tests.links = libgtest libponyrt
@@ -524,6 +518,7 @@ libponyrt.benchmarks.links = libgbenchmark libponyrt
 
 ifeq ($(OSTYPE),linux)
   ponyc.links += libpthread libdl libatomic libunwind
+  ponyc.links.whole = libunwind
   libponyc.tests.links += libpthread libdl libatomic libunwind
   libponyrt.tests.links += libpthread libdl libatomic libunwind
   libponyc.benchmarks.links += libpthread libdl libatomic libunwind

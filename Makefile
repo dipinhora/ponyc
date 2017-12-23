@@ -518,7 +518,6 @@ libponyrt.benchmarks.links = libgbenchmark libponyrt
 
 ifeq ($(OSTYPE),linux)
   ponyc.links += libpthread libdl libatomic libunwind
-  ponyc.links.whole = libunwind
   libponyc.tests.links += libpthread libdl libatomic libunwind
   libponyrt.tests.links += libpthread libdl libatomic libunwind
   libponyc.benchmarks.links += libpthread libdl libatomic libunwind

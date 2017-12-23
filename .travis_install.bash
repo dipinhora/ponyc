@@ -19,6 +19,23 @@ download_llvm(){
   popd
 }
 
+download_libunwind(){
+  echo "Downloading and building libunwind..."
+
+  wget "http://download.savannah.nongnu.org/releases/libunwind/libunwind-1.2.1.tar.gz"
+  tar -xzvf libunwind-1.2.1.tar.gz
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr && make && sudo make install
+  popd
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr/local && make && sudo make install
+  popd
+  if [[ "${CROSS_ARCH}" != "" ]]
+  then
+    echo "Cross building libunwind..."
+    pushd libunwind-1.2.1 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    popd
+  fi
+}
+
 download_pcre(){
   echo "Downloading and building PCRE2..."
 
@@ -75,30 +92,35 @@ case "${TRAVIS_OS_NAME}:${LLVM_CONFIG}" in
   "linux:llvm-config-3.7")
     download_llvm
     download_pcre
+    download_libunwind
     set_linux_compiler
   ;;
 
   "linux:llvm-config-3.8")
     download_llvm
     download_pcre
+    download_libunwind
     set_linux_compiler
   ;;
 
   "linux:llvm-config-3.9")
     download_llvm
     download_pcre
+    download_libunwind
     set_linux_compiler
   ;;
 
   "linux:llvm-config-4.0")
     download_llvm
     download_pcre
+    download_libunwind
     set_linux_compiler
   ;;
 
   "linux:llvm-config-5.0")
     download_llvm
     download_pcre
+    download_libunwind
     set_linux_compiler
   ;;
 

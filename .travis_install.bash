@@ -24,6 +24,8 @@ download_libunwind(){
 
   wget "http://download.savannah.nongnu.org/releases/libunwind/libunwind-1.2.1.tar.gz"
   tar -xzvf libunwind-1.2.1.tar.gz
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr && make && sudo make install
+  popd
   pushd libunwind-1.2.1 && ./configure --prefix=/usr/local && make && sudo make install
   popd
   if [[ "${CROSS_ARCH}" != "" ]]

@@ -3,6 +3,9 @@ language: c
 dist: trusty
 sudo: required
 
+services:
+  - docker
+
 matrix:
   include:
 

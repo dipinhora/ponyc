@@ -509,7 +509,11 @@ libgbenchmark.disable = -Wconversion -Wno-sign-conversion -Wextra
 libblake2.disable = -Wconversion -Wno-sign-conversion -Wextra
 
 # Link relationships.
-ponyc.links = libponyc libponyrt llvm libblake2
+ponyc.links = libponyc libponyrt
+ifeq ($(OSTYPE),linux)
+ponyc.links += libunwind
+endif
+ponyc.links += llvm libblake2
 libponyc.tests.links = libgtest libponyc llvm libblake2
 libponyc.tests.links.whole = libponyrt
 libponyrt.tests.links = libgtest libponyrt

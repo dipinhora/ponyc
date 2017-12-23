@@ -292,7 +292,7 @@ static bool link_exe(compile_t* c, ast_t* program,
     "";
 #endif
 
-  size_t ld_len = 512 + strlen(file_exe) + strlen(file_o) + strlen(lib_args)
+  size_t ld_len = 512 + 9 + strlen(file_exe) + strlen(file_o) + strlen(lib_args)
                   + strlen(arch) + strlen(mcx16_arg) + strlen(fuseld)
                   + strlen(ldl) + strlen(dtrace_args);
 
@@ -303,7 +303,7 @@ static bool link_exe(compile_t* c, ast_t* program,
 #ifdef PONY_USE_LTO
     "-flto -fuse-linker-plugin "
 #endif
-    "%s %s %s %s -lpthread %s %s %s -lm %s",
+    "%s %s %s %s -lpthread %s %s %s -lunwind -lm %s",
     linker, file_exe, arch, mcx16_arg, atomic, fuseld, file_o, lib_args,
     dtrace_args, ponyrt, ldl, export
     );

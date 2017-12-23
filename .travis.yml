@@ -207,9 +207,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
-        - CROSS_CFLAGS=-m32
-        - CROSS_CXXFLAGS=-m32
-        - CROSS_LDFLAGS=-m32
+        - CROSS_CFLAGS='-m32 -isystem /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -isystem /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -isystem /usr/cross/include/'
         - CROSS_BITS=32
         - CROSS_TRIPLE=i686-unknown-linux-gnu
         - CROSS_LINKER='gcc-6 -m32'
@@ -478,9 +478,9 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
-        - CROSS_CFLAGS=
-        - CROSS_CXXFLAGS=
-        - CROSS_LDFLAGS=
+        - CROSS_CFLAGS='-isystem /usr/cross/include/'
+        - CROSS_CXXFLAGS='-isystem /usr/cross/include/'
+        - CROSS_LDFLAGS='-isystem /usr/cross/include/'
         - CROSS_BITS=32
         - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
         - CROSS_LINKER=arm-linux-gnueabihf-gcc

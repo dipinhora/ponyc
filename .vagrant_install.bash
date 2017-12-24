@@ -30,13 +30,10 @@ download_vagrant(){
   echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -s -c) contrib" | sudo tee -a /etc/apt/sources.list
   travis_retry sudo apt-get -qq update
   travis_retry sudo apt-get install -y linux-headers-`uname -r` virtualbox-5.2 dkms
-  uname -a
-  VBoxManage --version
   sudo modprobe vboxdrv
   sudo modprobe vboxnetflt
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
-  travis_retry vagrant init ubuntu/trusty32
   travis_retry vagrant up
 }
 

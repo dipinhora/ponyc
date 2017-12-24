@@ -9,6 +9,27 @@ then
   exit 0
 fi
 
+# from https://github.com/travis-ci/travis-build/blob/master/lib/travis/build/templates/header.sh#L243-L260
+ANSI_RED="\\033[31;1m"
+ANSI_RESET="\\033[0m"
+
+travis_retry() {
+  local result=0
+  local count=1
+  while [ $count -le 3 ]; do
+    [ $result -ne 0 ] && {
+      echo -e "\\n${ANSI_RED}The command \"$*\" failed. Retrying, $count of 3.${ANSI_RESET}\\n" >&2
+    }
+    "$@" && { result=0 && break; } || result=$?
+    count=$((count + 1))
+    sleep 1
+  done
+  [ $count -gt 3 ] && {
+    echo -e "\\n${ANSI_RED}The command \"$*\" failed 3 times.${ANSI_RESET}\\n" >&2
+  }
+  return $result
+}
+
 ponyc-test(){
   echo "Building and testing ponyc..."
   make CC="$CC1" CXX="$CXX1" verbose=1 test-ci
@@ -40,7 +61,7 @@ verify-changelog(){
 ponyc-build-packages(){
   echo "Installing ruby, rpm, and fpm..."
   rvm use 2.2.3 --default
-  sudo apt-get install -y rpm
+  travis_retry sudo apt-get install -y rpm
   gem install fpm
 
   echo "Building ponyc packages for deployment..."
@@ -49,7 +70,7 @@ ponyc-build-packages(){
 
 ponyc-build-docs(){
   echo "Installing mkdocs..."
-  sudo -H pip install mkdocs
+  travis_retry sudo -H pip install mkdocs
 
   echo "Building ponyc docs..."
   make CC="$CC1" CXX="$CXX1" docs-online

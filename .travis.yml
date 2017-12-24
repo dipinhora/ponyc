@@ -6,207 +6,89 @@ sudo: required
 services:
   - docker
 
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+    - CROSS_ARCH=
+    - FAVORITE_CONFIG=no
+    - CC1=gcc
+    - CXX1=g++
+    - ICC1=gcc-6
+    - ICXX1=g++-6
+
 matrix:
+  fast_finish: true
+
   include:
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
         - FAVORITE_CONFIG=yes
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
 
     # i686
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -218,22 +100,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -245,22 +116,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -272,22 +132,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -299,22 +148,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -326,22 +164,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -353,22 +180,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -380,22 +196,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -407,22 +212,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -434,22 +228,11 @@ matrix:
         - CROSS_TUNE=generic
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=i686
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
@@ -462,22 +245,11 @@ matrix:
 
     # armv7-a
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -490,22 +262,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -518,22 +279,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -546,22 +296,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -574,22 +313,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -602,22 +330,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -630,22 +347,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -658,22 +364,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -686,22 +381,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -714,22 +398,11 @@ matrix:
         - CROSS_TUNE=generic-armv7-a
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - CROSS_ARCH=armv7-a
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
-        - CC1=gcc
-        - CXX1=g++
-        - ICC1=gcc-6
-        - ICXX1=g++-6
         - CROSS_CFLAGS='-idirafter /usr/cross/include/'
         - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
         - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
@@ -743,8 +416,6 @@ matrix:
 
     - os: osx
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.7.1"
         - LLVM_CONFIG="llvm-config-3.7"
         - CC1=clang-3.7
@@ -752,8 +423,6 @@ matrix:
 
     - os: osx
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.8.1"
         - LLVM_CONFIG="llvm-config-3.8"
         - CC1=clang-3.8
@@ -761,8 +430,6 @@ matrix:
 
     - os: osx
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - CC1=clang-3.9
@@ -770,8 +437,6 @@ matrix:
 
     - os: osx
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - CC1=clang-4.0
@@ -779,12 +444,344 @@ matrix:
 
     - os: osx
       env:
-        - CROSS_ARCH=
-        - FAVORITE_CONFIG=no
         - LLVM_VERSION="5.0.0"
         - LLVM_CONFIG="llvm-config-5.0"
         - CC1=clang-5.0
         - CXX1=clang++-5.0
+
+  allow_failures:
+
+    # i686
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=debug
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=release
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=debug
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=release
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    - os: linux
+      env:
+        - CROSS_ARCH=i686
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CROSS_CFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-m32 -idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=i686-unknown-linux-gnu
+        - CROSS_LINKER='gcc-6 -m32'
+        - CROSS_CC=gcc-6
+        - CROSS_CXX=g++-6
+        - CROSS_TUNE=generic
+
+    # armv7-a
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.7.1"
+        - LLVM_CONFIG="llvm-config-3.7"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.8.1"
+        - LLVM_CONFIG="llvm-config-3.8"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - LLVM_VERSION="5.0.0"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabihf
+        - CROSS_LINKER=arm-linux-gnueabihf-gcc
+        - CROSS_CC=arm-linux-gnueabihf-gcc
+        - CROSS_CXX=arm-linux-gnueabihf-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=generic-armv7-a
 
 rvm:
   - 2.2.3

@@ -788,7 +788,7 @@ matrix:
         - CC1=clang-5.0
         - CXX1=clang++-5.0
 
-  include:
+  allow_failures:
 
     # i686
     - os: linux

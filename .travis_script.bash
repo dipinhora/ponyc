@@ -22,15 +22,15 @@ ponyc-test(){
 
 verify-changelog(){
   echo "Building changelog tool..."
-  make CC="$CC1" CXX="$CXX1" && sudo make install
+  make CC="$CC1" CXX="$CXX1" && make install
 
   pushd /tmp
 
   git clone "https://github.com/ponylang/pony-stable"
-  cd pony-stable && git checkout tags/0.0.1 && make && sudo make install && cd -
+  cd pony-stable && git checkout tags/0.0.1 && make && make install && cd -
 
   git clone "https://github.com/ponylang/changelog-tool"
-  cd changelog-tool && git checkout tags/0.2.0 && make && sudo make install && cd -
+  cd changelog-tool && git checkout tags/0.2.0 && make && make install && cd -
 
   popd
 
@@ -40,7 +40,7 @@ verify-changelog(){
 ponyc-build-packages(){
   echo "Installing ruby, rpm, and fpm..."
   rvm use 2.2.3 --default
-  sudo apt-get install -y rpm
+  apt-get install -y rpm
   gem install fpm
 
   echo "Building ponyc packages for deployment..."
@@ -49,7 +49,7 @@ ponyc-build-packages(){
 
 ponyc-build-docs(){
   echo "Installing mkdocs..."
-  sudo -H pip install mkdocs
+  pip install mkdocs
 
   echo "Building ponyc docs..."
   make CC="$CC1" CXX="$CXX1" docs-online

@@ -29,9 +29,7 @@ download_vagrant(){
   travis_retry wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
   echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -s -c) contrib" | sudo tee -a /etc/apt/sources.list
   travis_retry sudo apt-get -qq update
-  travis_retry sudo apt-get install virtualbox-5.2 dkms virtualbox-5.2-dkms virtualbox-5.2-source
-  sudo dpkg-reconfigure virtualbox-5.2-dkms
-  sudo dpkg-reconfigure virtualbox
+  travis_retry sudo apt-get install virtualbox-5.2 dkms
   sudo modprobe vboxdrv
   sudo modprobe vboxnetflt
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"

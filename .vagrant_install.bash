@@ -29,7 +29,7 @@ download_vagrant(){
   travis_retry wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
   echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -s -c) contrib" | sudo tee -a /etc/apt/sources.list
   travis_retry sudo apt-get -qq update
-  travis_retry sudo apt-get install -y virtualbox-5.2 dkms
+  travis_retry sudo apt-get install -y linux-headers-`uname -r` virtualbox-5.2 dkms
   uname -a
   VBoxManage --version
   sudo modprobe vboxdrv

@@ -21,6 +21,11 @@ matrix:
 
   include:
 
+    # i686
+    - os: linux
+      env:
+        - VAGRANT_ENV=ubuntu-i686
+
     - os: linux
       env:
         - LLVM_VERSION="3.7.1"
@@ -787,7 +792,7 @@ rvm:
   - 2.2.3
 
 install:
-  - bash .travis_install.bash
+  - if [ $VAGRANT_ENV = ubuntu-i686 ]; then bash .vagrant_install.bash; else bash .travis_install.bash; fi
 
 script:
   - bash .travis_script.bash

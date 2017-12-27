@@ -33,6 +33,7 @@ download_vagrant(){
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
   travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
   travis_retry sudo vagrant up --provider=libvirt
+  echo "Done downloading and installing vagrant/libvirt..."
 }
 
 download_compiler(){
@@ -87,10 +88,10 @@ case "${VAGRANT_ENV}" in
     if [[ "$(uname -i)" == "x86_64" ]]
     then
       download_vagrant
-      vagrant ssh -c "cp -r /vagrant ~/"
-      vagrant ssh -c "bash env ICC1=${ICC1} ICXX1=${ICXX1} .vagrant_install.sh"
-      vagrant ssh -c "bash make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
-      vagrant ssh -c "bash make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
+      sudo vagrant ssh -c "cp -r /vagrant ~/"
+      sudo vagrant ssh -c "bash env ICC1=${ICC1} ICXX1=${ICXX1} .vagrant_install.sh"
+      sudo vagrant ssh -c "bash make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
+      sudo vagrant ssh -c "bash make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
     else
       download_compiler
       download_llvm

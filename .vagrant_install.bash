@@ -25,16 +25,14 @@ travis_retry() {
 }
 
 download_vagrant(){
-  echo "Downloading and installing vagrant/virtualbox..."
-  travis_retry wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-  echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -s -c) contrib" | sudo tee -a /etc/apt/sources.list
+  echo "Downloading and installing vagrant/libvirt..."
   travis_retry sudo apt-get -qq update
-  travis_retry sudo apt-get install -y linux-headers-`uname -r` virtualbox-5.2 dkms
-  sudo modprobe vboxdrv
-  sudo modprobe vboxnetflt
+  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
+  sudo /etc/init.d/libvirt-bin restart
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
-  travis_retry vagrant up
+  travis_retry vagrant plugin install vagrant-libvirt
+  travis_retry vagrant up --provider=libvirt
 }
 
 download_compiler(){

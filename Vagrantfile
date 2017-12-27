@@ -5,5 +5,6 @@ Vagrant.configure("2") do |config|
     libvirt.driver = "qemu"
     libvirt.memory = 3072
     libvirt.cpus = 2
+    libvirt.cpu_mode = "host-model"
   end
 end

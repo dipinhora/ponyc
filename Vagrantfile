@@ -6,14 +6,5 @@ Vagrant.configure("2") do |config|
     libvirt.memory = 3072
     libvirt.cpus = 2
     libvirt.cpu_mode = "host-model"
-    puts "Before:"
-    libvirt.each do |key, value|
-      puts "#{key}:#{value}"
-    end
-    libvirt.attributes.except!("redirdev", "random")
-    puts "After:"
-    libvirt.each do |key, value|
-      puts "#{key}:#{value}"
-    end
   end
 end

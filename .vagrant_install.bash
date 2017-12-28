@@ -113,6 +113,7 @@ case "${VAGRANT_ENV}" in
     download_vagrant
 #    sudo vagrant ssh -c "cp -r /vagrant ~/"
 #    sudo vagrant ssh -c "ls -laF"
+    cat /proc/cpuinfo
     sudo vagrant ssh -c "cd /vagrant && ls -laF"
     sudo vagrant ssh -c "cat /proc/cpuinfo"
     sudo vagrant ssh -c "dmesg"

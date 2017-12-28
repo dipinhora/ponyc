@@ -38,8 +38,8 @@ download_vagrant(){
   sudo /etc/init.d/libvirt-bin restart
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
-#  travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
-  travis_retry vagrant plugin install vagrant-libvirt
+  travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
+#  travis_retry vagrant plugin install vagrant-libvirt
   travis_retry sudo vagrant up --provider=libvirt
   echo "Done downloading and installing vagrant/libvirt..."
 }

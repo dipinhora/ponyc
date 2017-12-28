@@ -114,6 +114,8 @@ case "${VAGRANT_ENV}" in
 #    sudo vagrant ssh -c "cp -r /vagrant ~/"
 #    sudo vagrant ssh -c "ls -laF"
     sudo vagrant ssh -c "cd /vagrant && ls -laF"
+    sudo vagrant ssh -c "cat /proc/cpuinfo"
+    sudo vagrant ssh -c "dmesg"
     sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1} bash .vagrant_install.bash"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"

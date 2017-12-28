@@ -49,6 +49,7 @@ download_vagrant(){
   sudo /etc/init.d/libvirt-bin restart
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
+  rm vagrant_2.0.1_x86_64.deb
   travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
 #  travis_retry vagrant plugin install vagrant-libvirt
   travis_retry sudo vagrant up --provider=libvirt
@@ -112,7 +113,7 @@ case "${VAGRANT_ENV}" in
 #      sudo vagrant ssh -c "cp -r /vagrant ~/"
 #      sudo vagrant ssh -c "ls -laF"
       sudo vagrant ssh -c "cd /vagrant && ls -laF"
-      sudo vagrant ssh -c "cd /vagrant && env ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.sh"
+      sudo vagrant ssh -c "cd /vagrant && env ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.bash"
       sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
       sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
     else

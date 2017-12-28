@@ -109,11 +109,11 @@ case "${VAGRANT_ENV}" in
     if [[ "$(uname -i)" == "x86_64" ]]
     then
       download_vagrant
-      sudo vagrant ssh -c "cp -r /vagrant ~/"
-      sudo vagrant ssh -c "ls -laF"
-      sudo vagrant ssh -c "env ICC1=${ICC1} ICXX1=${ICXX1} bash ./.vagrant_install.sh"
-      sudo vagrant ssh -c "make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
-      sudo vagrant ssh -c "make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
+#      sudo vagrant ssh -c "cp -r /vagrant ~/"
+#      sudo vagrant ssh -c "ls -laF"
+      sudo vagrant ssh -c "cd /vagrant && env ICC1=${ICC1} ICXX1=${ICXX1} bash ./.vagrant_install.sh"
+      sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
+      sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
     else
       download_compiler
       download_llvm

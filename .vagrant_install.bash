@@ -59,9 +59,9 @@ download_vagrant(){
 download_compiler(){
   echo "Downloading and installing the compiler..."
 
-  travis_retry sudo add-apt-repository -m ppa:ubuntu-toolchain-r/test -y
+#  travis_retry sudo add-apt-repository -m ppa:ubuntu-toolchain-r/test -y
   travis_retry apt_update_sources
-  travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
+  travis_retry sudo apt-get install -y "${CC1}" "${CXX1}"
 }
 
 download_llvm(){
@@ -97,9 +97,9 @@ download_pcre(){
 }
 
 set_linux_compiler(){
-  echo "Setting $ICC1 and $ICXX1 as default compiler"
+  echo "Setting $CC1 and $CXX1 as default compiler"
 
-  sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/$ICC1" 60 --slave /usr/bin/g++ g++ "/usr/bin/$ICXX1"
+  sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/$CC1" 60 --slave /usr/bin/g++ g++ "/usr/bin/$CXX1"
 }
 
 echo "Installing ponyc build dependencies..."
@@ -111,8 +111,8 @@ case "${VAGRANT_ENV}" in
 #    sudo vagrant ssh -c "cp -r /vagrant ~/"
 #    sudo vagrant ssh -c "ls -laF"
     sudo vagrant ssh -c "cd /vagrant && ls -laF"
-    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1}"
-    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.bash"
+    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1}"
+    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1} bash .vagrant_install.bash"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
   ;;

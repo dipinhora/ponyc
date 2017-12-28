@@ -60,8 +60,11 @@ download_compiler(){
   echo "Downloading and installing the compiler..."
 
 #  travis_retry sudo add-apt-repository -m ppa:ubuntu-toolchain-r/test -y
+  echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main " | sudo tee -a /etc/apt/sources.list
+  echo "deb-src http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main " | sudo tee -a /etc/apt/sources.list
+  travis_retry apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 60C317803A41BA51845E371A1E9377A2BA9EF27F
   travis_retry apt_update_sources
-  travis_retry sudo apt-get install -y "${CC1}" "${CXX1}"
+  travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
 }
 
 download_llvm(){
@@ -71,7 +74,7 @@ download_llvm(){
 #  echo "deb-src http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" | sudo tee -a /etc/apt/sources.list
   echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" | sudo tee -a /etc/apt/sources.list
   echo "deb-src http://apt.llvm.org/xenial/ llvm-toolchain-xenail main" | sudo tee -a /etc/apt/sources.list
-  travis retry wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+  travis_retry wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
   travis_retry apt_update_sources
   travis_retry sudo apt-get install -y llvm-3.9
 }
@@ -97,9 +100,9 @@ download_pcre(){
 }
 
 set_linux_compiler(){
-  echo "Setting $CC1 and $CXX1 as default compiler"
+  echo "Setting $ICC1 and $ICXX1 as default compiler"
 
-  sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/$CC1" 60 --slave /usr/bin/g++ g++ "/usr/bin/$CXX1"
+  sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/$ICC1" 60 --slave /usr/bin/g++ g++ "/usr/bin/$ICXX1"
 }
 
 echo "Installing ponyc build dependencies..."
@@ -111,7 +114,6 @@ case "${VAGRANT_ENV}" in
 #    sudo vagrant ssh -c "cp -r /vagrant ~/"
 #    sudo vagrant ssh -c "ls -laF"
     sudo vagrant ssh -c "cd /vagrant && ls -laF"
-    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1}"
     sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1} bash .vagrant_install.bash"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"

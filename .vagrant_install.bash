@@ -107,23 +107,22 @@ echo "Installing ponyc build dependencies..."
 case "${VAGRANT_ENV}" in
 
   "ubuntu-i686")
-    if [[ "$(uname -i)" == "x86_64" ]]
-    then
-      download_vagrant
-#      sudo vagrant ssh -c "cp -r /vagrant ~/"
-#      sudo vagrant ssh -c "ls -laF"
-      sudo vagrant ssh -c "cd /vagrant && ls -laF"
-      sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV} ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.bash"
-      sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
-      sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
-    else
-      download_compiler
-      download_llvm
-      download_pcre
-      download_libressl
-      download_libunwind
-      set_linux_compiler
-    fi
+    download_vagrant
+#    sudo vagrant ssh -c "cp -r /vagrant ~/"
+#    sudo vagrant ssh -c "ls -laF"
+    sudo vagrant ssh -c "cd /vagrant && ls -laF"
+    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.bash"
+    sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
+    sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
+  ;;
+
+  "ubuntu-i686-install")
+    download_compiler
+    download_llvm
+    download_pcre
+    download_libressl
+    download_libunwind
+    set_linux_compiler
   ;;
 
   *)

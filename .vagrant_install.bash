@@ -59,7 +59,7 @@ download_vagrant(){
 download_compiler(){
   echo "Downloading and installing the compiler..."
 
-  travis_retry sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  travis_retry sudo add-apt-repository -m ppa:ubuntu-toolchain-r/test -y
   travis_retry apt_update_sources
   travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
 }

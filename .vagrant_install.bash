@@ -2,6 +2,7 @@
 
 set -o errexit
 set -o nounset
+set -vx
 
 # from https://github.com/travis-ci/travis-build/blob/master/lib/travis/build/templates/header.sh#L243-L260
 ANSI_RED="\\033[31;1m"
@@ -29,10 +30,10 @@ download_vagrant(){
   travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
   travis_retry sudo apt-get -qq update
   travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
-  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
-  sudo virsh pool-autostart default
-  sudo virsh pool-build default
-  sudo virsh pool-start default
+#  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
+#  sudo virsh pool-autostart default
+#  sudo virsh pool-build default
+#  sudo virsh pool-start default
   sudo libvirtd --version
   sudo /etc/init.d/libvirt-bin restart
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"

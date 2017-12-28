@@ -47,7 +47,7 @@ download_vagrant(){
 download_compiler(){
   echo "Downloading and installing the compiler..."
 
-  travis_retry sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+#  travis_retry sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   travis_retry sudo apt-get -qq update
   travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
 }
@@ -55,8 +55,10 @@ download_compiler(){
 download_llvm(){
   echo "Downloading and installing the LLVM specified by envvars..."
 
-  echo "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" | sudo tee -a /etc/apt/sources.list
-  echo "deb-src http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" | sudo tee -a /etc/apt/sources.list
+#  echo "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" | sudo tee -a /etc/apt/sources.list
+#  echo "deb-src http://apt.llvm.org/trusty/ llvm-toolchain-trusty main" | sudo tee -a /etc/apt/sources.list
+  echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" | sudo tee -a /etc/apt/sources.list
+  echo "deb-src http://apt.llvm.org/xenial/ llvm-toolchain-xenail main" | sudo tee -a /etc/apt/sources.list
   travis retry wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
   travis_retry sudo apt-get -qq update
   travis_retry sudo apt-get install -y llvm-3.9
@@ -97,9 +99,9 @@ case "${VAGRANT_ENV}" in
     then
       download_vagrant
       sudo vagrant ssh -c "cp -r /vagrant ~/"
-      sudo vagrant ssh -c "bash env ICC1=${ICC1} ICXX1=${ICXX1} .vagrant_install.sh"
-      sudo vagrant ssh -c "bash make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
-      sudo vagrant ssh -c "bash make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
+      sudo vagrant ssh -c "env ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.sh"
+      sudo vagrant ssh -c "make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
+      sudo vagrant ssh -c "make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
     else
       download_compiler
       download_llvm

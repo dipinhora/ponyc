@@ -27,7 +27,7 @@ travis_retry() {
 
 download_vagrant(){
   echo "Downloading and installing vagrant/libvirt..."
-  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
+#  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
   travis_retry sudo apt-get -qq update
   travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
 #  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images

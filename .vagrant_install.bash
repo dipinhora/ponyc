@@ -62,7 +62,7 @@ download_compiler(){
 #  travis_retry sudo add-apt-repository -m ppa:ubuntu-toolchain-r/test -y
   echo "deb http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main " | sudo tee -a /etc/apt/sources.list
   echo "deb-src http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main " | sudo tee -a /etc/apt/sources.list
-  travis_retry apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 60C317803A41BA51845E371A1E9377A2BA9EF27F
+  travis_retry sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 60C317803A41BA51845E371A1E9377A2BA9EF27F
   travis_retry apt_update_sources
   travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
 }

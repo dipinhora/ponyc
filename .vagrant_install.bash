@@ -25,10 +25,19 @@ travis_retry() {
   return $result
 }
 
+apt_update_sources(){
+  # based on https://unix.stackexchange.com/a/175147
+  if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 download_vagrant(){
   echo "Downloading and installing vagrant/libvirt..."
 #  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
-  travis_retry sudo apt-get -qq update
+  travis_retry apt_update_sources
   travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
 #  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
 #  sudo virsh pool-autostart default
@@ -48,7 +57,7 @@ download_compiler(){
   echo "Downloading and installing the compiler..."
 
 #  travis_retry sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  travis_retry sudo apt-get -qq update
+  travis_retry apt_update_sources
   travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
 }
 
@@ -60,7 +69,7 @@ download_llvm(){
   echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main" | sudo tee -a /etc/apt/sources.list
   echo "deb-src http://apt.llvm.org/xenial/ llvm-toolchain-xenail main" | sudo tee -a /etc/apt/sources.list
   travis retry wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
-  travis_retry sudo apt-get -qq update
+  travis_retry apt_update_sources
   travis_retry sudo apt-get install -y llvm-3.9
 }
 
@@ -99,7 +108,8 @@ case "${VAGRANT_ENV}" in
     then
       download_vagrant
       sudo vagrant ssh -c "cp -r /vagrant ~/"
-      sudo vagrant ssh -c "env ICC1=${ICC1} ICXX1=${ICXX1} bash .vagrant_install.sh"
+      sudo vagrant ssh -c "ls -laF"
+      sudo vagrant ssh -c "env ICC1=${ICC1} ICXX1=${ICXX1} bash ./.vagrant_install.sh"
       sudo vagrant ssh -c "make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
       sudo vagrant ssh -c "make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
     else

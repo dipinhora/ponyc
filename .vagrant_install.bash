@@ -27,9 +27,11 @@ travis_retry() {
 
 apt_update_sources(){
   # based on https://unix.stackexchange.com/a/175147
-  if ! { sudo apt-get update 2>&1 || echo E: update failed; } | grep -q '^[WE]:'; then
+  if ! { sudo apt-get update 2>&1 || echo E: update failed; } | tee apt-get-update-output | grep -q '^[WE]:'; then
+    cat apt-get-update-output
     return 0
   else
+    cat apt-get-update-output
     return 1
   fi
 }

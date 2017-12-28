@@ -27,7 +27,7 @@ travis_retry() {
 
 apt_update_sources(){
   # based on https://unix.stackexchange.com/a/175147
-  if ! { sudo apt-get update 2>&1 || echo E: update failed; } | tee apt-get-update-output | egrep -q '(^W: Failed|^E:)'; then
+  if ! { sudo apt-get update 2>&1 || echo E: update failed; } | tee apt-get-update-output | grep -Eq '(^W: Failed|^E:)'; then
     cat apt-get-update-output
     return 0
   else

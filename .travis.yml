@@ -797,7 +797,7 @@ rvm:
   - 2.2.3
 
 install:
-  - if [ $VAGRANT_ENV = ubuntu-i686 ]; then bash .vagrant_install.bash; else bash .travis_install.bash; fi
+  - if [ "$VAGRANT_ENV" != "" ]; then bash .vagrant_install.bash; else bash .travis_install.bash; fi
 
 script:
   - bash .travis_script.bash

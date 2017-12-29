@@ -61,7 +61,7 @@ download_vagrant(){
   popd
   pwd
 
-  qemu-system-x86_64 -device ?
+  qemu-system-x86_64 --help
 
   echo "Downloading and installing vagrant/libvirt..."
 #  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y

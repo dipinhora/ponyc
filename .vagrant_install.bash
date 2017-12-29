@@ -81,7 +81,7 @@ download_vagrant(){
 #  travis_retry vagrant plugin install vagrant-libvirt
 #  travis_retry sudo vagrant up --provider=libvirt
 
-  vagrant box add generic/freebsd11 --provider libvirt
+  vagrant box add generic/freebsd11 --provider libvirt --box-version 1.3.28
 
   qemu-system-x86_64 -enable-kqemu -daemonize -nographic ~/.vagrant.d/boxes/generic-VAGRANTSLASH-freebsd11/1.3.28/libvirt/box.img -m 1536  -net user,hostfwd=tcp::10022-:22 -net nic,model=e1000 -parallel none
   echo "Done downloading and installing vagrant/libvirt..."
@@ -165,12 +165,18 @@ case "${VAGRANT_ENV}" in
   "freebsd-x86_64")
     date
     download_vagrant
+    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 -c "sudo mkdir /vagrant && sudo chmod 777 /vagrant"
+    scp -o IdentitiesOnly=yes -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -P 10022 -r . /vagrant
     date
-    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+
+#    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
     date
-    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
+    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 -c "cd /vagrant && gmake config=release test-ci"
+#    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
     date
-    sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
+    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 -c "cd /vagrant && gmake config=debug test-ci"
+#    sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
     date
   ;;
 

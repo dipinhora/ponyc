@@ -800,4 +800,4 @@ install:
   - if [ "$VAGRANT_ENV" != "" ]; then bash .vagrant_install.bash; else bash .travis_install.bash; fi
 
 script:
-  - bash .travis_script.bash
+  - if [ "$VAGRANT_ENV" == "" ]; then bash .travis_script.bash; fi

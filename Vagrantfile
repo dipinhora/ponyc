@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 600
   config.vm.provider :libvirt do |libvirt|
     libvirt.driver = "qemu"
-    libvirt.memory = 3072
+    libvirt.memory = 2047
     libvirt.cpus = 1
     libvirt.disk_bus = "virtio"
   end

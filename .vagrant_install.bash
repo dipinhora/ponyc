@@ -37,10 +37,33 @@ apt_update_sources(){
 }
 
 download_vagrant(){
+  pushd /tmp
+  sudo apt-get install linux-headers-`uname -r`
+  cat /proc/cpuinfo
+  wget http://wiki.qemu.org/download/kqemu-1.4.0pre1.tar.gz
+  tar xzf kqemu-1.4.0pre1.tar.gz
+  cd kqemu-1.4.0pre1
+  patch -p0 < ../kqemu.patch
+  ./configure
+  make
+  sudo insmod kqemu.ko
+  sudo chmod a+rw /dev/kqemu
+  cd ..
+  wget https://download.savannah.gnu.org/releases/qemu/qemu-0.11.1.tar.gz
+  tar xzf qemu-0.11.1.tar.gz
+  cd qemu-0.11.1
+  patch -p0 < ../qemu.patch
+  ./configure --target-list=x86_64-softmmu --disable-kvm
+  make -j4
+  sudo make -j4 install
+  cd ..
+  popd
+
   echo "Downloading and installing vagrant/libvirt..."
 #  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
   travis_retry apt_update_sources
-  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
+#  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
+  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev
 #  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
 #  sudo virsh pool-autostart default
 #  sudo virsh pool-build default

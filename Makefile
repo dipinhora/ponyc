@@ -858,60 +858,41 @@ ifeq ($(lto),yes)
 endif
 
 benchmark: all
-	@echo "Running libponyc benchmarks..."
-	@$(PONY_BUILD_DIR)/libponyc.benchmarks
-	@echo "Running libponyrt benchmarks..."
-	@$(PONY_BUILD_DIR)/libponyrt.benchmarks
+	$(SILENT)echo "Running libponyc benchmarks..."
+	$(SILENT)$(PONY_BUILD_DIR)/libponyc.benchmarks
+	$(SILENT)echo "Running libponyrt benchmarks..."
+	$(SILENT)$(PONY_BUILD_DIR)/libponyrt.benchmarks
 
 test: all
-	@$(PONY_BUILD_DIR)/libponyc.tests
-	@$(PONY_BUILD_DIR)/libponyrt.tests
-	@$(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify packages/stdlib
-	@./stdlib --sequential
-	@rm stdlib
-
-test-examples: all
-	@PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify examples
-	@./examples1
-	@rm examples1
-
-test-ci: all
-	@$(PONY_BUILD_DIR)/ponyc --version
-	@$(PONY_BUILD_DIR)/libponyc.tests
-	@$(PONY_BUILD_DIR)/libponyrt.tests
-	@$(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify packages/stdlib
-	@./stdlib --sequential
-	@rm stdlib
-	@$(PONY_BUILD_DIR)/ponyc --checktree --verify packages/stdlib
-	@./stdlib --sequential
-	@rm stdlib
-	@PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify examples
-	@./examples1
-	@rm examples1
-	@$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
-	@diff pony.g pony.g.new
-	@rm pony.g.new
-
-test-cross-ci: all
-	$(SILENT)$(PONY_BUILD_DIR)/ponyc --version
-	$(SILENT)$(PONY_BUILD_DIR)/ponyc --triple=$(cross_triple) \
-          --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s \
-	  --checktree --verify packages/stdlib
-	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
-	$(SILENT)rm stdlib
-	$(SILENT)$(PONY_BUILD_DIR)/ponyc --checktree --triple=$(cross_triple) \
-          --link-arch=$(cross_arch) --linker='$(cross_linker)' --verify \
-          packages/stdlib
+	$(SILENT)$(PONY_BUILD_DIR)/libponyc.tests
+	$(SILENT)$(PONY_BUILD_DIR)/libponyrt.tests
+	$(SILENT)PONYPATH=.:$(PONYPATH) @$(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify packages/stdlib
 	## Don't run `serialise` tests in stdlib if cross compiling for i686; see #1576
 	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
 	$(SILENT)rm stdlib
-	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc  --triple=$(cross_triple) \
-          --link-arch=$(cross_arch) --linker='$(cross_linker)' -d -s examples
+
+test-examples: all
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify examples
 	$(SILENT)$(QEMU_RUNNER) ./examples1
 	$(SILENT)rm examples1
-	@$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
-	@diff pony.g pony.g.new
-	@rm pony.g.new
+
+test-stdlib: all
+	$(SILENT)PONYPATH=.:$(PONYPATH) @$(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
+	$(SILENT)./stdlib --sequential
+	$(SILENT)rm stdlib
+
+check-version: all
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --version
+
+validate-grammar: all
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
+	$(SILENT)diff pony.g pony.g.new
+	$(SILENT)rm pony.g.new
+
+test-ci: all check-version test test-stdlib test-examples validate-grammar
+
+test-cross-ci: cross_args=--triple=$(cross_triple) --link-arch=$(cross_arch) --linker='$(cross_linker)'
+test-cross-ci: test-ci
 
 docs: all
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc packages/stdlib --docs --pass expr

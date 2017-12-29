@@ -40,7 +40,7 @@ download_vagrant(){
   pushd /tmp
   sudo apt-get install linux-headers-`uname -r`
   cat /proc/cpuinfo
-  wget http://wiki.qemu.org/download/kqemu-1.4.0pre1.tar.gz
+  wget http://www.nongnu.org/qemu/kqemu-1.4.0pre1.tar.gz
   tar xzf kqemu-1.4.0pre1.tar.gz
   cd kqemu-1.4.0pre1
   patch -p0 < ../kqemu.patch

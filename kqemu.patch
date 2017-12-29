@@ -99,9 +99,9 @@
 @@ -18,7 +18,7 @@
  
  kqemu.ko:
-  make -C common all
-- make -C $(KERNEL_PATH) M=`pwd` modules
-+ make -C $(KERNEL_PATH) M=`pwd` ARCH=$(ARCH) modules
+ 	make -C common all
+-	make -C $(KERNEL_PATH) M=`pwd` modules
++	make -C $(KERNEL_PATH) M=`pwd` ARCH=$(ARCH) modules
  
  else
  # 2.4 build

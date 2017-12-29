@@ -79,7 +79,8 @@ download_vagrant(){
   rm vagrant_2.0.1_x86_64.deb
   travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
 #  travis_retry vagrant plugin install vagrant-libvirt
-  travis_retry sudo vagrant up --provider=libvirt
+#  travis_retry sudo vagrant up --provider=libvirt
+  qemu-system-x86_64 -enable-kqemu -daemonize -nographic ~/.vagrant.d/boxes/generic-VAGRANTSLASH-freebsd11/1.3.28/libvirt/box.img -m 1536  -net user,hostfwd=tcp::10022-:22 -net nic,model=e1000 -parallel none
   echo "Done downloading and installing vagrant/libvirt..."
 }
 

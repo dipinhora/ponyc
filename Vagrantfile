@@ -8,6 +8,6 @@ Vagrant.configure("2") do |config|
     libvirt.memory = 3072
     libvirt.cpus = 2
     libvirt.cpu_mode = "custom"
-    libvirt.cpu_model = "qemu64"
+    libvirt.cpu_model = "kvm64"
   end
 end

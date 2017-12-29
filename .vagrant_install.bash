@@ -165,17 +165,18 @@ case "${VAGRANT_ENV}" in
   "freebsd-x86_64")
     date
     download_vagrant
-    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "sudo mkdir /vagrant && sudo chmod 777 /vagrant"
-    scp -o IdentitiesOnly=yes -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -P 10022 -r . /vagrant
+    sleep 30
+    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "sudo mkdir /vagrant && sudo chmod 777 /vagrant"
+    travis_retry scp -o IdentitiesOnly=yes -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -P 10022 -r . /vagrant
     date
-    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
 
 #    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
     date
-    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && gmake config=release test-ci"
+    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && gmake config=release test-ci"
 #    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
     date
-    ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && gmake config=debug test-ci"
+    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && gmake config=debug test-ci"
 #    sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
     date
   ;;

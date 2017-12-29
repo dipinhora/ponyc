@@ -26,6 +26,11 @@ matrix:
       env:
         - VAGRANT_ENV=ubuntu-i686
 
+    # freebsd
+    - os: linux
+      env:
+        - VAGRANT_ENV=freebsd-x86_64
+
     - os: linux
       env:
         - LLVM_VERSION="3.7.1"

@@ -131,6 +131,22 @@ case "${VAGRANT_ENV}" in
     set_linux_compiler
   ;;
 
+  "freebsd-x86_64")
+    download_vagrant
+    cat /proc/cpuinfo
+    sudo vagrant ssh -c "cd /vagrant && ls -laF"
+    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+  ;;
+
+  "freebsd-x86_64-install")
+    travis_retry sudo pkg install gmake
+    travis_retry sudo pkg install llvm39
+    travis_retry sudo pkg install pcre2
+    travis_retry sudo pkg install libunwind
+    sudo vagrant ssh -c "cd /vagrant && gmake config=debug verbose=1 test-ci"
+    sudo vagrant ssh -c "cd /vagrant && gmake config=release verbose=1 test-ci"
+  ;;
+
   *)
     echo "ERROR: An unrecognized vagrant environment was found! VAGRANT_ENV: ${VAGRANT_ENV}"
     exit 1

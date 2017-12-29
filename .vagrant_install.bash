@@ -64,7 +64,7 @@ download_compiler(){
   echo "deb-src http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu xenial main " | sudo tee -a /etc/apt/sources.list
   travis_retry sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 60C317803A41BA51845E371A1E9377A2BA9EF27F
   travis_retry apt_update_sources
-  travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}"
+  travis_retry sudo apt-get install -y "${ICC1}" "${ICXX1}" libssl-dev
 }
 
 download_llvm(){
@@ -117,9 +117,9 @@ case "${VAGRANT_ENV}" in
     sudo vagrant ssh -c "cd /vagrant && ls -laF"
     sudo vagrant ssh -c "cat /proc/cpuinfo"
     sudo vagrant ssh -c "dmesg"
-    sudo vagrant ssh -c "cd /vagrant && env PENSSL_ia32cap=\"~0x200000200000000\" VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1} bash .vagrant_install.bash"
-    sudo vagrant ssh -c "cd /vagrant && env PENSSL_ia32cap=\"~0x200000200000000\" make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
-    sudo vagrant ssh -c "cd /vagrant && env PENSSL_ia32cap=\"~0x200000200000000\" make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
+    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1} bash .vagrant_install.bash"
+    sudo vagrant ssh -c "cd /vagrant && env make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
+    sudo vagrant ssh -c "cd /vagrant && env make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
   ;;
 
   "ubuntu-i686-install")

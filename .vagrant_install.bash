@@ -59,6 +59,9 @@ download_vagrant(){
   sudo make -j4 install
   cd ..
   popd
+  pwd
+
+  qemu-system-x86_64 -device ?
 
   echo "Downloading and installing vagrant/libvirt..."
 #  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y

@@ -139,10 +139,11 @@ case "${VAGRANT_ENV}" in
   ;;
 
   "freebsd-x86_64-install")
-    travis_retry sudo pkg install gmake
-    travis_retry sudo pkg install llvm39
-    travis_retry sudo pkg install pcre2
-    travis_retry sudo pkg install libunwind
+    travis_retry sudo pkg update
+    travis_retry sudo pkg install -y gmake
+    travis_retry sudo pkg install -y llvm39
+    travis_retry sudo pkg install -y pcre2
+    travis_retry sudo pkg install -y libunwind
     sudo vagrant ssh -c "cd /vagrant && gmake config=debug verbose=1 test-ci"
     sudo vagrant ssh -c "cd /vagrant && gmake config=release verbose=1 test-ci"
   ;;

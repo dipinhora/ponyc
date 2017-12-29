@@ -37,6 +37,7 @@ apt_update_sources(){
 }
 
 download_vagrant(){
+  cp *.patch /tmp
   pushd /tmp
   sudo apt-get install linux-headers-`uname -r`
   cat /proc/cpuinfo

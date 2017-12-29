@@ -105,3 +105,15 @@
  
  else
  # 2.4 build
+--- configure.ori  2008-05-30 20:33:34.000000000 +0000
++++ configure  2017-12-29 07:11:51.277642897 +0000
+@@ -277,9 +277,6 @@
+ 
+ # find build system (2.6 or legacy)
+ kbuild26="yes"
+-if grep -q "PATCHLEVEL = 4" $kernel_path/Makefile ; then
+-kbuild26="no"
+-fi
+ 
+ fi # kqemu
+ 

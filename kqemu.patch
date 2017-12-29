@@ -105,6 +105,15 @@
  
  else
  # 2.4 build
+@@ -75,7 +75,7 @@
+ 
+ else
+ 
+-ifeq ($(PATCHLEVEL),4)
++ifeq ($(PATCHLEVEL),Z)
+ # called from 2.4 kernel kbuild
+ 
+ obj-m:= kqemu.o
 --- configure.ori  2008-05-30 20:33:34.000000000 +0000
 +++ configure  2017-12-29 07:11:51.277642897 +0000
 @@ -277,9 +277,6 @@

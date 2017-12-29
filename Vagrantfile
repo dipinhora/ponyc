@@ -8,5 +8,6 @@ Vagrant.configure("2") do |config|
     libvirt.driver = "qemu"
     libvirt.memory = 3072
     libvirt.cpus = 1
+    libvirt.disk_bus = "virtio"
   end
 end

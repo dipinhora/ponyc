@@ -866,7 +866,7 @@ benchmark: all
 test: all
 	$(SILENT)$(PONY_BUILD_DIR)/libponyc.tests
 	$(SILENT)$(PONY_BUILD_DIR)/libponyrt.tests
-	$(SILENT)PONYPATH=.:$(PONYPATH) @$(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify packages/stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify packages/stdlib
 	## Don't run `serialise` tests in stdlib if cross compiling for i686; see #1576
 	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
 	$(SILENT)rm stdlib
@@ -877,7 +877,7 @@ test-examples: all
 	$(SILENT)rm examples1
 
 test-stdlib: all
-	$(SILENT)PONYPATH=.:$(PONYPATH) @$(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
 	$(SILENT)./stdlib --sequential
 	$(SILENT)rm stdlib
 

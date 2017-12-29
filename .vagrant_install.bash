@@ -37,56 +37,16 @@ apt_update_sources(){
 }
 
 download_vagrant(){
-  cp *.patch /tmp
-  pushd /tmp
-  sudo apt-get install linux-headers-`uname -r`
-  cat /proc/cpuinfo
-  wget http://www.nongnu.org/qemu/kqemu-1.4.0pre1.tar.gz
-  tar xzf kqemu-1.4.0pre1.tar.gz
-  cd kqemu-1.4.0pre1
-  patch -p0 < ../kqemu.patch
-  ./configure
-  make
-  sudo insmod kqemu.ko
-  sudo chmod a+rw /dev/kqemu
-  cd ..
-  wget https://download.savannah.gnu.org/releases/qemu/qemu-0.11.1.tar.gz
-  tar xzf qemu-0.11.1.tar.gz
-  cd qemu-0.11.1
-  patch -p0 < ../qemu.patch
-  ./configure --target-list=x86_64-softmmu --disable-kvm
-  make -j4
-  sudo make -j4 install
-  cd ..
-  popd
-  pwd
-
-  qemu-system-x86_64 --help
-
   echo "Downloading and installing vagrant/libvirt..."
-#  travis_retry sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
   travis_retry apt_update_sources
-#  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
-  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev
-#  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
-#  sudo virsh pool-autostart default
-#  sudo virsh pool-build default
-#  sudo virsh pool-start default
+  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
   sudo libvirtd --version
   sudo /etc/init.d/libvirt-bin restart
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
   rm vagrant_2.0.1_x86_64.deb
   travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
-#  travis_retry vagrant plugin install vagrant-libvirt
-#  travis_retry sudo vagrant up --provider=libvirt
-
-  vagrant box add generic/freebsd11 --provider libvirt --box-version 1.3.28
-
-  #qemu-system-x86_64 -enable-kqemu -daemonize -nographic ~/.vagrant.d/boxes/generic-VAGRANTSLASH-freebsd11/1.3.28/libvirt/box.img -m 1536  -net user,hostfwd=tcp::10022-:22 -net nic,model=e1000 -parallel none
-
-  qemu-system-x86_64 -enable-kqemu -nographic ~/.vagrant.d/boxes/generic-VAGRANTSLASH-freebsd11/1.3.28/libvirt/box.img -m 1536  -net user,hostfwd=tcp::10022-:22 -net nic,model=e1000 -parallel none
-  echo "Done downloading and installing vagrant/libvirt..."
+  travis_retry sudo vagrant up --provider=libvirt
 }
 
 download_compiler(){
@@ -167,19 +127,12 @@ case "${VAGRANT_ENV}" in
   "freebsd-x86_64")
     date
     download_vagrant
-    sleep 30
-    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "sudo mkdir /vagrant && sudo chmod 777 /vagrant"
-    travis_retry scp -o IdentitiesOnly=yes -o ServerAliveInterval=30 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -P 10022 -r . /vagrant
     date
-    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
-
-#    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+    sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
     date
-    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && gmake config=release test-ci"
-#    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
+    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
     date
-    travis_retry ssh vagrant@localhost -p10022 -i ~/.vagrant.d/insecure_private_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o IdentitiesOnly=yes -o ServerAliveInterval=30 "cd /vagrant && gmake config=debug test-ci"
-#    sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
+    sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
     date
   ;;
 

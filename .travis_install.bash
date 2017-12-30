@@ -99,9 +99,7 @@ download_pcre(){
   if [[ "${CROSS_ARCH}" != "" ]]
   then
     echo "Cross building PCRE2..."
-    pushd pcre2-10.21 && ./configure --prefix=/usr/cross
-    --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}"
-    CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make -j2 && sudo make install
+    pushd pcre2-10.21 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make -j2 && sudo make install
     popd
     echo "Downloading and cross building libressl..."
     travis_retry wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.5.tar.gz"

@@ -867,18 +867,18 @@ test: all
 	$(SILENT)$(PONY_BUILD_DIR)/libponyc.tests
 	$(SILENT)$(PONY_BUILD_DIR)/libponyrt.tests
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify packages/stdlib
-	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential
+	$(SILENT)$(cross_runner) ./stdlib --sequential
 	$(SILENT)rm stdlib
 
 test-examples: all
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify examples
-	$(SILENT)$(QEMU_RUNNER) ./examples1
+	$(SILENT)$(cross_runner) ./examples1
 	$(SILENT)rm examples1
 
 test-stdlib: all
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
 	## Don't run `serialise` tests in stdlib if cross compiling for i686; see #1576
-	$(SILENT)$(QEMU_RUNNER) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
+	$(SILENT)$(cross_runner) ./stdlib --sequential $(if $(filter $(cross_arch),i686),--exclude=serialise/)
 	$(SILENT)rm stdlib
 
 check-version: all
@@ -892,6 +892,7 @@ validate-grammar: all
 test-ci: all check-version test test-stdlib test-examples validate-grammar
 
 test-cross-ci: cross_args=--triple=$(cross_triple) --link-arch=$(cross_arch) --linker='$(cross_linker)'
+test-cross-ci: cross_runner=$(QEMU_RUNNER)
 test-cross-ci: test-ci
 
 docs: all

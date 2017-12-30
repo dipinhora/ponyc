@@ -132,11 +132,11 @@ case "${VAGRANT_ENV}" in
     date
     sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
     date
-    sudo vagrant ssh -c "cd /vagrant && gmake config=release -j2 all"
-    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
-    date
     sudo vagrant ssh -c "cd /vagrant && gmake config=debug -j2 all"
     sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
+    date
+    sudo vagrant ssh -c "cd /vagrant && gmake config=release -j2 all"
+    sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
     date
   ;;
 

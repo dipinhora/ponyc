@@ -77,9 +77,9 @@ download_libunwind(){
 
   travis_retry wget "http://download.savannah.nongnu.org/releases/libunwind/libunwind-1.2.1.tar.gz"
   tar -xzf libunwind-1.2.1.tar.gz
-  pushd libunwind-1.2.1 && ./configure --prefix=/usr && make && sudo make install
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr && make -j2 && sudo make install
   popd
-  pushd libunwind-1.2.1 && ./configure --prefix=/usr/local && make && sudo make install
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr/local && make -j2 && sudo make install
   popd
 }
 
@@ -88,7 +88,7 @@ download_pcre(){
 
   travis_retry wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.21.tar.bz2"
   tar -xjf pcre2-10.21.tar.bz2
-  pushd pcre2-10.21 && ./configure --prefix=/usr && make && sudo make install
+  pushd pcre2-10.21 && ./configure --prefix=/usr && make -j2 && sudo make install
   popd
 }
 
@@ -111,7 +111,9 @@ case "${VAGRANT_ENV}" in
     sudo vagrant ssh -c "cat /proc/cpuinfo"
     sudo vagrant ssh -c "dmesg"
     sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install ICC1=${ICC1} ICXX1=${ICXX1} CC1=${CC1} CXX1=${CXX1} bash .vagrant_install.bash"
+    sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 -j2 all"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=debug verbose=1 test-ci"
+    sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 -j2 all"
     sudo vagrant ssh -c "cd /vagrant && make CC=\"$CC1\" CXX=\"$CXX1\" config=release verbose=1 test-ci"
   ;;
 
@@ -130,8 +132,10 @@ case "${VAGRANT_ENV}" in
     date
     sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
     date
+    sudo vagrant ssh -c "cd /vagrant && gmake config=release -j2 all"
     sudo vagrant ssh -c "cd /vagrant && gmake config=release test-ci"
     date
+    sudo vagrant ssh -c "cd /vagrant && gmake config=debug -j2 all"
     sudo vagrant ssh -c "cd /vagrant && gmake config=debug test-ci"
     date
   ;;

@@ -77,14 +77,14 @@ download_libunwind(){
 
   travis_retry wget "http://download.savannah.nongnu.org/releases/libunwind/libunwind-1.2.1.tar.gz"
   tar -xzf libunwind-1.2.1.tar.gz
-  pushd libunwind-1.2.1 && ./configure --prefix=/usr && make && sudo make install
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr && make -j2 && sudo make install
   popd
-  pushd libunwind-1.2.1 && ./configure --prefix=/usr/local && make && sudo make install
+  pushd libunwind-1.2.1 && ./configure --prefix=/usr/local && make -j2 && sudo make install
   popd
   if [[ "${CROSS_ARCH}" != "" ]]
   then
     echo "Cross building libunwind..."
-    pushd libunwind-1.2.1 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    pushd libunwind-1.2.1 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make -j2 && sudo make install
     popd
   fi
 }
@@ -94,17 +94,19 @@ download_pcre(){
 
   travis_retry wget "ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.21.tar.bz2"
   tar -xjf pcre2-10.21.tar.bz2
-  pushd pcre2-10.21 && ./configure --prefix=/usr && make && sudo make install
+  pushd pcre2-10.21 && ./configure --prefix=/usr && make -j2 && sudo make install
   popd
   if [[ "${CROSS_ARCH}" != "" ]]
   then
     echo "Cross building PCRE2..."
-    pushd pcre2-10.21 && ./configure --prefix=/usr/cross --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    pushd pcre2-10.21 && ./configure --prefix=/usr/cross
+    --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}"
+    CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make -j2 && sudo make install
     popd
     echo "Downloading and cross building libressl..."
     travis_retry wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.5.tar.gz"
     tar -xzf libressl-2.4.5.tar.gz
-    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make -j2 && sudo make install
     popd
   fi
 }
@@ -115,7 +117,7 @@ download_libressl(){
     echo "Downloading and cross building libressl..."
     travis_retry wget "https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.5.tar.gz"
     tar -xzf libressl-2.4.5.tar.gz
-    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make && sudo make install
+    pushd libressl-2.4.5 && ./configure --prefix=/usr/cross --disable-asm --host="${CROSS_TRIPLE}" CC="${CROSS_CC}" CXX="${CROSS_CXX}" CFLAGS="${CROSS_CFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" && make -j2 && sudo make install
     popd
   fi
 }

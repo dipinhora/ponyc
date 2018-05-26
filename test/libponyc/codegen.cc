@@ -614,7 +614,7 @@ TEST_F(CodegenTest, VariableDeclNestedTuple)
   TEST_COMPILE(src);
 }
 
-TEST_F(CodegenTest, CycleDetector)
+TEST_F(CodegenTest, DISABLED_CycleDetector)
 {
   const char* src =
     "actor Ring\n"

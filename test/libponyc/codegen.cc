@@ -33,6 +33,114 @@ class CodegenTest : public PassTest
 };
 
 
+// TODO: Figure out why running this after StringSerialization
+// and/or CustomSerialization results in a segfault
+TEST_F(CodegenTest, CycleDetector)
+{
+  const char* src =
+    "use \"time\"\n"
+    "actor Ring\n"
+    "  let _id: U32\n"
+    "  var _next: (Ring | None)\n"
+
+    "  new create(id: U32, neighbor: (Ring | None) = None) =>\n"
+    "    _id = id\n"
+    "    _next = neighbor\n"
+
+    "  be set(neighbor: Ring) =>\n"
+    "    _next = neighbor\n"
+
+    "  be pass(i: USize) =>\n"
+    "    if i > 0 then\n"
+    "      match _next\n"
+    "      | let n: Ring =>\n"
+    "        n.pass(i - 1)\n"
+    "      end\n"
+    "    end\n"
+
+    "  fun _final() =>\n"
+    "    let i = @pony_get_exitcode[I32]()\n"
+    "    @pony_exitcode[None](i + 1)\n"
+
+    "class Notify is TimerNotify\n"
+    "  var _c: U32 = 0\n"
+    "  let _num: I32\n"
+
+    "  new iso create(num: I32) =>\n"
+    "    _num = num\n"
+
+    "  fun ref apply(timer: Timer, count: U64): Bool =>\n"
+    "    if @pony_get_exitcode[I32]() != _num then\n"
+    "      _c = _c + 1\n"
+    "      if _c > 100 then\n"
+    "        @pony_exitcode[None](I32(1))\n"
+    "        false\n"
+    "      else\n"
+    "        true\n"
+    "      end\n"
+    "    else\n"
+    "      @pony_exitcode[None](I32(0))\n"
+    "      false\n"
+    "    end\n"
+
+    "actor Watcher\n"
+    "  new create(num: I32) =>\n"
+    "    let timers = Timers\n"
+    "    let timer = Timer(Notify(num), 100_000_000, 100_000_000)\n"
+    "    timers(consume timer)\n"
+
+    "actor Main\n"
+    "  var _ring_size: U32 = 5\n"
+    "  var _ring_count: U32 = 2\n"
+    "  var _pass: USize = 10\n"
+
+    "  new create(env: Env) =>\n"
+    "    setup_ring()\n"
+// TODO: Figure out why creating the timer directly from Main makes cycle detector
+//       not detect the cycles
+//    "    let timers = Timers\n"
+//    "    let timer = Timer(Notify((_ring_size * _ring_count).i32()), 100_000_000, 100_000_000)\n"
+//    "    timers(consume timer)\n"
+    "    Watcher((_ring_size * _ring_count).i32())\n"
+
+    "  fun setup_ring() =>\n"
+    "    var j: U32 = 0\n"
+    "    while true do\n"
+    "      let first = Ring(1)\n"
+    "      var next = first\n"
+
+    "      var k: U32 = 0\n"
+    "      while true do\n"
+    "        let current = Ring(_ring_size - k, next)\n"
+    "        next = current\n"
+
+    "        k = k + 1\n"
+    "        if k >= (_ring_size - 1) then\n"
+    "          break\n"
+    "        end\n"
+    "      end\n"
+
+    "      first.set(next)\n"
+
+    "      if _pass > 0 then\n"
+    "        first.pass(_pass)\n"
+    "      end\n"
+
+    "      j = j + 1\n"
+    "      if j >= _ring_count then\n"
+    "        break\n"
+    "      end\n"
+    "    end\n";
+
+  set_builtin(NULL);
+
+  TEST_COMPILE(src);
+
+  int exit_code = -1;
+  ASSERT_TRUE(run_program(&exit_code));
+  ASSERT_EQ(exit_code, 0);
+}
+
 TEST_F(CodegenTest, PackedStructIsPacked)
 {
   const char* src =
@@ -612,110 +720,4 @@ TEST_F(CodegenTest, VariableDeclNestedTuple)
     "    end";
 
   TEST_COMPILE(src);
-}
-
-TEST_F(CodegenTest, CycleDetector)
-{
-  const char* src =
-    "use \"time\"\n"
-    "actor Ring\n"
-    "  let _id: U32\n"
-    "  var _next: (Ring | None)\n"
-
-    "  new create(id: U32, neighbor: (Ring | None) = None) =>\n"
-    "    _id = id\n"
-    "    _next = neighbor\n"
-
-    "  be set(neighbor: Ring) =>\n"
-    "    _next = neighbor\n"
-
-    "  be pass(i: USize) =>\n"
-    "    if i > 0 then\n"
-    "      match _next\n"
-    "      | let n: Ring =>\n"
-    "        n.pass(i - 1)\n"
-    "      end\n"
-    "    end\n"
-
-    "  fun _final() =>\n"
-    "    let i = @pony_get_exitcode[I32]()\n"
-    "    @pony_exitcode[None](i + 1)\n"
-
-    "class Notify is TimerNotify\n"
-    "  var _c: U32 = 0\n"
-    "  let _num: I32\n"
-
-    "  new iso create(num: I32) =>\n"
-    "    _num = num\n"
-
-    "  fun ref apply(timer: Timer, count: U64): Bool =>\n"
-    "    if @pony_get_exitcode[I32]() != _num then\n"
-    "      _c = _c + 1\n"
-    "      if _c > 100 then\n"
-    "        @pony_exitcode[None](I32(1))\n"
-    "        false\n"
-    "      else\n"
-    "        true\n"
-    "      end\n"
-    "    else\n"
-    "      @pony_exitcode[None](I32(0))\n"
-    "      false\n"
-    "    end\n"
-
-    "actor Watcher\n"
-    "  new create(num: I32) =>\n"
-    "    let timers = Timers\n"
-    "    let timer = Timer(Notify(num), 100_000_000, 100_000_000)\n"
-    "    timers(consume timer)\n"
-
-    "actor Main\n"
-    "  var _ring_size: U32 = 5\n"
-    "  var _ring_count: U32 = 2\n"
-    "  var _pass: USize = 10\n"
-
-    "  new create(env: Env) =>\n"
-    "    setup_ring()\n"
-// TODO: Figure out why creating the timer directly from Main makes cycle detector
-//       not detect the cycles
-//    "    let timers = Timers\n"
-//    "    let timer = Timer(Notify((_ring_size * _ring_count).i32()), 100_000_000, 100_000_000)\n"
-//    "    timers(consume timer)\n"
-    "    Watcher((_ring_size * _ring_count).i32())\n"
-
-    "  fun setup_ring() =>\n"
-    "    var j: U32 = 0\n"
-    "    while true do\n"
-    "      let first = Ring(1)\n"
-    "      var next = first\n"
-
-    "      var k: U32 = 0\n"
-    "      while true do\n"
-    "        let current = Ring(_ring_size - k, next)\n"
-    "        next = current\n"
-
-    "        k = k + 1\n"
-    "        if k >= (_ring_size - 1) then\n"
-    "          break\n"
-    "        end\n"
-    "      end\n"
-
-    "      first.set(next)\n"
-
-    "      if _pass > 0 then\n"
-    "        first.pass(_pass)\n"
-    "      end\n"
-
-    "      j = j + 1\n"
-    "      if j >= _ring_count then\n"
-    "        break\n"
-    "      end\n"
-    "    end\n";
-
-  set_builtin(NULL);
-
-  TEST_COMPILE(src);
-
-  int exit_code = -1;
-  ASSERT_TRUE(run_program(&exit_code));
-  ASSERT_EQ(exit_code, 0);
 }

@@ -1,0 +1,13 @@
+Source: ponyc
+Maintainer: Dipin Hora <dipin@wallaroolabs.com>
+Build-Depends: debhelper (>= 9.0.0), git, zlib1g-dev, libncurses5-dev, libssl-dev, libpcre2-dev, llvm-3.9, llvm-3.9-dev
+Standards-Version: 3.9.7
+Section: devel
+
+Package: ponyc
+Priority: optional
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}, zlib1g-dev, libssl-dev, libpcre2-dev, gcc
+Description: pony language compiler
+  Pony is an open-source, actor-model, capabilities-secure, high performance programming language
+  http://www.ponylang.org

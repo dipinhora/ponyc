@@ -9,6 +9,8 @@
 %if 0%{?el7}
 %global extra_build_args use="llvm_link_static"
 %global build_command_prefix scl enable llvm-toolset-7 
+%else
+%global extra_build_args default_ssl='openssl_1.1.0'
 %endif
 
 %global all_env_vars5 %(ls -l %{_sourcedir})
@@ -41,6 +43,10 @@ BuildRequires:  libatomic
 %endif
 
 %if 0%{?el7}
+BuildRequires:  centos-release-scl
+BuildRequires:  llvm-toolset-7
+BuildRequires:  llvm-toolset-7-llvm-devel
+BuildRequires:  llvm-toolset-7-llvm-static
 BuildRequires:  libatomic
 %else
 BuildRequires:  llvm-devel
@@ -54,11 +60,6 @@ Requires:  pcre2-devel
 Compiler for the pony programming language.
 
 %prep
-%if 0%{?el7}
-yum install centos-release-scl
-yum install llvm-toolset-7 llvm-toolset-7-llvm-devel llvm-toolset-7-llvm-static
-%endif
-
 %setup
 
 %build

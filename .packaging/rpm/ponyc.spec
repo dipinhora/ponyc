@@ -38,14 +38,19 @@ Source0:    https://github.com/ponylang/ponyc/archive/%{version}.tar.gz
 BuildRequires:  git
 BuildRequires:  gcc-c++
 BuildRequires:  make
-BuildRequires:  openssl-devel
 BuildRequires:  pcre2-devel
 BuildRequires:  zlib-devel
 BuildRequires:  ncurses-devel
 
+%if %{?_vendor} == suse
+BuildRequires:  libopenssl-devel
+BuildRequires:  binutils-gold
+%else
+BuildRequires:  openssl-devel
+%endif
+
 %if 0%{?el#}
 BuildRequires:  libatomic
-BuildRequires:  llvm-devel
 %else
 BuildRequires:  llvm-devel
 %endif

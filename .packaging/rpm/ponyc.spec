@@ -47,12 +47,12 @@ BuildRequires:  libopenssl-devel
 BuildRequires:  binutils-gold
 %else
 BuildRequires:  openssl-devel
+BuildRequires:  libatomic
 %endif
 
 %if 0%{?el7}
 BuildRequires:  libatomic
 %else
-BuildRequires:  libatomic
 BuildRequires:  llvm-devel
 %endif
 

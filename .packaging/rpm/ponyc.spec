@@ -52,6 +52,7 @@ BuildRequires:  openssl-devel
 %if 0%{?el7}
 BuildRequires:  libatomic
 %else
+BuildRequires:  libatomic
 BuildRequires:  llvm-devel
 %endif
 
@@ -73,7 +74,7 @@ yum install llvm-toolset-7 llvm-toolset-7-llvm-devel llvm-toolset-7-llvm-static
 
 %build
 %trace
-%{?build_command_prefix} make %{?arch_build_args} %{?extra_build_args} prefix=/usr %{?_smp_mflags}
+%{?build_command_prefix} make %{?arch_build_args} %{?extra_build_args} prefix=/usr %{?_smp_mflags} test-ci
 
 %install
 %trace

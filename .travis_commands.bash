@@ -51,6 +51,9 @@ ponyc-build-packages(){
   cp -r .packaging/deb debian
   cp LICENSE debian/copyright
 
+  echo "[DEFAULT]" >> ~/.dput.cf
+  echo "method = http" >> ~/.dput.cf
+
   build_and_submit_deb_src xenial
   build_and_submit_deb_src artful
   build_and_submit_deb_src bionic

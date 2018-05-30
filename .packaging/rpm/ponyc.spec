@@ -1,4 +1,4 @@
-%global ponyc_version %(ls | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' || cat ../../VERSION)
+%global ponyc_version %(ls %{_sourcedir} | egrep -o '[0-9]+\.[0-9]+\.[0-9]+' || cat ../../VERSION)
 %global release_version 1
 
 %ifarch x86_64

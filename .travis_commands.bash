@@ -36,7 +36,7 @@ ponyc-build-packages(){
   docker run -it --rm -e COPR_LOGIN=${COPR_LOGIN} -e COPR_USERNAME=${COPR_USERNAME} -e COPR_TOKEN=${COPR_TOKEN} -e COPR_COPR_URL=${COPR_COPR_URL} mgruener/copr-cli buildscm --clone-url https://github.com/dipinhora/ponyc --commit ${package_version} --subdir /.packaging/rpm/ --spec ponyc.spec --type git --nowait testcopr
 
   echo "Install debuild, dch, dput..."
-  sudo apt-get install -y devscripts build-essential lintian
+  sudo apt-get install -y devscripts build-essential lintian debhelper
 
   echo "Decrypting and Importing gpg keys..."
   openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in gpg-files.tar.enc -out gpg-files.tar -d

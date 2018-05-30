@@ -11,13 +11,13 @@ ponyc-test(){
 build_and_submit_deb_src(){
   deb_distro=$1
   rm -f debian/changelog
-  dch --package ponyc -v ${package_version}-1ubuntu1~${deb_distro}1 -D ${deb_distro} --controlmaint --create "Release ${package_version}"
+  dch --package ponyc -v ${package_version}-0ppa1~${deb_distro} -D ${deb_distro} --controlmaint --create "Release ${package_version}"
   if [[ "$deb_distro" == "trusty" ]]
   then
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
   debuild -S
-  dput custom-ppa ../ponyc_${package_version}-1ubuntu1~${deb_distro}1_source.changes
+  dput custom-ppa ../ponyc_${package_version}-0ppa1~${deb_distro}_source.changes
 }
 
 ponyc-build-packages(){
@@ -35,7 +35,7 @@ ponyc-build-packages(){
   sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko
 
   echo "Decrypting and Importing gpg keys..."
-  openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in gpg-files.tar.enc -out gpg-files.tar -d
+  openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in securefiles.tar.enc -out securefiles.tar -d
   tar -xvf gpg-files.tar
   gpg --import dipin-secret-gpg.key
   gpg --import-ownertrust dipin-ownertrust-gpg.txt
@@ -47,6 +47,7 @@ ponyc-build-packages(){
   cp -r .packaging/deb debian
   cp LICENSE debian/copyright
 
+  # ssh stuff for launchpad as a workaround for https://github.com/travis-ci/travis-ci/issues/9391
   echo "[custom-ppa]" >> ~/.dput.cf
   echo "fqdn = ppa.launchpad.net" >> ~/.dput.cf
   echo "method = sftp" >> ~/.dput.cf
@@ -59,8 +60,6 @@ ponyc-build-packages(){
   echo "    StrictHostKeyChecking no" >> ~/.ssh/config
   echo "    IdentityFile sshkey" >> ~/.ssh/config
   sudo chmod 400 ~/.ssh/config
-
-  openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in sshkey.enc -out sshkey -d
   sudo chmod 600 sshkey
 
   build_and_submit_deb_src xenial

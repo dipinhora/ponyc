@@ -36,7 +36,7 @@ ponyc-build-packages(){
 
   echo "Decrypting and Importing gpg keys..."
   openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in securefiles.tar.enc -out securefiles.tar -d
-  tar -xvf gpg-files.tar
+  tar -xvf securefiles.tar
   gpg --import dipin-secret-gpg.key
   gpg --import-ownertrust dipin-ownertrust-gpg.txt
 

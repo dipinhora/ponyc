@@ -7,6 +7,7 @@
 
 %if 0%{?el7}
 %global arch_build_args arch=x86-64 tune=generic LLVM_CONFIG=/usr/lib64/llvm3.9/bin/llvm-config
+%global extra_build_args use="llvm_link_static"
 %else
 %if %{?_vendor} == suse
 %global extra_build_args default_ssl='openssl_1.1.0'
@@ -38,6 +39,10 @@ BuildRequires:  llvm-devel
 BuildRequires:  openssl-devel
 BuildRequires:  libatomic
 BuildRequires:  llvm3.9-devel
+%endif
+
+%if 0%{?el7}
+BuildRequires:  llvm3.9-static
 %endif
 
 Requires:  gcc-c++

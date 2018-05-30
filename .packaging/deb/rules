@@ -23,6 +23,9 @@ ifeq ($(DEB_HOST_ARCH),s390x)
 	MAKE_OPTIONS += arch=z900 tune=z900
 endif
 
+ifeq ($(DEB_HOST_ARCH),armhf)
+	MAKE_OPTIONS += arch=armv7 tune=arm7
+endif
 
 %:
 	dh $@

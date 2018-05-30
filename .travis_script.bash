@@ -11,7 +11,7 @@ set -o nounset
 case "${TRAVIS_OS_NAME}" in
   "linux")
     # when RELEASE_CONFIG stops matching part of this case, move this logic
-    if [[ "$TRAVIS_BRANCH" == "release" && "$TRAVIS_PULL_REQUEST" == "false" ]]
+    if [[ "$TRAVIS_BRANCH" == "packaging" && "$TRAVIS_PULL_REQUEST" == "false" ]]
     then
       download_llvm
       download_pcre

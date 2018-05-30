@@ -3,10 +3,14 @@ language: c
 branches:
   only:
     - master
-    - release
+    - packaging
 
 dist: trusty
 sudo: required
+
+env:
+  global:
+    secure: Kz9/tycjdEwjy3lj8f5sGGE9AS5KTcIY6KnvNYYJWc7I5d5ORp/2VZ03OSkc7M3ieP8Oc+pi+dfom6tTOqpnn4UUGsMSzFEg0QC+HsDEHBFXbz9Hp1Fg/AWQvmzzXKtE9DsUOrHq37yhLWPxbbksLoEuOzvPlNvxVKkpQd/QVa1zIyRxRPDjqifLqlAvwvJ0ayjCYox5TKb4qLZf4NeJMpv9MSTgDeD5f+VI8SF7HBdoMCQSfxjMWoWQRVxgiLmgt5KR/cLcPU1AQRG0JUlotoAPMpFMmm4+kDVOrFPCIAIrl+5zbYbsjJtlddoMqOhOPCZJM8aN6oglbbwxkxPUZYcK8VUxB08/axdpnE62p0mxsED5f1VTCLPnnYslhISjjHWY3SZMSs9RRDL3kwfnQpi4H0jw+AVlFDNYrgZH2pf1bOLn/aOED4QKN+zg1/A/O95NSvxp/Bo6X8189/WEsBN3GMXH1BpuXH1TwNDlSdBbWU7u86upVZfGxHiM0arZz5lbX1eirjP2Zh/AJ0tDflqSoNc2D6M+Cdw2eHYJVMEchcziZjO5Yw2gHlVuBPfmzJk8xmgyLCgQ7iqWlfoqYWCcaV0ScrQ9m1Ht+Sm+cCOJ/f4tsEcWNJd309iNcVN7PT9uEWgw7g99DdHYNYg6I/Khz7+A/sw44fGp8n/hupc=
 
 matrix:
    include:

@@ -43,6 +43,7 @@ BuildRequires:  libatomic
 %endif
 
 %if 0%{?el7}
+BuildPreReq:  centos-release-scl
 BuildRequires:  llvm-toolset-7
 BuildRequires:  llvm-toolset-7-llvm-devel
 BuildRequires:  llvm-toolset-7-llvm-static
@@ -65,7 +66,7 @@ Compiler for the pony programming language.
 %{?build_command_prefix} make %{?arch_build_args} %{?extra_build_args} prefix=/usr %{?_smp_mflags} test-ci
 
 %install
-%{?build_command_prefix} make install %{?arch_build_args} %{?extra_build_args} prefix=%{_prefix}
+%{?build_command_prefix} make install %{?arch_build_args} %{?extra_build_args} prefix=%{_prefix} DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT

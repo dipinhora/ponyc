@@ -31,6 +31,10 @@ ponyc-build-packages(){
 #  echo "Building ponyc packages for deployment..."
 #  make CC="$CC1" CXX="$CXX1" verbose=1 arch=x86-64 tune=intel package_name="ponyc" package_base_version="${package_version}" deploy
 
+  # COPR for fedora/centos/suse
+  echo "Kicking off ponyc packaging for COPR..."
+  docker run -it --rm -e COPR_LOGIN=${COPR_LOGIN} -e COPR_USERNAME=${COPR_USERNAME} -e COPR_TOKEN=${COPR_TOKEN} -e COPR_COPR_URL=${COPR_COPR_URL} mgruener/copr-cli buildscm --clone-url https://github.com/dipinhora/ponyc --commit ${package_version} --subdir /.packaging/rpm/ --spec ponyc.spec --type git --nowait testcopr
+
   echo "Install debuild, dch, dput..."
   sudo apt-get install -y devscripts build-essential lintian
 
@@ -40,7 +44,7 @@ ponyc-build-packages(){
   gpg --import dipin-secret-gpg.key
   gpg --import-ownertrust dipin-ownertrust-gpg.txt
 
-  echo "Kicking off ponyc packaging for PPA and COPR..."
+  echo "Kicking off ponyc packaging for PPA..."
   wget https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz -O ponyc_${package_version}.orig.tar.gz
   tar -xvzf ponyc_${package_version}.orig.tar.gz
   cd ponyc_${package_version}
@@ -60,9 +64,6 @@ ponyc-build-packages(){
   sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
   sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
   build_and_submit_deb_src trusty
-
-  # COPR for fedora/centos/suse
-  docker run -it --rm -e COPR_LOGIN=${COPR_LOGIN} -e COPR_USERNAME=${COPR_USERNAME} -e COPR_TOKEN=${COPR_TOKEN} -e COPR_COPR_URL=${COPR_COPR_URL} mgruener/copr-cli buildscm --clone-url https://github.com/dipinhora/ponyc --commit ${package_version} --subdir /.packaging/rpm/ --spec ponyc.spec --type git --nowait testcopr
 }
 
 ponyc-build-docs(){

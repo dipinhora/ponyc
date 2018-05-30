@@ -8,7 +8,8 @@
 
 %if 0%{?el7}
 %global extra_build_args use="llvm_link_static"
-%global build_command_prefix scl enable llvm-toolset-7 
+%global build_command_prefix scl enable llvm-toolset-7 '
+%global build_command_postfix '
 %else
 %global extra_build_args default_ssl='openssl_1.1.0'
 %endif
@@ -43,7 +44,6 @@ BuildRequires:  libatomic
 %endif
 
 %if 0%{?el7}
-BuildPreReq:  centos-release-scl
 BuildRequires:  llvm-toolset-7
 BuildRequires:  llvm-toolset-7-llvm-devel
 BuildRequires:  llvm-toolset-7-llvm-static
@@ -65,10 +65,10 @@ Compiler for the pony programming language.
 %setup
 
 %build
-%{?build_command_prefix} make %{?arch_build_args} %{?extra_build_args} prefix=/usr %{?_smp_mflags} test-ci
+%{?build_command_prefix}make %{?arch_build_args} %{?extra_build_args} prefix=/usr %{?_smp_mflags} test-ci%{?build_command_postfix}
 
 %install
-%{?build_command_prefix} make install %{?arch_build_args} %{?extra_build_args} prefix=%{_prefix} DESTDIR=$RPM_BUILD_ROOT
+%{?build_command_prefix}make install %{?arch_build_args} %{?extra_build_args} prefix=%{_prefix} DESTDIR=$RPM_BUILD_ROOT%{?build_command_postfix}
 
 %clean
 rm -rf $RPM_BUILD_ROOT

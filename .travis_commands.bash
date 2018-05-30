@@ -12,6 +12,10 @@ build_and_submit_deb_src(){
   deb_distro=$1
   rm -f debian/changelog
   dch --package ponyc -v ${package_version}-1ubuntu1~${deb_distro}1 -D ${deb_distro} --controlmaint --create "Release ${package_version}"
+  if [[ "$deb_distro" == "trusty" ]]
+  then
+    EDITOR=/bin/true dpkg-source --commit . removepcredep
+  fi
   debuild -S
   dput ppa:dipinhora/testppa ../ponyc_${package_version}-1ubuntu1~${deb_distro}1_source.changes
 }
@@ -44,10 +48,18 @@ ponyc-build-packages(){
   cp LICENSE debian/copyright
 
   build_and_submit_deb_src xenial
-  build_and_submit_deb_src trusty
   build_and_submit_deb_src artful
   build_and_submit_deb_src bionic
   build_and_submit_deb_src cosmic
+
+  # run trusty last because we will modify things to not rely on pcre2
+  # remove pcre dependency from package and tests
+  sed -i 's/, libpcre2-dev//g' debian/control
+  sed -i 's#use glob#//use glob#g' packages/stdlib/_test.pony
+  sed -i 's#glob.Main.make#None//glob.Main.make#g' packages/stdlib/_test.pony
+  sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
+  sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
+  build_and_submit_deb_src trusty
 
   # COPR for fedora/centos/suse
   docker run -it --rm -e COPR_LOGIN=${COPR_LOGIN} -e COPR_USERNAME=${COPR_USERNAME} -e COPR_TOKEN=${COPR_TOKEN} -e COPR_COPR_URL=${COPR_COPR_URL} mgruener/copr-cli buildscm --clone-url https://github.com/dipinhora/ponyc --commit ${package_version} --subdir /.packaging/rpm/ --spec ponyc.spec --type git --nowait testcopr

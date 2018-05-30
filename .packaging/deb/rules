@@ -13,18 +13,30 @@ export DH_VERBOSE = 1
 # package maintainers to append LDFLAGS
 #export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
 
+MAKE_OPTIONS := prefix=/usr
+
+ifeq ($(DEB_HOST_ARCH),amd64)
+	MAKE_OPTIONS += arch=x86-64 tune=intel
+endif
+
+ifeq ($(DEB_HOST_ARCH),s390x)
+	MAKE_OPTIONS += arch=z900 tune=z900
+endif
+
 
 %:
 	dh $@
 
 override_dh_auto_build:
-	dh_auto_build -- arch=x86-64 tune=intel prefix=/usr
+	env
+	uname -m
+	dh_auto_build -- $(MAKE_OPTIONS)
 
 override_dh_auto_install:
-	dh_auto_install -- arch=x86-64 tune=intel prefix=/usr
+	dh_auto_install -- $(MAKE_OPTIONS)
 
 override_dh_auto_test:
-	make test-ci
+	$(MAKE) test-ci $(MAKE_OPTIONS)
 
 # dh_make generated override targets
 # This is example for Cmake (See https://bugs.debian.org/641051 )

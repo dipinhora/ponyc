@@ -6,8 +6,10 @@ Section: devel
 
 Package: ponyc
 Priority: optional
-Architecture: amd64
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, zlib1g-dev, libssl-dev, libpcre2-dev, gcc
 Description: pony language compiler
+  Compiler for the pony programming language.
+
   Pony is an open-source, actor-model, capabilities-secure, high performance programming language
   http://www.ponylang.org

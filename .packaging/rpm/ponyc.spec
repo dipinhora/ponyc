@@ -52,6 +52,9 @@ Requires:  pcre2-devel
 %description
 Compiler for the pony programming language.
 
+Pony is an open-source, actor-model, capabilities-secure, high performance programming language
+http://www.ponylang.org
+
 %global debug_package %{nil}
 
 %prep

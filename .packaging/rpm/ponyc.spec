@@ -59,6 +59,8 @@ Requires:  pcre2-devel
 %description
 Compiler for the pony programming language.
 
+%global debug_package %{nil}
+
 %prep
 %setup
 

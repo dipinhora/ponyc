@@ -14,10 +14,6 @@
 %global extra_build_args default_ssl='openssl_1.1.0'
 %endif
 
-%global all_env_vars5 %(ls -l %{_sourcedir})
-
-%{echo:%{all_env_vars5}}
-
 %dump
 
 Name:       ponyc

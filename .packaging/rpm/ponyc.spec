@@ -29,11 +29,11 @@ BuildRequires:  ncurses-devel
 %if %{?_vendor} == suse
 BuildRequires:  libopenssl-devel
 BuildRequires:  binutils-gold
-BuildRequires:  llvm3_9
+BuildRequires:  llvm-devel
 %else
 BuildRequires:  openssl-devel
 BuildRequires:  libatomic
-BuildRequires:  llvm3.9
+BuildRequires:  llvm3.9-devel
 %endif
 
 Requires:  gcc-c++

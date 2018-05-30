@@ -45,7 +45,7 @@ ponyc-build-packages(){
   gpg --import-ownertrust dipin-ownertrust-gpg.txt
 
   echo "Kicking off ponyc packaging for PPA..."
-  wget https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz -O ponyc_${package_version}.orig.tar.gz
+  wget https://github.com/dipinhora/ponyc/archive/${package_version}.tar.gz -O ponyc_${package_version}.orig.tar.gz
   tar -xvzf ponyc_${package_version}.orig.tar.gz
   cd ponyc-${package_version}
   cp -r .packaging/deb debian

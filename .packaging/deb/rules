@@ -24,6 +24,7 @@ ifeq ($(DEB_DISTRIBUTION),trusty)
 else
 	MAKE_OPTIONS += arch=x86-64 tune=intel
 endif
+endif
 
 ifeq ($(DEB_HOST_ARCH),s390x)
 	MAKE_OPTIONS += arch=z900 tune=z900

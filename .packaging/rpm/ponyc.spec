@@ -32,17 +32,11 @@ BuildRequires:  ncurses-devel
 %if %{?_vendor} == suse
 BuildRequires:  libopenssl-devel
 BuildRequires:  binutils-gold
+BuildRequires:  llvm3_9
 %else
 BuildRequires:  openssl-devel
 BuildRequires:  libatomic
-%endif
-
-%if 0%{?el7}
-BuildRequires:  llvm-toolset-7
-BuildRequires:  llvm-toolset-7-llvm-devel
-BuildRequires:  llvm-toolset-7-llvm-static
-%else
-BuildRequires:  llvm-devel
+BuildRequires:  llvm3.9
 %endif
 
 Requires:  gcc-c++
@@ -77,4 +71,4 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue May 29 2018 Dipin Hora <dipin@wallaroolabs.com> 0.22.2-1
-- Initial version
+- Initial version of spec file

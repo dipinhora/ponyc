@@ -14,8 +14,6 @@
 %global extra_build_args default_ssl='openssl_1.1.0'
 %endif
 
-%dump
-
 Name:       ponyc
 Version:    %{ponyc_version}
 Release:    %{release_version}%{?dist}

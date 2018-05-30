@@ -32,7 +32,7 @@ ponyc-build-packages(){
 #  make CC="$CC1" CXX="$CXX1" verbose=1 arch=x86-64 tune=intel package_name="ponyc" package_base_version="${package_version}" deploy
 
   echo "Install debuild, dch, dput..."
-  sudo apt-get install -y devscripts build-essential lintian debhelper
+  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko
 
   echo "Decrypting and Importing gpg keys..."
   openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in gpg-files.tar.enc -out gpg-files.tar -d

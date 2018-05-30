@@ -13,8 +13,8 @@ case "${TRAVIS_OS_NAME}" in
     # when RELEASE_CONFIG stops matching part of this case, move this logic
     if [[ "$TRAVIS_BRANCH" == "packaging" && "$TRAVIS_PULL_REQUEST" == "false" ]]
     then
-      download_llvm
-      download_pcre
+#      download_llvm
+#      download_pcre
       set_linux_compiler
       ponyc-build-packages
       ponyc-build-docs

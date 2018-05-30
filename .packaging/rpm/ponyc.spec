@@ -7,9 +7,6 @@
 
 %if 0%{?el7}
 %global arch_build_args arch=x86-64 tune=generic
-%global extra_build_args use="llvm_link_static"
-%global build_command_prefix scl enable llvm-toolset-7 '
-%global build_command_postfix '
 %else
 %global extra_build_args default_ssl='openssl_1.1.0'
 %endif

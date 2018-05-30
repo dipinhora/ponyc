@@ -41,7 +41,6 @@ BuildRequires:  libatomic
 BuildRequires:  llvm-toolset-7
 BuildRequires:  llvm-toolset-7-llvm-devel
 BuildRequires:  llvm-toolset-7-llvm-static
-BuildRequires:  libatomic
 %else
 BuildRequires:  llvm-devel
 %endif

@@ -23,7 +23,7 @@ Summary:     Compiler for the pony programming language.
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:    BSD
 URL:        https://github.com/ponylang/ponyc
-Source0:    https://github.com/ponylang/ponyc/archive/%{version}.tar.gz
+Source0:    https://github.com/dipinhora/ponyc/archive/%{version}.tar.gz
 BuildRequires:  git
 BuildRequires:  gcc-c++
 BuildRequires:  make

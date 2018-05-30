@@ -17,7 +17,7 @@ build_and_submit_deb_src(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
   debuild -S
-  dput ppa:dipinhora/testppa ../ponyc_${package_version}-1ubuntu1~${deb_distro}1_source.changes
+  dput custom-ppa ../ponyc_${package_version}-1ubuntu1~${deb_distro}1_source.changes
 }
 
 ponyc-build-packages(){
@@ -51,8 +51,17 @@ ponyc-build-packages(){
   cp -r .packaging/deb debian
   cp LICENSE debian/copyright
 
-  echo "[DEFAULT]" >> ~/.dput.cf
-  echo "method = http" >> ~/.dput.cf
+  echo "[custom-ppa]" >> ~/.dput.cf
+  echo "fqdn = ppa.launchpad.net" >> ~/.dput.cf
+  echo "method = sftp" >> ~/.dput.cf
+  echo "incoming = ~dipinhora/ubuntu/testppa/" >> ~/.dput.cf
+  echo "login = dipinhora" >> ~/.dput.cf
+  echo "allow_unsigned_uploads = 0" >> ~/.dput.cf
+
+  mkdir -p ~/.ssh
+  echo "Host *" >> ~/.ssh/config
+  echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+  sudo chmod 400 ~/.ssh/config
 
   build_and_submit_deb_src xenial
   build_and_submit_deb_src artful

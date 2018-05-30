@@ -55,9 +55,13 @@ ponyc-build-packages(){
   echo "allow_unsigned_uploads = 0" >> ~/.dput.cf
 
   mkdir -p ~/.ssh
-  echo "Host *" >> ~/.ssh/config
+  echo "Host ppa.launchpad.net" >> ~/.ssh/config
   echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+  echo "    IdentityFile sshkey" >> ~/.ssh/config
   sudo chmod 400 ~/.ssh/config
+
+  openssl aes-256-cbc -K $encrypted_0f44361077f1_key -iv $encrypted_0f44361077f1_iv -in sshkey.enc -out sshkey -d
+  sudo chmod 600 sshkey
 
   build_and_submit_deb_src xenial
   build_and_submit_deb_src artful

@@ -53,7 +53,7 @@ ponyc-build-packages(){
   echo "[custom-ppa]" >> ~/.dput.cf
   echo "fqdn = ppa.launchpad.net" >> ~/.dput.cf
   echo "method = sftp" >> ~/.dput.cf
-  echo "incoming = ~dipinhora/ubuntu/testppa/" >> ~/.dput.cf
+  echo "incoming = ~dipinhora/ubuntu/ponylang/" >> ~/.dput.cf
   echo "login = dipinhora" >> ~/.dput.cf
   echo "allow_unsigned_uploads = 0" >> ~/.dput.cf
 
@@ -79,7 +79,7 @@ ponyc-build-packages(){
 
   # COPR for fedora/centos/suse
   echo "Kicking off ponyc packaging for COPR..."
-  docker run -it --rm -e COPR_LOGIN=${COPR_LOGIN} -e COPR_USERNAME=${COPR_USERNAME} -e COPR_TOKEN=${COPR_TOKEN} -e COPR_COPR_URL=${COPR_COPR_URL} mgruener/copr-cli buildscm --clone-url https://github.com/dipinhora/ponyc --commit ${package_version} --subdir /.packaging/rpm/ --spec ponyc.spec --type git --nowait testcopr
+  docker run -it --rm -e COPR_LOGIN=${COPR_LOGIN} -e COPR_USERNAME=${COPR_USERNAME} -e COPR_TOKEN=${COPR_TOKEN} -e COPR_COPR_URL=${COPR_COPR_URL} mgruener/copr-cli buildscm --clone-url https://github.com/dipinhora/ponyc --commit ${package_version} --subdir /.packaging/rpm/ --spec ponyc.spec --type git --nowait ponylang
 }
 
 ponyc-build-docs(){

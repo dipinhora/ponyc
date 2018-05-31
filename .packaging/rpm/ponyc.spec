@@ -49,6 +49,10 @@ Requires:  gcc-c++
 Requires:  openssl-devel
 Requires:  pcre2-devel
 
+%if %{?_vendor} == suse
+Requires:  binutils-gold
+%endif
+
 %description
 Compiler for the pony programming language.
 

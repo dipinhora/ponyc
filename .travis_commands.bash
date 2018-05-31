@@ -39,7 +39,8 @@ ponyc-build-packages(){
   tar -xvf securefiles.tar
   gpg --import dipin-secret-gpg.key
   gpg --import-ownertrust dipin-ownertrust-gpg.txt
-  sudo chmod 600 sshkey
+  mv sshkey ~/sshkey
+  sudo chmod 600 ~/sshkey
 
   echo "Kicking off ponyc packaging for PPA..."
   wget https://github.com/dipinhora/ponyc/archive/${package_version}.tar.gz -O ponyc_${package_version}.orig.tar.gz

@@ -39,6 +39,7 @@ ponyc-build-packages(){
   tar -xvf securefiles.tar
   gpg --import dipin-secret-gpg.key
   gpg --import-ownertrust dipin-ownertrust-gpg.txt
+  sudo chmod 600 sshkey
 
   echo "Kicking off ponyc packaging for PPA..."
   wget https://github.com/dipinhora/ponyc/archive/${package_version}.tar.gz -O ponyc_${package_version}.orig.tar.gz
@@ -58,9 +59,8 @@ ponyc-build-packages(){
   mkdir -p ~/.ssh
   echo "Host ppa.launchpad.net" >> ~/.ssh/config
   echo "    StrictHostKeyChecking no" >> ~/.ssh/config
-  echo "    IdentityFile sshkey" >> ~/.ssh/config
+  echo "    IdentityFile ~/sshkey" >> ~/.ssh/config
   sudo chmod 400 ~/.ssh/config
-  sudo chmod 600 sshkey
 
   build_and_submit_deb_src xenial
   build_and_submit_deb_src artful

@@ -34,6 +34,7 @@ static uint64_t last_cd_tsc;
 static uint32_t scheduler_count;
 static uint32_t min_scheduler_count;
 static PONY_ATOMIC(uint32_t) active_scheduler_count;
+static PONY_ATOMIC(uint32_t) active_scheduler_count_check;
 static scheduler_t* scheduler;
 static PONY_ATOMIC(bool) detect_quiescence;
 static bool use_yield;

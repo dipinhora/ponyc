@@ -14,7 +14,6 @@
 
 #define PONY_SCHED_BATCH 100
 #define PONY_SCHED_BLOCK_THRESHOLD 1000000
-#define PONY_SCHED_SUSPEND_THRESHOLD 1000000
 
 static DECLARE_THREAD_FN(run_thread);
 
@@ -35,6 +34,7 @@ typedef enum
 static uint64_t last_cd_tsc;
 static uint32_t scheduler_count;
 static uint32_t min_scheduler_count;
+static uint64_t scheduler_suspend_threshold;
 static PONY_ATOMIC(uint32_t) active_scheduler_count;
 static PONY_ATOMIC(uint32_t) active_scheduler_count_check;
 static scheduler_t* scheduler;
@@ -738,7 +738,7 @@ static pony_actor_t* steal(scheduler_t* sched)
         (ponyint_mutemap_size(&sched->mute_mapping) == 0))
       {
         // only try and suspend if enough time has passed
-        if(clocks_elapsed > PONY_SCHED_SUSPEND_THRESHOLD)
+        if(clocks_elapsed > scheduler_suspend_threshold)
         {
           // in case active scheduler count changed
           current_active_scheduler_count = get_active_scheduler_count();
@@ -773,7 +773,7 @@ static pony_actor_t* steal(scheduler_t* sched)
       pony_assert(current_active_scheduler_count > (uint32_t)sched->index);
 
       // only try and suspend if enough time has passed
-      if(clocks_elapsed > PONY_SCHED_SUSPEND_THRESHOLD)
+      if(clocks_elapsed > scheduler_suspend_threshold)
       {
         actor = perhaps_suspend_scheduler(sched, current_active_scheduler_count,
           &block_sent, &steal_attempts, false);
@@ -824,31 +824,35 @@ static void run(scheduler_t* sched)
 
   while(true)
   {
-    // if we're scheduler 0 and cycle detection is enabled
-    if((sched->index == 0) && !ponyint_actor_getnoblock())
+    // if we're scheduler 0
+    if(sched->index == 0)
     {
-      // trigger cycle detector by sending it a message if it is time
-      uint64_t current_tsc = ponyint_cpu_tick();
-      if(ponyint_cycle_check_blocked(&sched->ctx, last_cd_tsc, current_tsc))
+      // if cycle detection is enabled
+      if(!ponyint_actor_getnoblock())
       {
-        last_cd_tsc = current_tsc;
+        // trigger cycle detector by sending it a message if it is time
+        uint64_t current_tsc = ponyint_cpu_tick();
+        if(ponyint_cycle_check_blocked(&sched->ctx, last_cd_tsc, current_tsc))
+        {
+          last_cd_tsc = current_tsc;
 
-        // cycle detector should now be on the queue
-        if(actor == NULL)
-          actor = pop_global(sched);
+          // cycle detector should now be on the queue
+          if(actor == NULL)
+            actor = pop_global(sched);
+        }
       }
-    }
 
-    uint32_t current_active_scheduler_count = get_active_scheduler_count();
-    uint32_t current_active_scheduler_count_check = get_active_scheduler_count_check();
+      uint32_t current_active_scheduler_count = get_active_scheduler_count();
+      uint32_t current_active_scheduler_count_check = get_active_scheduler_count_check();
 
-    // if not all threads that should be awake are awake due to a missed signal
-    if(current_active_scheduler_count != current_active_scheduler_count_check)
-    {
-      // send signals to all scheduler threads that should be awake
-      // this is somewhat wasteful if a scheduler thread is already awake
-      // but is necessary in case the signal to wake a thread was missed
-      signal_suspended_threads(current_active_scheduler_count, sched->index);
+      // if not all threads that should be awake are awake due to a missed signal
+      if(current_active_scheduler_count != current_active_scheduler_count_check)
+      {
+        // send signals to all scheduler threads that should be awake
+        // this is somewhat wasteful if a scheduler thread is already awake
+        // but is necessary in case the signal to wake a thread was missed
+        signal_suspended_threads(current_active_scheduler_count, sched->index);
+      }
     }
 
     // In response to reading a message, we might have unmuted an actor and
@@ -976,11 +980,15 @@ static void ponyint_sched_shutdown()
 }
 
 pony_ctx_t* ponyint_sched_init(uint32_t threads, bool noyield, bool nopin,
-  bool pinasio, uint32_t min_threads)
+  bool pinasio, uint32_t min_threads, uint32_t thread_suspend_threshold)
 {
   pony_register_thread();
 
   use_yield = !noyield;
+
+  // if thread suspend threshold is less then 1, then ensure it is 1
+  if(thread_suspend_threshold < 1)
+    thread_suspend_threshold = 1;
 
   // If no thread count is specified, use the available physical core count.
   if(threads == 0)
@@ -989,6 +997,11 @@ pony_ctx_t* ponyint_sched_init(uint32_t threads, bool noyield, bool nopin,
   // If minimum thread count is > thread count, cap it at thread count
   if(min_threads > threads)
     min_threads = threads;
+
+  // convert to cycles for use with ponyint_cpu_tick()
+  // 1 second = 2000000000 cycles (approx.)
+  // based on same scale as ponyint_cpu_core_pause() uses
+  scheduler_suspend_threshold = thread_suspend_threshold * 1000000;
 
   scheduler_count = threads;
   min_scheduler_count = min_threads;

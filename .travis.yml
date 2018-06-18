@@ -26,15 +26,7 @@ env:
 matrix:
   include:
 
-#    # i686
-#    - os: linux
-#      env:
-#        - VAGRANT_ENV=ubuntu-i686
-#
-#    # freebsd
-#    - os: linux
-#      env:
-#        - VAGRANT_ENV=freebsd-x86_64
+    - os: osx
 
     - os: linux
       addons:
@@ -48,6 +40,16 @@ matrix:
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
+
+#    # i686 vagrant
+#    - os: linux
+#      env:
+#        - VAGRANT_ENV=ubuntu-i686
+#
+#    # freebsd
+#    - os: linux
+#      env:
+#        - VAGRANT_ENV=freebsd-x86_64
 
     # i686
     - os: linux
@@ -314,8 +316,6 @@ matrix:
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=generic-armv7-a
-
-    - os: osx
 
   allow_failures:
 

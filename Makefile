@@ -771,6 +771,7 @@ $(foreach d,$($(1).depends),$(eval depends += $($(d))/$(d).$(LIB_EXT)))
 
 ifeq ($(1),libponyrt)
 $($(1))/libponyrt.$(LIB_EXT): $(depends) $(ofiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Linking libponyrt'
     ifneq (,$(DTRACE))
     ifeq ($(OSTYPE), linux)
@@ -791,6 +792,7 @@ $($(1))/libponyrt.$(LIB_EXT): $(depends) $(ofiles)
     endif
   ifeq ($(runtime-bitcode),yes)
 $($(1))/libponyrt.bc: $(depends) $(bcfiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Generating bitcode for libponyrt'
 	$(SILENT)$(LLVM_LINK) -o $$@ $(bcfiles)
     ifeq ($(config),release)
@@ -802,11 +804,13 @@ libponyrt: $($(1))/libponyrt.$(LIB_EXT)
   endif
 else ifneq ($(filter $(1),$(libraries)),)
 $($(1))/$(1).$(LIB_EXT): $(depends) $(ofiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Linking $(1)'
 	$(SILENT)$(AR) $(AR_FLAGS) $$@ $(ofiles)
 $(1): $($(1))/$(1).$(LIB_EXT)
 else
 $($(1))/$(1): $(depends) $(ofiles)
+	@mkdir -p $$(dir $$@)
 	@echo 'Linking $(1)'
 	$(SILENT)$(linker) -o $$@ $(ofiles) $(linkcmd)
 $(1): $($(1))/$(1)

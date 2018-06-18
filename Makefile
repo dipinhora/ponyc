@@ -103,7 +103,7 @@ endif
 LIB_EXT ?= a
 BUILD_FLAGS = -march=$(arch) -mtune=$(tune) -Werror -Wconversion \
   -Wno-sign-conversion -Wextra -Wall
-LINKER_FLAGS = -march=$(arch) -mtune=$(tune)
+LINKER_FLAGS = -march=$(arch) -mtune=$(tune) $(LDFLAGS)
 AR_FLAGS ?= rcs
 ALL_CFLAGS = -std=gnu11 -fexceptions \
   -DPONY_VERSION=\"$(tag)\" -DLLVM_VERSION=\"$(llvm_version)\" \
@@ -327,11 +327,11 @@ packages_abs_src := $(shell dirname $(makefile_abs_path))/packages
 
 $(shell mkdir -p $(PONY_BUILD_DIR))
 
-lib   := $(PONY_BUILD_DIR)
+lib   := $(PONY_BUILD_DIR)/lib/$(arch)
 bin   := $(PONY_BUILD_DIR)
 tests := $(PONY_BUILD_DIR)
 benchmarks := $(PONY_BUILD_DIR)
-obj   := $(PONY_BUILD_DIR)/obj
+obj   := $(PONY_BUILD_DIR)/obj-$(arch)
 
 # Libraries. Defined as
 # (1) a name and output directory
@@ -582,7 +582,7 @@ libponyrt.benchmarks.linker = $(CXX)
 # make targets
 targets := $(libraries) libponyrt $(binaries) $(tests) $(benchmarks)
 
-.PHONY: all $(targets) install uninstall clean stats deploy prerelease
+.PHONY: all $(targets) install uninstall clean stats deploy prerelease check-version test-core test-stdlib-debug test-stdlib test-examples validate-grammar test-ci test-cross-ci benchmark stdlib stdlib-debug
 all: $(targets)
 	@:
 
@@ -680,7 +680,7 @@ endef
 
 define CONFIGURE_LIBS_WHOLE
   ifeq ($(OSTYPE),osx)
-    wholelibs += -Wl,-force_load,$(PONY_BUILD_DIR)/$(1).a
+    wholelibs += -Wl,-force_load,$(lib)/$(1).a
   else
     wholelibs += $(subst lib,-l,$(1))
   endif
@@ -821,26 +821,33 @@ $(foreach target,$(targets),$(eval $(call EXPAND_COMMAND,$(target))))
 
 
 define EXPAND_INSTALL
+install-libponyrt-pic: libponyrt-pic
+	@mkdir -p $(destdir)/lib/$(arch)
+	$(SILENT)cp $(lib)/libponyrt-pic.a $(DESTDIR)$(ponydir)/lib/$(arch)
+endif
+install-libponyrt: libponyrt
+	@mkdir -p $(destdir)/lib/$(arch)
+	$(SILENT)cp $(lib)/libponyrt.a $(DESTDIR)$(ponydir)/lib/$(arch)
 ifeq ($(OSTYPE),linux)
 install: libponyc libponyrt libponyrt-pic ponyc
 else
 install: libponyc libponyrt ponyc
 endif
 	@mkdir -p $(DESTDIR)$(ponydir)/bin
-	@mkdir -p $(DESTDIR)$(ponydir)/lib
+	@mkdir -p $(DESTDIR)$(ponydir)/lib/$(arch)
 	@mkdir -p $(DESTDIR)$(ponydir)/include/pony/detail
-	$(SILENT)cp $(PONY_BUILD_DIR)/libponyrt.a $(DESTDIR)$(ponydir)/lib
+	$(SILENT)cp $(lib)/libponyrt.a $(DESTDIR)$(ponydir)/lib/$(arch)
 ifeq ($(OSTYPE),linux)
-	$(SILENT)cp $(PONY_BUILD_DIR)/libponyrt-pic.a $(DESTDIR)$(ponydir)/lib
+	$(SILENT)cp $(lib)/libponyrt-pic.a $(DESTDIR)$(ponydir)/lib/$(arch)
 endif
 ifneq ($(wildcard $(PONY_BUILD_DIR)/libponyrt.bc),)
 	$(SILENT)cp $(PONY_BUILD_DIR)/libponyrt.bc $(DESTDIR)$(ponydir)/lib
 endif
-ifneq ($(wildcard $(PONY_BUILD_DIR)/libdtrace_probes.a),)
-	$(SILENT)cp $(PONY_BUILD_DIR)/libdtrace_probes.a $(DESTDIR)$(ponydir)/lib
+ifneq ($(wildcard $(lib)/libdtrace_probes.a),)
+	$(SILENT)cp $(lib)/libdtrace_probes.a $(DESTDIR)$(ponydir)/lib/$(arch)
 endif
-	$(SILENT)cp $(PONY_BUILD_DIR)/libponyc.a $(DESTDIR)$(ponydir)/lib
-	$(SILENT)cp $(PONY_BUILD_DIR)/ponyc $(DESTDIR)$(ponydir)/bin
+	$(SILENT)cp $(lib)/libponyc.a $(DESTDIR)$(ponydir)/lib/$(arch)
+	$(SILENT)cp $(bin)/ponyc $(DESTDIR)$(ponydir)/bin
 	$(SILENT)cp src/libponyrt/pony.h $(DESTDIR)$(ponydir)/include
 	$(SILENT)cp src/common/pony/detail/atomics.h $(DESTDIR)$(ponydir)/include/pony/detail
 	$(SILENT)cp -r packages $(DESTDIR)$(ponydir)/
@@ -849,17 +856,17 @@ ifeq ($$(symlink),yes)
 	@mkdir -p $(DESTDIR)$(libdir)
 	@mkdir -p $(DESTDIR)$(includedir)/pony/detail
 	$(SILENT)ln $(symlink.flags) $(ponydir)/bin/ponyc $(DESTDIR)$(bindir)/ponyc
-	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/libponyrt.a $(DESTDIR)$(libdir)/libponyrt.a
+	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/$(arch)/libponyrt.a $(DESTDIR)$(libdir)/libponyrt.a
 ifeq ($(OSTYPE),linux)
-	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/libponyrt-pic.a $(DESTDIR)$(libdir)/libponyrt-pic.a
+	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/$(arch)/libponyrt-pic.a $(DESTDIR)$(libdir)/libponyrt-pic.a
 endif
 ifneq ($(wildcard $(DESTDIR)$(ponydir)/lib/libponyrt.bc),)
 	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/libponyrt.bc $(DESTDIR)$(libdir)/libponyrt.bc
 endif
 ifneq ($(wildcard $(PONY_BUILD_DIR)/libdtrace_probes.a),)
-	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/libdtrace_probes.a $(DESTDIR)$(libdir)/libdtrace_probes.a
+	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/$(arch)/libdtrace_probes.a $(DESTDIR)$(libdir)/libdtrace_probes.a
 endif
-	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/libponyc.a $(DESTDIR)$(libdir)/libponyc.a
+	$(SILENT)ln $(symlink.flags) $(ponydir)/lib/$(arch)/libponyc.a $(DESTDIR)$(libdir)/libponyc.a
 	$(SILENT)ln $(symlink.flags) $(ponydir)/include/pony.h $(DESTDIR)$(includedir)/pony.h
 	$(SILENT)ln $(symlink.flags) $(ponydir)/include/pony/detail/atomics.h $(DESTDIR)$(includedir)/pony/detail/atomics.h
 endif
@@ -897,48 +904,47 @@ ifeq ($(lto),yes)
 endif
 
 benchmark: all
-	@echo "Running libponyc benchmarks..."
-	@$(PONY_BUILD_DIR)/libponyc.benchmarks
-	@echo "Running libponyrt benchmarks..."
-	@$(PONY_BUILD_DIR)/libponyrt.benchmarks
+	$(SILENT)echo "Running libponyc benchmarks..."
+	$(SILENT)$(PONY_BUILD_DIR)/libponyc.benchmarks
+	$(SILENT)echo "Running libponyrt benchmarks..."
+	$(SILENT)(PONY_BUILD_DIR)/libponyrt.benchmarks
 
 stdlib-debug: all
-	$(PONY_BUILD_DIR)/ponyc -d --checktree --verify packages/stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify packages/stdlib
 
 stdlib: all
-	$(PONY_BUILD_DIR)/ponyc --checktree --verify packages/stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
 
 test-stdlib-debug: stdlib-debug
-	./stdlib --sequential
+	$(SILENT)$(cross_runner) ./stdlib --sequential
+	$(SILENT)rm stdlib
 
 test-stdlib: stdlib
-	./stdlib --sequential
+	$(SILENT)$(cross_runner) ./stdlib --sequential
+	$(SILENT)rm stdlib
 
-test: all
-	@$(PONY_BUILD_DIR)/libponyc.tests
-	@$(PONY_BUILD_DIR)/libponyrt.tests
-	@$(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify packages/stdlib
-	@./stdlib --sequential
-	@rm stdlib
-	@make test-examples
+test-core: all
+	$(SILENT)$(PONY_BUILD_DIR)/libponyc.tests
+	$(SILENT)$(PONY_BUILD_DIR)/libponyrt.tests
+
+test: test-core test-stdlib test-examples
 
 test-examples: all
-	@PONYPATH=. find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} $(PONY_BUILD_DIR)/ponyc -d -s --checktree -o {} {}
+	$(SILENT)PONYPATH=.:$(PONYPATH) find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree -o {} {}
 
-test-ci: all
-	@$(PONY_BUILD_DIR)/ponyc --version
-	@$(PONY_BUILD_DIR)/libponyc.tests
-	@$(PONY_BUILD_DIR)/libponyrt.tests
-	@$(PONY_BUILD_DIR)/ponyc -d -s --checktree --verify packages/stdlib
-	@./stdlib --sequential
-	@rm stdlib
-	@$(PONY_BUILD_DIR)/ponyc --checktree --verify packages/stdlib
-	@./stdlib --sequential
-	@rm stdlib
-	@PONYPATH=. find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} $(PONY_BUILD_DIR)/ponyc -d -s --checktree -o {} {}
-	@$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
-	@diff pony.g pony.g.new
-	@rm pony.g.new
+check-version: all
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --version
+
+validate-grammar: all
+	$(SILENT)$(PONY_BUILD_DIR)/ponyc --antlr > pony.g.new
+	$(SILENT)diff pony.g pony.g.new
+	$(SILENT)rm pony.g.new
+
+test-ci: all check-version test-core test-stdlib-debug test-stdlib test-examples validate-grammar
+
+test-cross-ci: cross_args=--triple=$(cross_triple) --link-arch=$(cross_arch) --linker='$(cross_linker)'
+test-cross-ci: cross_runner=$(QEMU_RUNNER)
+test-cross-ci: test-ci
 
 docs: all
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc packages/stdlib --docs --pass expr
@@ -1063,6 +1069,10 @@ help:
 	@echo '  test                   Run test suite'
 	@echo '  benchmark              Build and run benchmark suite'
 	@echo '  install                Install ponyc'
+	@echo '  install-libponyrt      Install libponyrt only (for cross'
+	@echo '                         linking)'
+	@echo '  install-libponyrt-pic  Install libponyrt-pic only (for cross'
+	@echo '                         linking)'
 	@echo '  uninstall              Remove all versions of ponyc'
 	@echo '  stats                  Print Pony cloc statistics'
 	@echo '  clean                  Delete all build files'

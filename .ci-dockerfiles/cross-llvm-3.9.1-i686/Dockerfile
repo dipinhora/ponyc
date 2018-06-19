@@ -1,4 +1,4 @@
-FROM ponylang/ponyc-ci:llvm-3.9.1
+FROM dipinhora/ponyc-ci:llvm-3.9.1
 
 ARG CROSS_TRIPLE=i686-unknown-linux-gnu
 ARG CROSS_CC=gcc-6
@@ -40,7 +40,11 @@ RUN dpkg --add-architecture i386 \
  && make \
  && make install \
  && cd .. \
- && rm -rf libressl-2.4.5*
+ && rm -rf libressl-2.4.5* \
+# cleanup
+ && rm -rf /var/lib/apt/lists/* \
+ && apt-get -y autoremove --purge \
+ && apt-get -y clean
 
 USER pony
 WORKDIR /home/pony

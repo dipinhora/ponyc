@@ -1,4 +1,4 @@
-FROM ponylang/ponyc-ci:llvm-3.9.1
+FROM dipinhora/ponyc-ci:llvm-3.9.1
 
 ARG CROSS_TRIPLE=arm-unknown-linux-gnueabihf
 ARG CROSS_CC=arm-linux-gnueabihf-gcc

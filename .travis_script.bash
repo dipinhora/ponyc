@@ -15,16 +15,16 @@ case "${TRAVIS_OS_NAME}" in
     then
       # build and test for x86_64 first
       echo "Building and testing ponyc..."
-      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make CC="$CC1" CXX="$CXX1" verbose=1 -j$(nproc) all
-      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make CC="$CC1" CXX="$CXX1" verbose=1 test-ci
+      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make CC="$CC1" CXX="$CXX1" verbose=1 -j$(nproc) all
+      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make CC="$CC1" CXX="$CXX1" verbose=1 test-ci
 
       echo "Building and testing cross ponyc..."
       # build libponyrt for target arch
-      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make verbose=1 CC="${CROSS_CC}" CXX="${CROSS_CXX}" arch="${CROSS_ARCH}" tune="${CROSS_TUNE}" bits="${CROSS_BITS}" CFLAGS="${CROSS_CFLAGS}" CXXFLAGS="${CROSS_CXXFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" -j$(nproc) libponyrt
+      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make verbose=1 CC="${CROSS_CC}" CXX="${CROSS_CXX}" arch="${CROSS_ARCH}" tune="${CROSS_TUNE}" bits="${CROSS_BITS}" CFLAGS="${CROSS_CFLAGS}" CXXFLAGS="${CROSS_CXXFLAGS}" LDFLAGS="${CROSS_LDFLAGS}" -j$(nproc) libponyrt
       # build ponyc for target cross compilation
-      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make verbose=1 -j$(nproc) all PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}"
+      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make verbose=1 -j$(nproc) all PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}"
       # run tests for cross built stdlib using ponyc cross building support
-      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make verbose=1 test-cross-ci PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}"
+      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make verbose=1 test-cross-ci PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}"
     fi
     # when RELEASE_CONFIG stops matching part of this case, move this logic
     if [[ "$TRAVIS_BRANCH" == "release" && "$TRAVIS_PULL_REQUEST" == "false" ]]

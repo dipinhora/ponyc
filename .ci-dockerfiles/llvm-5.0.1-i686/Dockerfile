@@ -1,4 +1,4 @@
-FROM ponylang/ponyc-ci:llvm-5.0.1
+FROM dipinhora/ponyc-ci:llvm-5.0.1
 
 ARG CROSS_TRIPLE=i686-unknown-linux-gnu
 ARG CROSS_CC=gcc-6

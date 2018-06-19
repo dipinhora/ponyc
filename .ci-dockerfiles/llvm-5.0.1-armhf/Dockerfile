@@ -1,4 +1,4 @@
-FROM ponylang/ponyc-ci:llvm-5.0.1
+FROM dipinhora/ponyc-ci:llvm-5.0.1
 
 ARG CROSS_TRIPLE=arm-unknown-linux-gnueabihf
 ARG CROSS_CC=arm-linux-gnueabihf-gcc
@@ -18,7 +18,7 @@ RUN wget "https://releases.linaro.org/components/toolchain/binaries/6.4-2017.11/
  && tar xJvf gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz -C /usr/local --strip 1 \
  && arm-linux-gnueabihf-gcc --version \
  && rm gcc-linaro-6.4.1-2017.11-x86_64_arm-linux-gnueabihf.tar.xz \
- && wget https://github.com/multiarch/qemu-user-static/releases/download/v${QEMU_VERSION}-1/qemu-arm-static -O /usr/bin/qemu-arm-static \
+ && wget https://github.com/multiarch/qemu-user-static/releases/download/v${QEMU_VERSION}/qemu-arm-static -O /usr/bin/qemu-arm-static \
  && chmod +x /usr/bin/qemu-arm-static \
 # install pcre2
  && wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.21.tar.bz2 \

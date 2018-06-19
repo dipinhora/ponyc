@@ -55,6 +55,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
@@ -71,6 +72,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -87,6 +89,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
@@ -103,6 +106,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
@@ -119,6 +123,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
@@ -135,6 +140,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
@@ -151,6 +157,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=debug
@@ -167,6 +174,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=release
@@ -183,7 +191,8 @@ matrix:
     # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
@@ -200,7 +209,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -217,7 +227,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
@@ -234,7 +245,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
@@ -251,7 +263,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
@@ -268,7 +281,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
@@ -285,7 +299,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=debug
@@ -302,7 +317,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=release
@@ -323,6 +339,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
@@ -339,6 +356,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -355,6 +373,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
@@ -371,6 +390,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
@@ -387,6 +407,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
@@ -403,6 +424,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
@@ -419,6 +441,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=debug
@@ -435,6 +458,7 @@ matrix:
     - os: linux
       env:
         - CROSS_ARCH=i686
+        - DOCKER_ARCH=i686
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=release
@@ -451,7 +475,8 @@ matrix:
     # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
@@ -468,7 +493,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -485,7 +511,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
@@ -502,7 +529,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
@@ -519,7 +547,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
@@ -536,7 +565,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
@@ -553,7 +583,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=debug
@@ -570,7 +601,8 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armhf
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=release

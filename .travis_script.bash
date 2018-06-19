@@ -15,6 +15,8 @@ case "${TRAVIS_OS_NAME}" in
     then
       # build and test for x86_64 first
       echo "Building and testing ponyc..."
+      set -x
+      id
       docker run -u pony -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make CC="$CC1" CXX="$CXX1" verbose=1 -j$(nproc) all
       docker run -u pony -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${CROSS_ARCH}" make CC="$CC1" CXX="$CXX1" verbose=1 test-ci
 

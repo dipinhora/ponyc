@@ -180,10 +180,10 @@ matrix:
         - CROSS_CXX=g++-6
         - CROSS_TUNE=generic
 
-    # armv7-a
+    # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
@@ -200,7 +200,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -217,7 +217,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
@@ -234,7 +234,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
@@ -251,7 +251,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
@@ -268,7 +268,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
@@ -285,7 +285,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=debug
@@ -302,7 +302,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=release
@@ -448,10 +448,10 @@ matrix:
         - CROSS_CXX=g++-6
         - CROSS_TUNE=generic
 
-    # armv7-a
+    # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=debug
@@ -468,7 +468,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -485,7 +485,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=debug
@@ -502,7 +502,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
         - config=release
@@ -519,7 +519,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=debug
@@ -536,7 +536,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
         - config=release
@@ -553,7 +553,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=debug
@@ -570,7 +570,7 @@ matrix:
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
         - config=release

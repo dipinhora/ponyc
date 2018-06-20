@@ -333,6 +333,151 @@ matrix:
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=armv7
 
+    # aarch64
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
   allow_failures:
 
     # i686
@@ -616,6 +761,151 @@ matrix:
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
         - CROSS_TUNE=armv7
+
+    # aarch64
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
+
+    - os: linux
+      env:
+        - CROSS_ARCH=aarch64
+        - DOCKER_ARCH=aarch64
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=64
+        - CROSS_TRIPLE=aarch64-unknown-linux-gnu
+        - CROSS_LINKER=aarch64-linux-gnu-gcc
+        - CROSS_CC=aarch64-linux-gnu-gcc
+        - CROSS_CXX=aarch64-linux-gnu-g++
+        - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
+        - CROSS_TUNE=aarch64
 
 rvm:
   - 2.2.3

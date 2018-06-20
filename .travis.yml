@@ -205,7 +205,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -223,7 +223,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -241,7 +241,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -259,7 +259,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -277,7 +277,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -295,7 +295,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -313,7 +313,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -331,12 +331,12 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     # aarch64
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -350,11 +350,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -368,11 +368,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -386,11 +386,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -404,11 +404,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -422,11 +422,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -440,11 +440,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -458,11 +458,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -476,7 +476,7 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
   allow_failures:
 
@@ -634,7 +634,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -652,7 +652,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -670,7 +670,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -688,7 +688,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -706,7 +706,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -724,7 +724,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -742,7 +742,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     - os: linux
       env:
@@ -760,12 +760,12 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=armv7
+        - CROSS_TUNE=cortex-a7
 
     # aarch64
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -779,11 +779,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -797,11 +797,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -815,11 +815,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -833,11 +833,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -851,11 +851,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -869,11 +869,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -887,11 +887,11 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
     - os: linux
       env:
-        - CROSS_ARCH=aarch64
+        - CROSS_ARCH=armv8-a
         - DOCKER_ARCH=aarch64
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -905,7 +905,7 @@ matrix:
         - CROSS_CC=aarch64-linux-gnu-gcc
         - CROSS_CXX=aarch64-linux-gnu-g++
         - QEMU_RUNNER='qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc'
-        - CROSS_TUNE=aarch64
+        - CROSS_TUNE=cortex-a53
 
 rvm:
   - 2.2.3

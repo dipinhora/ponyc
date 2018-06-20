@@ -191,7 +191,7 @@ matrix:
     # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -205,11 +205,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -223,11 +223,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -241,11 +241,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -259,11 +259,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -277,11 +277,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -295,11 +295,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -313,11 +313,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -331,7 +331,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
   allow_failures:
 
@@ -475,7 +475,7 @@ matrix:
     # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -489,11 +489,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -507,11 +507,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -525,11 +525,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -543,11 +543,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -561,11 +561,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -579,11 +579,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -597,11 +597,11 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7-a
+        - CROSS_ARCH=armv7
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -615,7 +615,7 @@ matrix:
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
         - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=generic-armv7-a
+        - CROSS_TUNE=armv7
 
 rvm:
   - 2.2.3

@@ -649,7 +649,7 @@ static bool init_module(compile_t* c, ast_t* program, pass_opt_t* opt, bool jit)
     c->callconv = LLVMFastCallConv;
 
   if(target_is_arm(opt->triple))
-    c->callconv = LLVMARMAAPCSCallConv;
+    c->callconv = 67; //LLVMARMAAPCSCallConv;
 
   if(!c->opt->release || c->opt->library || c->opt->extfun)
     c->linkage = LLVMExternalLinkage;

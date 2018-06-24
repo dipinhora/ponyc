@@ -216,7 +216,7 @@ static void make_serialise(compile_t* c, reach_type_t* t)
     c->serialise_type, true);
 
   codegen_startfun(c, c_t->serialise_fn, NULL, NULL, NULL, false);
-  LLVMSetFunctionCallConv(c_t->serialise_fn, c->callconv);
+  LLVMSetFunctionCallConv(c_t->serialise_fn, LLVMCCallConv);
   LLVMSetLinkage(c_t->serialise_fn, LLVMExternalLinkage);
 
   LLVMValueRef ctx = LLVMGetParam(c_t->serialise_fn, 0);
@@ -362,7 +362,7 @@ static void make_deserialise(compile_t* c, reach_type_t* t)
     c->trace_type, true);
 
   codegen_startfun(c, c_t->deserialise_fn, NULL, NULL, NULL, false);
-  LLVMSetFunctionCallConv(c_t->deserialise_fn, c->callconv);
+  LLVMSetFunctionCallConv(c_t->deserialise_fn, LLVMCCallConv);
   LLVMSetLinkage(c_t->deserialise_fn, LLVMExternalLinkage);
 
   LLVMValueRef ctx = LLVMGetParam(c_t->deserialise_fn, 0);

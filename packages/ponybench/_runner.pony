@@ -30,11 +30,15 @@ actor _RunSync is _Runner
       _complete(a)
     else
       try
-        Time.perf_begin()
+        ifdef x86 then
+          Time.perf_begin()
+        end
         let s = Time.nanos()
         _bench()?
         let e = Time.nanos()
-        Time.perf_end()
+        ifdef x86 then
+          Time.perf_end()
+        end
         _run_iteration(n + 1, a + (e - s))
       else
         _fail()
@@ -97,7 +101,9 @@ actor _RunAsync is _Runner
     else
       try
         _n = _n + 1
-        Time.perf_begin()
+        ifdef x86 then
+          Time.perf_begin()
+        end
         _start_time = Time.nanos()
         _bench(_bench_cont)?
       else
@@ -127,7 +133,9 @@ class val AsyncBenchContinue
 
   fun complete() =>
     let e = Time.nanos()
-    Time.perf_end()
+    ifdef x86 then
+      Time.perf_end()
+    end
     _f(e)
 
   fun fail() =>

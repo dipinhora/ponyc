@@ -30,7 +30,7 @@ case "${TRAVIS_OS_NAME}" in
       EXTRA_ARGS=
       if [[ "${DOCKER_ARCH}" == "armhf" ]]
       then
-        EXTRA_ARGS=arch=armv7
+        EXTRA_ARGS="arch=armv7 tune=arm7"
       fi
       docker run --rm --privileged multiarch/qemu-user-static:register --reset
       docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:${DOCKER_ARCH}-llvm-${LLVM_VERSION}" make ${EXTRA_ARGS} verbose=1 config=${config} test-ci

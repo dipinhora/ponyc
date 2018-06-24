@@ -28,7 +28,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=debug default_pic=true -j$(nproc)
+      - run: make all config=debug default_pic=true -j3
       - run: make test-ci config=debug default_pic=true
 
   llvm-600-release:
@@ -37,7 +37,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=release default_pic=true -j$(nproc)
+      - run: make all config=release default_pic=true -j3
       - run: make test-ci config=release default_pic=true
 
   llvm-501-debug:
@@ -46,7 +46,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=debug default_pic=true -j$(nproc)
+      - run: make all config=debug default_pic=true -j3
       - run: make test-ci config=debug default_pic=true
 
   llvm-501-release:
@@ -55,7 +55,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=release default_pic=true -j$(nproc)
+      - run: make all config=release default_pic=true -j3
       - run: make test-ci config=release default_pic=true
 
   llvm-401-debug:
@@ -64,7 +64,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=debug default_pic=true -j$(nproc)
+      - run: make all config=debug default_pic=true -j3
       - run: make test-ci config=debug default_pic=true
 
   llvm-401-release:
@@ -73,7 +73,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=release default_pic=true -j$(nproc)
+      - run: make all config=release default_pic=true -j3
       - run: make test-ci config=release default_pic=true
 
   llvm-391-debug:
@@ -82,7 +82,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=debug default_pic=true -j$(nproc)
+      - run: make all config=debug default_pic=true -j3
       - run: make test-ci config=debug default_pic=true
 
   llvm-391-release:
@@ -91,7 +91,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=release default_pic=true -j$(nproc)
+      - run: make all config=release default_pic=true -j3
       - run: make test-ci config=release default_pic=true
 
   openssl-110:
@@ -100,7 +100,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all default_ssl=openssl_1.1.0 default_pic=true -j$(nproc)
+      - run: make all default_ssl=openssl_1.1.0 default_pic=true -j3
       - run: make test-ci default_ssl=openssl_1.1.0 default_pic=true
 
   alpine-llvm-391-debug:
@@ -109,7 +109,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=debug default_pic=true -j$(nproc)
+      - run: make all config=debug default_pic=true -j3
       - run: make test-ci config=debug default_pic=true
 
   alpine-llvm-391-release:
@@ -118,7 +118,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=release default_pic=true -j$(nproc)
+      - run: make all config=release default_pic=true -j3
       - run: make test-ci config=release default_pic=true
 
   centos7-llvm-391-debug:
@@ -127,7 +127,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=debug default_pic=true use="llvm_link_static" -j$(nproc)
+      - run: make all config=debug default_pic=true use="llvm_link_static" -j3
       - run: make test-ci config=debug default_pic=true use="llvm_link_static"
 
   centos7-llvm-391-release:
@@ -136,7 +136,7 @@ jobs:
         user: pony
     steps:
       - checkout
-      - run: make all config=release default_pic=true use="llvm_link_static" -j$(nproc)
+      - run: make all config=release default_pic=true use="llvm_link_static" -j3
       - run: make test-ci config=release default_pic=true use="llvm_link_static"
 
   cross-llvm-600-debug-arm:
@@ -146,12 +146,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -162,12 +162,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -178,12 +178,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -194,12 +194,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -210,12 +210,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -226,12 +226,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -242,12 +242,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -258,12 +258,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabi-gcc CXX=arm-linux-gnueabi-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabi cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabi-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc" test-cross-ci
 
@@ -274,12 +274,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -290,12 +290,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -306,12 +306,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -322,12 +322,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -338,12 +338,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -354,12 +354,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -370,12 +370,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -386,12 +386,12 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ arch=armv7-a tune=cortex-a9 bits=32 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
       - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=arm-unknown-linux-gnueabihf cross_arch=armv7-a cross_cpu=cortex-a9 cross_linker=arm-linux-gnueabihf-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc" test-cross-ci
 
@@ -402,14 +402,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-600-release-aarch64:
     docker:
@@ -418,14 +418,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-501-debug-aarch64:
     docker:
@@ -434,14 +434,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-501-release-aarch64:
     docker:
@@ -450,14 +450,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-401-debug-aarch64:
     docker:
@@ -466,14 +466,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-401-release-aarch64:
     docker:
@@ -482,14 +482,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-391-debug-aarch64:
     docker:
@@ -498,14 +498,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=debug verbose=1 -j$(nproc) all
+      - run: make config=debug verbose=1 -j3 all
       - run: make config=debug verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=debug verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=debug verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
   cross-llvm-391-release-aarch64:
     docker:
@@ -514,14 +514,14 @@ jobs:
     steps:
       - checkout
       # build and test for x86_64 first
-      - run: make config=release verbose=1 -j$(nproc) all
+      - run: make config=release verbose=1 -j3 all
       - run: make config=release verbose=1 test-ci
       # build libponyrt for target arch
-      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j$(nproc) libponyrt
+      - run: make config=release verbose=1 CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ arch=armv8-a tune=cortex-a53 bits=64 CFLAGS="-idirafter /usr/cross/include/" CXXFLAGS="-idirafter /usr/cross/include/" LDFLAGS="-idirafter /usr/cross/include/" PONYPATH=/usr/cross/lib -j3 libponyrt
       # build ponyc for target cross compilation
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j$(nproc) all
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" -j3 all
       # run tests for cross built stdlib using ponyc cross building support
-      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-arm-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
+      - run: make config=release verbose=1 PONYPATH=/usr/cross/lib cross_triple=aarch64-unknown-linux-gnu cross_arch=armv8-a cross_cpu=cortex-a53 cross_linker=aarch64-linux-gnu-gcc QEMU_RUNNER="qemu-aarch64-static --cpu cortex-a53 -L /usr/local/aarch64-linux-gnu/libc" test-cross-ci
 
 workflows:
   version: 2

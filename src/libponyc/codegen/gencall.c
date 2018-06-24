@@ -433,7 +433,7 @@ static LLVMValueRef gen_constructor_receiver(compile_t* c, reach_type_t* t,
   }
 }
 
-static void set_method_external_interface(compile_t* c, reach_type_t* t, const char* name,
+static void set_method_external_interface(reach_type_t* t, const char* name,
   uint32_t vtable_index)
 {
   size_t i = HASHMAP_BEGIN;
@@ -517,7 +517,7 @@ LLVMValueRef gen_funptr(compile_t* c, ast_t* ast)
       case TK_ISECTTYPE:
       case TK_INTERFACE:
       case TK_TRAIT:
-        set_method_external_interface(c, t, name, m->vtable_index);
+        set_method_external_interface(t, name, m->vtable_index);
         break;
       default:
         pony_assert(0);

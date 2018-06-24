@@ -2,6 +2,7 @@
 
 set -o errexit
 set -o nounset
+set -x
 
 # include install commands
 . .travis_install.bash

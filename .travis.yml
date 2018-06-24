@@ -188,10 +188,155 @@ matrix:
         - CROSS_CXX=g++-6
         - CROSS_TUNE=generic
 
+    # arm
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
     # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -204,12 +349,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -222,12 +367,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -240,12 +385,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -258,12 +403,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -276,12 +421,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -294,12 +439,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -312,12 +457,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -330,8 +475,8 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     # aarch64
     - os: linux
@@ -617,10 +762,155 @@ matrix:
         - CROSS_CXX=g++-6
         - CROSS_TUNE=generic
 
+    # arm
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="3.9.1"
+        - LLVM_CONFIG="llvm-config-3.9"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="4.0.1"
+        - LLVM_CONFIG="llvm-config-4.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="5.0.1"
+        - LLVM_CONFIG="llvm-config-5.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=debug
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
+    - os: linux
+      env:
+        - CROSS_ARCH=armv7-a
+        - DOCKER_ARCH=arm
+        - LLVM_VERSION="6.0.0"
+        - LLVM_CONFIG="llvm-config-6.0"
+        - config=release
+        - CROSS_CFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_CXXFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_LDFLAGS='-idirafter /usr/cross/include/'
+        - CROSS_BITS=32
+        - CROSS_TRIPLE=arm-unknown-linux-gnueabi
+        - CROSS_LINKER=arm-linux-gnueabi-gcc
+        - CROSS_CC=arm-linux-gnueabi-gcc
+        - CROSS_CXX=arm-linux-gnueabi-g++
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabi/libc'
+        - CROSS_TUNE=cortex-a9
+
     # armhf
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -633,12 +923,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
@@ -651,12 +941,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -669,12 +959,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="4.0.1"
         - LLVM_CONFIG="llvm-config-4.0"
@@ -687,12 +977,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -705,12 +995,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="5.0.1"
         - LLVM_CONFIG="llvm-config-5.0"
@@ -723,12 +1013,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -741,12 +1031,12 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     - os: linux
       env:
-        - CROSS_ARCH=armv7
+        - CROSS_ARCH=armv7-a
         - DOCKER_ARCH=armhf
         - LLVM_VERSION="6.0.0"
         - LLVM_CONFIG="llvm-config-6.0"
@@ -759,8 +1049,8 @@ matrix:
         - CROSS_LINKER=arm-linux-gnueabihf-gcc
         - CROSS_CC=arm-linux-gnueabihf-gcc
         - CROSS_CXX=arm-linux-gnueabihf-g++
-        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a7 -L /usr/local/arm-linux-gnueabihf/libc'
-        - CROSS_TUNE=cortex-a7
+        - QEMU_RUNNER='qemu-arm-static --cpu cortex-a9 -L /usr/local/arm-linux-gnueabihf/libc'
+        - CROSS_TUNE=cortex-a9
 
     # aarch64
     - os: linux

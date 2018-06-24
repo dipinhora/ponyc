@@ -648,8 +648,8 @@ static bool init_module(compile_t* c, ast_t* program, pass_opt_t* opt, bool jit)
   else
     c->callconv = LLVMFastCallConv;
 
-  if(target_is_arm(opt->triple))
-    c->callconv = LLVMCCallConv;
+//  if(target_is_arm(opt->triple))
+//    c->callconv = LLVMCCallConv;
 //    c->callconv = (LLVMCallConv)68; //LLVMARMAAPCSVFPCallConv;
 //    c->callconv = (LLVMCallConv)67; //LLVMARMAAPCSCallConv;
 

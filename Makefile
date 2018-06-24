@@ -949,7 +949,7 @@ validate-grammar: all
 
 test-ci: all check-version test-core test-stdlib-debug test-stdlib test-examples validate-grammar
 
-test-cross-ci: cross_args=--triple=$(cross_triple) --link-arch=$(cross_arch) --linker='$(cross_linker)'
+test-cross-ci: cross_args=--triple=$(cross_triple) --cpu=$(cross_cpu) --link-arch=$(cross_arch) --linker='$(cross_linker)'
 test-cross-ci: cross_runner=$(QEMU_RUNNER)
 test-cross-ci: test-ci
 

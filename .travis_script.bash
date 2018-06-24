@@ -14,6 +14,9 @@ case "${TRAVIS_OS_NAME}" in
     # when running a cross build of ponyc
     if [[ "${CROSS_ARCH}" != "" ]]
     then
+      "$CC1" --version
+      "$CC1" -Q --help=target
+      "$CC1" -Q --target-help
       # build and test for x86_64 first
       echo "Building and testing ponyc..."
       docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make config=${config} CC="$CC1" CXX="$CXX1" verbose=1 -j$(nproc) all

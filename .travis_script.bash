@@ -27,8 +27,13 @@ case "${TRAVIS_OS_NAME}" in
       # run tests for cross built stdlib using ponyc cross building support
 #      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make verbose=1 test-cross-ci PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}" QEMU_RUNNER="${QEMU_RUNNER:-}"
 
+      EXTRA_ARGS=
+      if [[ "${DOCKER_ARCH}" == "armhf" ]]
+      then
+        EXTRA_ARGS=arch=armv7
+      fi
       docker run --rm --privileged multiarch/qemu-user-static:register --reset
-      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:${DOCKER_ARCH}-llvm-${LLVM_VERSION}" make verbose=1 config=${config} test-ci
+      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:${DOCKER_ARCH}-llvm-${LLVM_VERSION}" make ${EXTRA_ARGS} verbose=1 config=${config} test-ci
     fi
     # when RELEASE_CONFIG stops matching part of this case, move this logic
     if [[ "$TRAVIS_BRANCH" == "release" && "$TRAVIS_PULL_REQUEST" == "false" ]]

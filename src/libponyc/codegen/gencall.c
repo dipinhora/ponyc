@@ -454,7 +454,7 @@ static void set_method_external_interface(reach_type_t* t, const char* name,
       if(m->vtable_index == vtable_index)
       {
         compile_method_t* c_m = (compile_method_t*)m->c_method;
-        LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+        LLVMSetFunctionCallConv(c_m->func, c->callconv);
         LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
         break;
       }
@@ -509,7 +509,7 @@ LLVMValueRef gen_funptr(compile_t* c, ast_t* ast)
       case TK_ACTOR:
       {
         compile_method_t* c_m = (compile_method_t*)m->c_method;
-        LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+        LLVMSetFunctionCallConv(c_m->func, c->callconv);
         LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
         break;
       }

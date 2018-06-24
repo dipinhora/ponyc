@@ -299,23 +299,23 @@ static void make_prototype(compile_t* c, reach_type_t* t,
     // linkage.
     pony_assert(c_t->final_fn == NULL);
     c_t->final_fn = c_m->func;
-    LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+    LLVMSetFunctionCallConv(c_m->func, c->callconv);
     LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
   } else if(n->name == c->str__serialise_space) {
     c_t->custom_serialise_space_fn = c_m->func;
-    LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+    LLVMSetFunctionCallConv(c_m->func, c->callconv);
     LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
   } else if(n->name == c->str__serialise) {
     c_t->custom_serialise_fn = c_m->func;
   } else if(n->name == c->str__deserialise) {
     c_t->custom_deserialise_fn = c_m->func;
-    LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+    LLVMSetFunctionCallConv(c_m->func, c->callconv);
     LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
   }
 
   if(n->cap == TK_AT)
   {
-    LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+    LLVMSetFunctionCallConv(c_m->func, c->callconv);
     LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
     LLVMSetUnnamedAddr(c_m->func, false);
 
@@ -641,7 +641,7 @@ static void genfun_implicit_final_prototype(compile_t* c, reach_type_t* t,
   c_m->func = codegen_addfun(c, m->full_name, c_m->func_type, true);
 
   c_t->final_fn = c_m->func;
-  LLVMSetFunctionCallConv(c_m->func, LLVMCCallConv);
+  LLVMSetFunctionCallConv(c_m->func, c->callconv);
   LLVMSetLinkage(c_m->func, LLVMExternalLinkage);
 }
 
@@ -1005,7 +1005,7 @@ static void primitive_call(compile_t* c, const char* method)
     LLVMValueRef value = codegen_call(c, c_m->func, &c_t->instance, 1, true);
 
     if(c->str__final == method)
-      LLVMSetInstructionCallConv(value, LLVMCCallConv);
+      LLVMSetInstructionCallConv(value, c->callconv);
   }
 }
 

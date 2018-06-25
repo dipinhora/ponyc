@@ -22,10 +22,10 @@ then
       date
       download_vagrant
       date
-#      sudo vagrant ssh -c "mkdir ~/pony"
-#      sudo vagrant ssh -c "cp -r /vagrant/* ~/pony/"
-#      sudo vagrant ssh -c "cp -r /vagrant/.[abd-z]* ~/pony/"
-#      date
+      sudo vagrant ssh -c "ifconfig"
+      sudo vagrant ssh -c "cat /etc/resolv.conf"
+      sudo vagrant ssh -c "ping 8.8.8.8"
+      sudo vagrant ssh -c "ping www.google.com"
       sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .travis_script.bash"
       date
       sudo vagrant ssh -c "cd /vagrant && gmake config=${config} -j2 all"

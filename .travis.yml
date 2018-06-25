@@ -16,6 +16,7 @@ env:
 
 env:
   global:
+    - VAGRANT_ENV=
     - CROSS_ARCH=
     - RELEASE_CONFIG=no
     - CC1=gcc

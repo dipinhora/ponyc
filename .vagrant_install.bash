@@ -42,7 +42,7 @@ download_vagrant(){
   sudo dpkg -i vagrant_2.0.1_x86_64.deb
   rm vagrant_2.0.1_x86_64.deb
   travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
-  sudo travis_retry sudo apt-get install -y portmap nfs-kernel-server
+  travis_retry sudo apt-get install -y portmap nfs-kernel-server
   sudo modprobe nfs
   sudo modprobe nfsd
   cd .ci-vagrantfiles/${VAGRANT_ENV}

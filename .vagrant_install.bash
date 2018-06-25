@@ -34,7 +34,7 @@ apt_update_sources(){
 
 download_vagrant(){
   echo "Downloading and installing vagrant/libvirt..."
-  travis_retry apt_update_sources
+  apt_update_sources
   travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
   sudo libvirtd --version
   sudo /etc/init.d/libvirt-bin restart

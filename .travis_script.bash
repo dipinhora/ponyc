@@ -2,7 +2,6 @@
 
 set -o errexit
 set -o nounset
-set -x
 
 # include install commands
 . .travis_install.bash
@@ -11,12 +10,49 @@ set -x
 
 case "${TRAVIS_OS_NAME}" in
   "linux")
+    # when running a vagrant build of ponyc
+    if [[ "${VAGRANT_ENV}" != "" ]]
+    then
+      # include vagrant install command
+      . .vagrant_install.bash
+
+      set -x
+
+      case "${VAGRANT_ENV}" in
+      
+        "freebsd11-x86_64")
+          date
+          download_vagrant
+          date
+          sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+          date
+          sudo vagrant ssh -c "cd /vagrant && gmake config=${config} -j2 all"
+          sudo vagrant ssh -c "cd /vagrant && gmake config=${config} test-ci"
+          date
+        ;;
+      
+        "freebsd11-x86_64-install")
+          travis_retry sudo pkg update
+          travis_retry sudo pkg install -y gmake
+          travis_retry sudo pkg install -y llvm39
+          travis_retry sudo pkg install -y pcre2
+          travis_retry sudo pkg install -y libunwind
+        ;;
+      
+        *)
+          echo "ERROR: An unrecognized vagrant environment was found! VAGRANT_ENV: ${VAGRANT_ENV}"
+          exit 1
+        ;;
+      
+      esac
+                                                                                                                            68,1          Bot
+      exit
+    fi
+
     # when running a cross build of ponyc
     if [[ "${CROSS_ARCH}" != "" ]]
     then
-      docker run --rm -u pony:2000 "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" "$CROSS_CC" --version
-      docker run --rm -u pony:2000 "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" "$CROSS_CC" -Q --help=target
-      docker run --rm -u pony:2000 "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" "$CROSS_CC" -Q --target-help
+      set -x
       # build and test for x86_64 first
       echo "Building and testing ponyc..."
       docker run --rm -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make config=${config} CC="$CC1" CXX="$CXX1" verbose=1 -j$(nproc) all
@@ -30,13 +66,7 @@ case "${TRAVIS_OS_NAME}" in
       # run tests for cross built stdlib using ponyc cross building support
       docker run --rm -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:cross-llvm-${LLVM_VERSION}-${DOCKER_ARCH}" make config=${config} verbose=1 test-cross-ci PONYPATH=/usr/cross/lib cross_triple="${CROSS_TRIPLE}" cross_cpu="${CROSS_TUNE}" cross_arch="${CROSS_ARCH}" cross_linker="${CROSS_LINKER}" QEMU_RUNNER="${QEMU_RUNNER:-}"
 
-#      EXTRA_ARGS=
-#      if [[ "${DOCKER_ARCH}" == "armhf" ]]
-#      then
-#        EXTRA_ARGS="arch=armv7 tune=arm7"
-#      fi
-#      docker run --rm --privileged multiarch/qemu-user-static:register --reset
-#      docker run -u pony:2000 -v $(pwd):/home/pony "dipinhora/ponyc-ci:${DOCKER_ARCH}-llvm-${LLVM_VERSION}" make ${EXTRA_ARGS} verbose=1 config=${config} test-ci
+      set +x
     fi
     # when RELEASE_CONFIG stops matching part of this case, move this logic
     if [[ "$TRAVIS_BRANCH" == "release" && "$TRAVIS_PULL_REQUEST" == "false" ]]

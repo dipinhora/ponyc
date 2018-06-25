@@ -8,52 +8,51 @@ set -o nounset
 # include various build commands
 . .travis_commands.bash
 
+# when running a vagrant build of ponyc
+if [[ "${VAGRANT_ENV}" != "" ]]
+then
+  # include vagrant install command
+  . .vagrant_install.bash
+
+  set -x
+
+  case "${VAGRANT_ENV}" in
+  
+    "freebsd11-x86_64")
+      date
+      download_vagrant
+      date
+#      sudo vagrant ssh -c "mkdir ~/pony"
+#      sudo vagrant ssh -c "cp -r /vagrant/* ~/pony/"
+#      sudo vagrant ssh -c "cp -r /vagrant/.[abd-z]* ~/pony/"
+#      date
+      sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .travis_script.bash"
+      date
+      sudo vagrant ssh -c "cd /vagrant && gmake config=${config} -j2 all"
+      sudo vagrant ssh -c "cd /vagrant && gmake config=${config} test-ci"
+      date
+    ;;
+  
+    "freebsd11-x86_64-install")
+      travis_retry sudo pkg update
+      travis_retry sudo pkg install -y gmake
+      travis_retry sudo pkg install -y llvm39
+      travis_retry sudo pkg install -y pcre2
+      travis_retry sudo pkg install -y libunwind
+    ;;
+  
+    *)
+      echo "ERROR: An unrecognized vagrant environment was found! VAGRANT_ENV: ${VAGRANT_ENV}"
+      exit 1
+    ;;
+  
+  esac
+                                                                                                                        68,1          Bot
+  exit
+fi
+
 case "${TRAVIS_OS_NAME}" in
   "linux")
-    # when running a vagrant build of ponyc
-    if [[ "${VAGRANT_ENV}" != "" ]]
-    then
-      # include vagrant install command
-      . .vagrant_install.bash
-
-      set -x
-
-      case "${VAGRANT_ENV}" in
-      
-        "freebsd11-x86_64")
-          date
-          download_vagrant
-          date
-          id
-          sudo vagrant ssh -c "mkdir ~/pony"
-          sudo vagrant ssh -c "cp -r /vagrant/* ~/pony/"
-          sudo vagrant ssh -c "cp -r /vagrant/.[abd-z]* ~/pony/"
-          date
-          sudo vagrant ssh -c "cd ~/pony && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
-          date
-          sudo vagrant ssh -c "cd ~/pony && gmake config=${config} -j2 all"
-          sudo vagrant ssh -c "cd ~/pony && gmake config=${config} test-ci"
-          date
-        ;;
-      
-        "freebsd11-x86_64-install")
-          travis_retry sudo pkg update
-          travis_retry sudo pkg install -y gmake
-          travis_retry sudo pkg install -y llvm39
-          travis_retry sudo pkg install -y pcre2
-          travis_retry sudo pkg install -y libunwind
-        ;;
-      
-        *)
-          echo "ERROR: An unrecognized vagrant environment was found! VAGRANT_ENV: ${VAGRANT_ENV}"
-          exit 1
-        ;;
-      
-      esac
-                                                                                                                            68,1          Bot
-      exit
-    fi
-
     # when running a cross build of ponyc
     if [[ "${CROSS_ARCH}" != "" ]]
     then

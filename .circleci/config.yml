@@ -559,8 +559,8 @@ workflows:
       - cross-llvm-401-release-armhf
       - cross-llvm-391-debug-armhf
       - cross-llvm-391-release-armhf
-      - cross-llvm-600-debug-aarch64
-      - cross-llvm-600-release-aarch64
+#      - cross-llvm-600-debug-aarch64
+#      - cross-llvm-600-release-aarch64
       - cross-llvm-501-debug-aarch64
       - cross-llvm-501-release-aarch64
       - cross-llvm-401-debug-aarch64

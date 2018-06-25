@@ -27,8 +27,10 @@ then
       sudo vagrant ssh -c "cat /usr/local/etc/pkg.conf"
       sudo vagrant ssh -c "ping -c 10 8.8.8.8"
       sudo vagrant ssh -c "ping -c 10 www.google.com"
+      sudo vagrant ssh -c "ls -la /var/db/pkg/"
       sudo vagrant ssh -c "sudo pkg -d update"
       sudo vagrant ssh -c "sudo pkg -d update"
+      sudo vagrant ssh -c "ls -la /var/db/pkg/"
       sudo vagrant ssh -c "sudo pkg -d install -y gmake"
       sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .travis_script.bash"
       date

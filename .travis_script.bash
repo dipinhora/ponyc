@@ -25,8 +25,9 @@ case "${TRAVIS_OS_NAME}" in
           download_vagrant
           date
           id
-          sudo vagrant ssh -c "sudo cp -r /vagrant ~/pony"
-          sudo vagrant ssh -c "sudo chown -R vagrant:vagrant ~/pony"
+          sudo vagrant ssh -c "mkdir ~/pony"
+          sudo vagrant ssh -c "cp -r /vagrant/* ~/pony/"
+          sudo vagrant ssh -c "cp -r /vagrant/.[abd-z]* ~/pony/"
           date
           sudo vagrant ssh -c "cd ~/pony && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
           date

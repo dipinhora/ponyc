@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 set -o errexit
 set -o nounset
@@ -24,10 +24,12 @@ case "${TRAVIS_OS_NAME}" in
           date
           download_vagrant
           date
-          sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+          sudo vagrant ssh -c "cp -r /vagrant /pony"
           date
-          sudo vagrant ssh -c "cd /vagrant && gmake config=${config} -j2 all"
-          sudo vagrant ssh -c "cd /vagrant && gmake config=${config} test-ci"
+          sudo vagrant ssh -c "cd /pony && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .vagrant_install.bash"
+          date
+          sudo vagrant ssh -c "cd /pony && gmake config=${config} -j2 all"
+          sudo vagrant ssh -c "cd /pony && gmake config=${config} test-ci"
           date
         ;;
       

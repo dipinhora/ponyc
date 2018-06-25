@@ -192,6 +192,17 @@ matrix:
 
   allow_failures:
 
+    # freebsd11
+    - os: linux
+      env:
+        - VAGRANT_ENV=freebsd11-x86_64
+        - config=debug
+
+    - os: linux
+      env:
+        - VAGRANT_ENV=freebsd11-x86_64
+        - config=release
+
     # i686
     - os: linux
       env:

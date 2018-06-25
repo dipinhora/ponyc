@@ -31,6 +31,7 @@ skip_commits:
     - release.bash
     - '**/*.md'
     - '**/*.txt'
+    - .vagrant_install.bash
 
 clone_folder: C:\projects\ponyc
 

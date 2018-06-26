@@ -35,8 +35,8 @@ ponyc-build-debs(){
   cp -r .packaging/deb debian
   cp LICENSE debian/copyright
 
-  build_deb stretch
-  build_deb buster
+#  build_deb stretch
+#  build_deb buster
   build_deb xenial
   build_deb artful
   build_deb bionic
@@ -50,7 +50,7 @@ ponyc-build-debs(){
   sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
   sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
   build_deb trusty
-  build_deb jessie
+#  build_deb jessie
 
   # restore original working directory
   popd

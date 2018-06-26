@@ -8,6 +8,54 @@ ponyc-test(){
   make CC="$CC1" CXX="$CXX1" test-ci
 }
 
+build_deb(){
+  deb_distro=$1
+  rm -f debian/changelog
+  dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --controlmaint --create "Release ${package_version}"
+  if [[ ("$deb_distro" == "trusty") || ("$deb_distro" == "jessie") ]]
+  then
+    EDITOR=/bin/true dpkg-source --commit . removepcredep
+  fi
+  debuild -us -uc -d
+
+  ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
+  mv bintray* ..
+}
+
+ponyc-build-debs(){
+  package_version=$(cat VERSION)
+
+  echo "Install debuild, dch, dput..."
+  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko
+
+  echo "Kicking off ponyc packaging for PPA..."
+  wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
+  tar -xvzf "ponyc_${package_version}.orig.tar.gz"
+  pushd "ponyc-${package_version}"
+  cp -r .packaging/deb debian
+  cp LICENSE debian/copyright
+
+  build_deb stretch
+  build_deb buster
+  build_deb xenial
+  build_deb artful
+  build_deb bionic
+  build_deb cosmic
+
+  # run trusty and jessie last because we will modify things to not rely on pcre2
+  # remove pcre dependency from package and tests
+  sed -i 's/, libpcre2-dev//g' debian/control
+  sed -i 's#use glob#//use glob#g' packages/stdlib/_test.pony
+  sed -i 's#glob.Main.make#None//glob.Main.make#g' packages/stdlib/_test.pony
+  sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
+  sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
+  build_deb trusty
+  build_deb jessie
+
+  # restore original working directory
+  popd
+}
+
 build_and_submit_deb_src(){
   deb_distro=$1
   rm -f debian/changelog

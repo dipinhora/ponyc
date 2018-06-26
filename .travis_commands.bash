@@ -11,7 +11,7 @@ ponyc-test(){
 build_deb(){
   deb_distro=$1
   rm -f debian/changelog
-  dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --controlmaint --create "Release ${package_version}"
+  dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --force-distribution --controlmaint --create "Release ${package_version}"
   if [[ ("$deb_distro" == "trusty") || ("$deb_distro" == "jessie") ]]
   then
     EDITOR=/bin/true dpkg-source --commit . removepcredep

@@ -17,14 +17,16 @@ build_deb(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
 
-  mk-sbuild "$deb_distro"
-  sbuild -d "${deb_distro}-amd64" --debbuildopts="-us -uc"
+  sg sbuild -c "mk-sbuild $deb_distro"
+  sg sbuild -c "sbuild -d ${deb_distro}-amd64 --debbuildopts='-us -uc'"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   mv bintray* ..
 }
 
 ponyc-build-debs(){
+  set -x
+
   package_version=$(cat VERSION)
 
   echo "Install debuild, dch, dput..."
@@ -38,7 +40,6 @@ ponyc-build-debs(){
   cp LICENSE debian/copyright
 
   sudo adduser $USER sbuild
-  sg sbuild
 
 #  build_deb stretch
 #  build_deb buster
@@ -59,6 +60,8 @@ ponyc-build-debs(){
 
   # restore original working directory
   popd
+
+  set +x
 }
 
 build_and_submit_deb_src(){

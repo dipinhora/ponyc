@@ -17,8 +17,10 @@ build_deb(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
 
+  debuild -S -us -uc
+
   sg sbuild -c "mk-sbuild $deb_distro"
-  sg sbuild -c "sbuild -d ${deb_distro}-amd64 --debbuildopts='-us -uc'"
+  sg sbuild -c "sbuild -d ${deb_distro}-amd64 --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}_source.dsc"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   mv bintray* ..
@@ -31,6 +33,17 @@ ponyc-build-debs(){
 
   echo "Install debuild, dch, dput..."
   sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
+
+#  echo "Decrypting and Importing gpg keys..."
+  # Disable shellcheck error SC2154 for uninitialized variables as these get set by travis-ci for us.
+  # See the following for error details: https://github.com/koalaman/shellcheck/wiki/SC2154
+  # shellcheck disable=SC2154
+#  openssl aes-256-cbc -K "$encrypted_9035f6d310e4_key" -iv "$encrypted_9035f6d310e4_iv" -in .securefiles.tar.enc -out .securefiles.tar -d
+#  tar -xvf .securefiles.tar
+#  gpg --import ponylang-secret-gpg.key
+#  gpg --import-ownertrust ponylang-ownertrust-gpg.txt
+#  mv sshkey ~/sshkey
+#  sudo chmod 600 ~/sshkey
 
   echo "Building off ponyc debs for bintray..."
   wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"

@@ -20,7 +20,7 @@ build_deb(){
   debuild -S -us -uc
 
   sg sbuild -c "mk-sbuild $deb_distro"
-  sg sbuild -c "sbuild -d ${deb_distro}-amd64 --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
+  sg sbuild -c "sbuild -d ${deb_distro}-amd64 --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   mv bintray* ..

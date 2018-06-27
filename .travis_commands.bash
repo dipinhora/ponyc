@@ -16,7 +16,9 @@ build_deb(){
   then
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
-  debuild -us -uc -d
+
+  mk-sbuild "$deb_distro"
+  sbuild -d "${deb_distro}-amd64" --debbuildopts="-us -uc"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   mv bintray* ..
@@ -26,14 +28,17 @@ ponyc-build-debs(){
   package_version=$(cat VERSION)
 
   echo "Install debuild, dch, dput..."
-  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko
+  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
 
-  echo "Kicking off ponyc packaging for PPA..."
+  echo "Building off ponyc debs for bintray..."
   wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
   tar -xvzf "ponyc_${package_version}.orig.tar.gz"
   pushd "ponyc-${package_version}"
   cp -r .packaging/deb debian
   cp LICENSE debian/copyright
+
+  sudo adduser $USER sbuild
+  sg sbuild
 
 #  build_deb stretch
 #  build_deb buster

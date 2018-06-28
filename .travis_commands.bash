@@ -32,7 +32,7 @@ ponyc-build-debs(){
   package_version=$(cat VERSION)
 
   echo "Install debuild, dch, dput..."
-#  sudo add-apt-repository ppa:dipinhora/ponylang -y
+  sudo add-apt-repository ppa:dipinhora/ponylang -y
   sudo apt-get update
   sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
 

@@ -34,7 +34,7 @@ ponyc-build-debs(){
   echo "Install debuild, dch, dput..."
   sudo add-apt-repository ppa:dipinhora/ponylang -y
   sudo apt-get update
-  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
+  sudo apt-get install -y devscripts build-essential libdpkg-perl=1.18.4 lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
 
 #  echo "Decrypting and Importing gpg keys..."
   # Disable shellcheck error SC2154 for uninitialized variables as these get set by travis-ci for us.

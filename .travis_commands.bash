@@ -20,7 +20,7 @@ build_deb(){
   debuild -S -us -uc
 
   sg sbuild -c "mk-sbuild $deb_distro"
-  sg sbuild -c "sbuild -d ${deb_distro}-amd64 --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
+  sg sbuild -c "sbuild --dist=${deb_distro} --arch=amd64 --debug --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   mv bintray* ..
@@ -32,7 +32,7 @@ ponyc-build-debs(){
   package_version=$(cat VERSION)
 
   echo "Install debuild, dch, dput..."
-  sudo add-apt-repository ppa:dipinhora/ponylang -y
+#  sudo add-apt-repository ppa:dipinhora/ponylang -y
   sudo apt-get update
   sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
 

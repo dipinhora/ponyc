@@ -17,10 +17,10 @@ build_deb(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
 
-  debuild -S -us -uc
+  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i && debuild -S -us -uc'
 
-  sg sbuild -c "mk-sbuild $deb_distro"
-  sg sbuild -c "sbuild --dist=${deb_distro} --arch=amd64 --verbose --debug --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
+#  sg sbuild -c "mk-sbuild $deb_distro"
+#  sg sbuild -c "sbuild --dist=${deb_distro} --arch=amd64 --verbose --debug --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   mv bintray* ..
@@ -31,10 +31,8 @@ ponyc-build-debs(){
 
   package_version=$(cat VERSION)
 
-  echo "Install debuild, dch, dput..."
-  sudo add-apt-repository ppa:dipinhora/ponylang -y
-  sudo apt-get update
-  sudo apt-get install -y devscripts build-essential libdpkg-perl=1.18.4 lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
+#  echo "Install debuild, dch, dput..."
+#  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
 
 #  echo "Decrypting and Importing gpg keys..."
   # Disable shellcheck error SC2154 for uninitialized variables as these get set by travis-ci for us.
@@ -54,14 +52,14 @@ ponyc-build-debs(){
   cp -r .packaging/deb debian
   cp LICENSE debian/copyright
 
-  sudo adduser $USER sbuild
+#  sudo adduser $USER sbuild
 
-#  build_deb stretch
-#  build_deb buster
   build_deb xenial
   build_deb artful
   build_deb bionic
   build_deb cosmic
+  build_deb stretch
+  build_deb buster
 
   # run trusty and jessie last because we will modify things to not rely on pcre2
   # remove pcre dependency from package and tests
@@ -71,7 +69,7 @@ ponyc-build-debs(){
   sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
   sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
   build_deb trusty
-#  build_deb jessie
+  build_deb jessie
 
   # restore original working directory
   popd

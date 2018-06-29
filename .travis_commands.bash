@@ -70,7 +70,7 @@ ponyc-build-debs(){
   sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
   sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
   build_deb trusty
-  build_deb jessie
+#  build_deb jessie
 
   # restore original working directory
   popd

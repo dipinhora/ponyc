@@ -17,9 +17,7 @@ build_deb(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
  
-  sudo make clean
-
-  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -us -uc'
+  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && make clean && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -us -uc'
 
 #  sg sbuild -c "mk-sbuild $deb_distro"
 #  sg sbuild -c "sbuild --dist=${deb_distro} --arch=amd64 --verbose --debug --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"

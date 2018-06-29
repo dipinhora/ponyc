@@ -21,6 +21,13 @@ build_deb(){
   dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --force-distribution --controlmaint --create "Release ${package_version}"
   if [[ ("$deb_distro" == "trusty") || ("$deb_distro" == "jessie") ]]
   then
+    # run trusty and jessie last because we will modify things to not rely on pcre2
+    # remove pcre dependency from package and tests
+    sed -i 's/, libpcre2-dev//g' debian/control
+    sed -i 's#use glob#//use glob#g' packages/stdlib/_test.pony
+    sed -i 's#glob.Main.make#None//glob.Main.make#g' packages/stdlib/_test.pony
+    sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
+    sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
  
@@ -36,7 +43,7 @@ build_deb(){
   sudo rm -rf "ponyc-${package_version}"
 }
 
-ponyc-build-debs(){
+ponyc-build-debs-ubuntu(){
   set -x
 
   package_version=$(cat VERSION)
@@ -50,17 +57,25 @@ ponyc-build-debs(){
   build_deb xenial
   build_deb artful
   build_deb bionic
+  build_deb trusty
+
+  ls -la
+  set +x
+}
+
+ponyc-build-debs-debian(){
+  set -x
+
+  package_version=$(cat VERSION)
+
+  echo "Install devscripts..."
+  sudo apt-get install -y devscripts
+
+  echo "Building off ponyc debs for bintray..."
+  wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
+
   build_deb stretch
   build_deb buster
-
-  # run trusty and jessie last because we will modify things to not rely on pcre2
-  # remove pcre dependency from package and tests
-  sed -i 's/, libpcre2-dev//g' debian/control
-  sed -i 's#use glob#//use glob#g' packages/stdlib/_test.pony
-  sed -i 's#glob.Main.make#None//glob.Main.make#g' packages/stdlib/_test.pony
-  sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
-  sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
-  build_deb trusty
   build_deb jessie
 
   ls -la

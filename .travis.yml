@@ -28,6 +28,7 @@ matrix:
             - g++-6
       env:
         - RELEASE_CONFIG=yes
+        - RELEASE_DEBS=
         - LLVM_VERSION="3.9.1"
         - LLVM_CONFIG="llvm-config-3.9"
         - config=release
@@ -35,6 +36,28 @@ matrix:
         - CXX1=g++
         - ICC1=gcc-6
         - ICXX1=g++-6
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - RELEASE_CONFIG=yes
+        - RELEASE_DEBS=ubuntu
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - RELEASE_CONFIG=yes
+        - RELEASE_DEBS=debian
 
     - os: osx
 

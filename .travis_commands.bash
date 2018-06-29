@@ -76,6 +76,7 @@ ponyc-build-debs(){
   # restore original working directory
   popd
 
+  ls -la
   set +x
 }
 

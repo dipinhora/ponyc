@@ -10,6 +10,13 @@ ponyc-test(){
 
 build_deb(){
   deb_distro=$1
+  tar -xzf "ponyc_${package_version}.orig.tar.gz"
+
+  pushd "ponyc-${package_version}"
+
+  cp -r .packaging/deb debian
+  cp LICENSE debian/copyright
+
   rm -f debian/changelog
   dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --force-distribution --controlmaint --create "Release ${package_version}"
   if [[ ("$deb_distro" == "trusty") || ("$deb_distro" == "jessie") ]]
@@ -17,14 +24,16 @@ build_deb(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
  
-  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && make clean LLVM_CONFIG=/bin/true && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -us -uc'
-
-#  sg sbuild -c "mk-sbuild $deb_distro"
-#  sg sbuild -c "sbuild --dist=${deb_distro} --arch=amd64 --verbose --debug --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
+  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -us -uc'
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
-  sudo rm ../ponyc_${package_version}-0ppa1~${deb_distro}.debian.tar*
+  sudo rm "../ponyc_${package_version}-0ppa1~${deb_distro}.debian.tar"*
   mv bintray* ..
+
+  # restore original working directory
+  popd
+
+  sudo rm -rf "ponyc-${package_version}"
 }
 
 ponyc-build-debs(){
@@ -32,34 +41,15 @@ ponyc-build-debs(){
 
   package_version=$(cat VERSION)
 
-#  echo "Install debuild, dch, dput..."
-#  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
-  sudo apt-get install -y devscripts debhelper
-
-#  echo "Decrypting and Importing gpg keys..."
-  # Disable shellcheck error SC2154 for uninitialized variables as these get set by travis-ci for us.
-  # See the following for error details: https://github.com/koalaman/shellcheck/wiki/SC2154
-  # shellcheck disable=SC2154
-#  openssl aes-256-cbc -K "$encrypted_9035f6d310e4_key" -iv "$encrypted_9035f6d310e4_iv" -in .securefiles.tar.enc -out .securefiles.tar -d
-#  tar -xvf .securefiles.tar
-#  gpg --import ponylang-secret-gpg.key
-#  gpg --import-ownertrust ponylang-ownertrust-gpg.txt
-#  mv sshkey ~/sshkey
-#  sudo chmod 600 ~/sshkey
+  echo "Install devscripts..."
+  sudo apt-get install -y devscripts
 
   echo "Building off ponyc debs for bintray..."
   wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
-  tar -xvzf "ponyc_${package_version}.orig.tar.gz"
-  pushd "ponyc-${package_version}"
-  cp -r .packaging/deb debian
-  cp LICENSE debian/copyright
-
-#  sudo adduser $USER sbuild
 
   build_deb xenial
   build_deb artful
   build_deb bionic
-#  build_deb cosmic
   build_deb stretch
   build_deb buster
 
@@ -71,10 +61,7 @@ ponyc-build-debs(){
   sed -i 's#use regex#//use regex#g' packages/stdlib/_test.pony
   sed -i 's#regex.Main.make#//regex.Main.make#g' packages/stdlib/_test.pony
   build_deb trusty
-#  build_deb jessie
-
-  # restore original working directory
-  popd
+  build_deb jessie
 
   ls -la
   set +x

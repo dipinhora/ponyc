@@ -58,7 +58,7 @@ ponyc-build-debs(){
   build_deb xenial
   build_deb artful
   build_deb bionic
-  build_deb cosmic
+#  build_deb cosmic
   build_deb stretch
   build_deb buster
 

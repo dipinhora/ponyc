@@ -23,7 +23,7 @@ build_deb(){
 #  sg sbuild -c "sbuild --dist=${deb_distro} --arch=amd64 --verbose --debug --nolog --debbuildopts='-us -uc' ../ponyc_${package_version}-0ppa1~${deb_distro}.dsc"
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
-  rm "../ponyc_${package_version}-0ppa1~${deb_distro}.debian.tar.xz"
+  sudo rm "../ponyc_${package_version}-0ppa1~${deb_distro}.debian.tar.xz"
   mv bintray* ..
 }
 

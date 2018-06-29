@@ -22,7 +22,7 @@ ifeq ($(DEB_HOST_ARCH),amd64)
 ifeq ($(DEB_DISTRIBUTION),trusty)
 	MAKE_OPTIONS += arch=x86-64 tune=generic
 else
-ifeq ($(DEB_DISTRIBUTION),trusty)
+ifeq ($(DEB_DISTRIBUTION),jessie)
 	MAKE_OPTIONS += arch=x86-64 tune=generic use="llvm_link_static"
 else
 	MAKE_OPTIONS += arch=x86-64 tune=intel

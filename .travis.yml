@@ -38,23 +38,11 @@ matrix:
         - ICXX1=g++-6
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - RELEASE_CONFIG=yes
         - RELEASE_DEBS=ubuntu
 
     - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
       env:
         - RELEASE_CONFIG=yes
         - RELEASE_DEBS=debian

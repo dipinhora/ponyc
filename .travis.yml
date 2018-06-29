@@ -85,7 +85,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_trusty.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_trusty.json
     skip_cleanup: true
     on:
       branch: bintray_deb
@@ -95,7 +95,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_xenial.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_xenial.json
     skip_cleanup: true
     on:
       branch: bintray_deb
@@ -105,7 +105,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_artful.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_artful.json
     skip_cleanup: true
     on:
       branch: bintray_deb
@@ -115,7 +115,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_bionic.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_bionic.json
     skip_cleanup: true
     on:
       branch: bintray_deb
@@ -125,7 +125,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_cosmic.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_cosmic.json
     skip_cleanup: true
     on:
       branch: bintray_deb
@@ -135,7 +135,7 @@ deploy:
 
 #  - provider: bintray
 #    user: dipinhora
-#    file: /home/travis/build/ponylang/ponyc/bintray_debian_jessie.json
+#    file: /home/travis/build/dipinhora/ponyc/bintray_debian_jessie.json
 #    skip_cleanup: true
 #    on:
 #      branch: bintray_deb
@@ -145,7 +145,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_stretch.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_stretch.json
     skip_cleanup: true
     on:
       branch: bintray_deb
@@ -155,7 +155,7 @@ deploy:
 
   - provider: bintray
     user: dipinhora
-    file: /home/travis/build/ponylang/ponyc/bintray_debian_buster.json
+    file: /home/travis/build/dipinhora/ponyc/bintray_debian_buster.json
     skip_cleanup: true
     on:
       branch: bintray_deb

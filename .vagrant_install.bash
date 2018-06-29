@@ -39,9 +39,10 @@ download_vagrant(){
   travis_retry sudo apt-get install libvirt-bin libvirt-dev qemu-utils qemu -y
   sudo /etc/init.d/libvirt-bin restart
   sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
-  sudo virsh pool-autostart default
-  sudo virsh pool-build default
-  sudo virsh pool-start default
+  sudo virsh pool-autostart default || true
+  sudo virsh pool-build default || true
+  sudo virsh pool-start default || true
+  sudo /etc/init.d/libvirt-bin restart
   sudo libvirtd --version
   travis_retry wget "https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb"
   sudo dpkg -i vagrant_2.1.2_x86_64.deb

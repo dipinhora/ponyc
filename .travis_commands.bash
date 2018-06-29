@@ -33,6 +33,7 @@ ponyc-build-debs(){
 
 #  echo "Install debuild, dch, dput..."
 #  sudo apt-get install -y devscripts build-essential lintian debhelper python-paramiko sbuild ubuntu-dev-tools piuparts
+  sudo apt-get install -y devscripts debhelper
 
 #  echo "Decrypting and Importing gpg keys..."
   # Disable shellcheck error SC2154 for uninitialized variables as these get set by travis-ci for us.

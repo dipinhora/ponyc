@@ -49,6 +49,7 @@ ponyc-build-debs-ubuntu(){
   package_version=$(cat VERSION)
 
   echo "Install devscripts..."
+  sudo apt-get update
   sudo apt-get install -y devscripts
 
   echo "Building off ponyc debs for bintray..."
@@ -69,6 +70,7 @@ ponyc-build-debs-debian(){
   package_version=$(cat VERSION)
 
   echo "Install devscripts..."
+  sudo apt-get update
   sudo apt-get install -y devscripts
 
   echo "Building off ponyc debs for bintray..."

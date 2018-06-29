@@ -34,14 +34,19 @@ apt_update_sources(){
 
 download_vagrant(){
   echo "Downloading and installing vagrant/libvirt..."
+  sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
   apt_update_sources
-  travis_retry sudo apt-get install -y libvirt-bin libvirt-dev qemu-utils qemu
-  sudo libvirtd --version
+  travis_retry sudo apt-get install libvirt-bin libvirt-dev qemu-utils qemu -y
   sudo /etc/init.d/libvirt-bin restart
-  travis_retry wget "https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb"
-  sudo dpkg -i vagrant_2.0.1_x86_64.deb
-  rm vagrant_2.0.1_x86_64.deb
-  travis_retry vagrant plugin install vagrant-libvirt --plugin-version 0.0.35
+  sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images
+  sudo virsh pool-autostart default
+  sudo virsh pool-build default
+  sudo virsh pool-start default
+  sudo libvirtd --version
+  travis_retry wget "https://releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb"
+  sudo dpkg -i vagrant_2.1.2_x86_64.deb
+  rm vagrant_2.1.2_x86_64.deb
+  travis_retry vagrant plugin install vagrant-libvirt
   cd .ci-vagrantfiles/${VAGRANT_ENV}
   travis_retry sudo vagrant up --provider=libvirt
 }

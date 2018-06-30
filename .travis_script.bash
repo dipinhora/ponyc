@@ -23,8 +23,6 @@ then
       download_vagrant
       ps aux
       qemu-system-x86_64 --version
-      sudo vagrant ssh -c "which llvm-config"
-      sudo vagrant ssh -c "which llvm-config38"
       date
       sudo vagrant ssh -c "cd /vagrant && LLVM_CONFIG=llvm-config38 gmake config=${config} -j2 all"
       date

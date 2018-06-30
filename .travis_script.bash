@@ -28,7 +28,7 @@ then
       sudo vagrant ssh -c "cat /etc/resolv.conf"
       sudo vagrant ssh -c "cat /usr/local/etc/pkg.conf"
       sudo vagrant ssh -c "ping -c 10 8.8.8.8"
-      sudo vagrant ssh -c "ping -c 10 pkg.freebsd.org"
+      sudo vagrant ssh -c "ping -c 10 pkg.FREEBSD.org"
       sudo vagrant ssh -c "sudo ls -la /var/db/pkg/"
       sudo vagrant ssh -c "sudo ls -la /var/backups/"
       sudo vagrant ssh -c "sudo pkg -d update -f"

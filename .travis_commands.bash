@@ -42,6 +42,8 @@ build_deb(){
   # restore original working directory
   popd
 
+  mv "ponyc_${package_version}_amd64.deb" "ponyc_${package_version}_${deb_distro}_amd64.deb"
+
   sudo rm -rf "ponyc-${package_version}"
 }
 

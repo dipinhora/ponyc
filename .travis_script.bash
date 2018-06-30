@@ -24,31 +24,10 @@ then
       ps aux
       qemu-system-x86_64 --version
       date
-      sudo vagrant ssh -c "ifconfig"
-      sudo vagrant ssh -c "cat /etc/resolv.conf"
-      sudo vagrant ssh -c "cat /usr/local/etc/pkg.conf"
-      sudo vagrant ssh -c "ping -c 10 8.8.8.8"
-      sudo vagrant ssh -c "ping -c 10 pkg.FREEBSD.org"
-      sudo vagrant ssh -c "sudo ls -la /var/db/pkg/"
-      sudo vagrant ssh -c "sudo ls -la /var/backups/"
-      sudo vagrant ssh -c "sudo pkg -d -d -d -d -d update -f"
-      sudo vagrant ssh -c "sudo pkg -d update -f"
-      sudo vagrant ssh -c "sudo ls -la /var/db/pkg/"
-      sudo vagrant ssh -c "sudo ls -la /var/backups/"
-      sudo vagrant ssh -c "sudo pkg -d install -y gmake"
-      sudo vagrant ssh -c "cd /vagrant && env VAGRANT_ENV=${VAGRANT_ENV}-install bash .travis_script.bash"
-      date
       sudo vagrant ssh -c "cd /vagrant && gmake config=${config} -j2 all"
+      date
       sudo vagrant ssh -c "cd /vagrant && gmake config=${config} test-ci"
       date
-    ;;
-  
-    "freebsd11-x86_64-install")
-      travis_retry sudo pkg update -f
-      travis_retry sudo pkg install -y gmake
-      travis_retry sudo pkg install -y llvm39
-      travis_retry sudo pkg install -y pcre2
-      travis_retry sudo pkg install -y libunwind
     ;;
   
     *)

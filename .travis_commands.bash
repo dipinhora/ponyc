@@ -18,7 +18,8 @@ build_deb(){
   cp LICENSE debian/copyright
 
   rm -f debian/changelog
-  dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --force-distribution --controlmaint --create "Release ${package_version}"
+#  dch --package ponyc -v "${package_version}-0ppa1~${deb_distro}" -D "${deb_distro}" --force-distribution --controlmaint --create "Release ${package_version}"
+  dch --package ponyc -v "${package_version}" -D "${deb_distro}" --force-distribution --controlmaint --create "Release ${package_version}"
   if [[ ("$deb_distro" == "trusty") || ("$deb_distro" == "jessie") ]]
   then
     # run trusty and jessie last because we will modify things to not rely on pcre2
@@ -34,7 +35,8 @@ build_deb(){
   sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -us -uc'
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
-  sudo rm "../ponyc_${package_version}-0ppa1~${deb_distro}.debian.tar"*
+  ls -l ..
+#  sudo rm "../ponyc_${package_version}-0ppa1~${deb_distro}.debian.tar"*
   mv bintray* ..
 
   # restore original working directory

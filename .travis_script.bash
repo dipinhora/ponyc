@@ -21,6 +21,7 @@ then
     "freebsd11-x86_64")
       date
       download_vagrant
+      ps aux
       date
       sudo vagrant ssh -c "ifconfig"
       sudo vagrant ssh -c "cat /etc/resolv.conf"

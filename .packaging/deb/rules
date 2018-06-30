@@ -38,9 +38,9 @@ ifeq ($(DEB_HOST_ARCH),armhf)
 	MAKE_OPTIONS += arch=armv7 tune=arm7
 endif
 
-# trusty, xenial and artful are on openssl 1.0
+# jessie, trusty, xenial and artful are on openssl 1.0
 # artful and newer require PIC
-ifeq (,$(filter $(DEB_DISTRIBUTION),trusty xenial artful))
+ifeq (,$(filter $(DEB_DISTRIBUTION),jessie trusty xenial artful))
 	MAKE_OPTIONS += default_ssl='openssl_1.1.0' default_pic=true
 else
 ifeq ($(DEB_DISTRIBUTION),artful)

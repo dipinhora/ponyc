@@ -32,7 +32,7 @@ build_deb(){
     EDITOR=/bin/true dpkg-source --commit . removepcredep
   fi
  
-  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -us -uc'
+  sudo docker run -v "$(pwd)/..:/home/pony" --rm --user root "dipinhora/ponyc-ci:${deb_distro}-deb-builder" sh -c 'cd ponyc* && mk-build-deps -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends -y" -i -r && debuild -b -us -uc'
 
   ../.bintray_deb.bash "$package_version" ponyc "$deb_distro"
   ls -l ..

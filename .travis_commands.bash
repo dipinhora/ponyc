@@ -80,8 +80,8 @@ ponyc-build-debs-debian(){
   echo "Building off ponyc debs for bintray..."
   wget "https://github.com/dipinhora/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
 
-  build_deb stretch
   build_deb buster
+  build_deb stretch
   build_deb jessie
 
   ls -la

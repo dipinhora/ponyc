@@ -35,7 +35,7 @@ apt_update_sources(){
 download_vagrant(){
   echo "Downloading and installing vagrant/libvirt..."
   sudo add-apt-repository ppa:linuxsimba/libvirt-udp-tunnel -y
-  apt_update_sources
+  sudo apt-get update
   travis_retry sudo apt-get install libvirt-bin libvirt-dev qemu-utils qemu -y
   sudo /etc/init.d/libvirt-bin restart
   sudo virsh pool-define-as --name default --type dir --target /var/lib/libvirt/images

@@ -55,6 +55,7 @@ endif
 override_dh_auto_build:
 	env
 	uname -m
+	echo $(DEB_DISTRIBUTION)
 	dh_auto_build -- $(MAKE_OPTIONS)
 
 override_dh_auto_install:

@@ -53,7 +53,7 @@ ponyc-build-debs-ubuntu(){
   sudo apt-get install -y devscripts
 
   echo "Building off ponyc debs for bintray..."
-  wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
+  wget "https://github.com/dipinhora/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
 
   build_deb xenial
   build_deb artful
@@ -74,7 +74,7 @@ ponyc-build-debs-debian(){
   sudo apt-get install -y devscripts
 
   echo "Building off ponyc debs for bintray..."
-  wget "https://github.com/ponylang/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
+  wget "https://github.com/dipinhora/ponyc/archive/${package_version}.tar.gz" -O "ponyc_${package_version}.orig.tar.gz"
 
   build_deb stretch
   build_deb buster

@@ -31,7 +31,7 @@ case "$REPO_TYPE" in
     FILES="\"files\":
         [
           {
-            \"includePattern\": \"/home/travis/build/dipinhora/ponyc/(.*${DISTRO}.*.deb)\", \"uploadPattern\": \"pool/main/p/ponyc/\$1\",
+            \"includePattern\": \"/home/travis/build/dipinhora/ponyc/(ponyc_.*${DISTRO}.*.deb)\", \"uploadPattern\": \"pool/main/p/ponyc/\$1\",
             \"matrixParams\": {
             \"deb_distribution\": \"${DISTRO}\",
             \"deb_component\": \"ponylang\",

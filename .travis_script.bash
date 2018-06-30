@@ -22,6 +22,7 @@ then
       date
       download_vagrant
       ps aux
+      qemu-system-x86_64 --version
       date
       sudo vagrant ssh -c "ifconfig"
       sudo vagrant ssh -c "cat /etc/resolv.conf"

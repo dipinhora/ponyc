@@ -67,7 +67,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "-z $RELEASE_DEBS"
     key:
@@ -78,7 +78,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_rpm.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "-z $RELEASE_DEBS"
     key:
@@ -89,7 +89,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_source.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "-z $RELEASE_DEBS"
     key:
@@ -100,7 +100,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_trusty.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == ubuntu"
 
@@ -112,7 +112,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_xenial.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == ubuntu"
 
@@ -124,7 +124,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_artful.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == ubuntu"
 
@@ -136,7 +136,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_bionic.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == ubuntu"
 
@@ -148,7 +148,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_jessie.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == debian"
 
@@ -160,7 +160,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_stretch.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == debian"
 
@@ -172,7 +172,7 @@ deploy:
     file: /home/travis/build/ponylang/ponyc/bintray_debian_buster.json
     skip_cleanup: true
     on:
-      branch: release
+      branch: blah
       condition: "$RELEASE_CONFIG == yes"
       condition: "$RELEASE_DEBS == debian"
 

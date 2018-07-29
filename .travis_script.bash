@@ -22,23 +22,27 @@ then
       download_vagrant
       qemu-system-x86_64 --version
       date
-      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/ponyc --version"
-      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/libponyc.tests"
+      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/ponyc --version" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/libponyc.tests" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/libponyrt.tests"
+      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/libponyrt.tests" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} ./build/${config}/ponyc -d -s --checktree --verify packages/stdlib"
-      sudo vagrant ssh -c "cd /vagrant && ./stdlib --sequential && rm ./stdlib"
+      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} ./build/${config}/ponyc -d -s --checktree --verify packages/stdlib" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && ./stdlib --sequential && rm ./stdlib" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} ./build/${config}/ponyc --checktree --verify packages/stdlib"
-      sudo vagrant ssh -c "cd /vagrant && ./stdlib --sequential && rm ./stdlib"
+      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} ./build/${config}/ponyc --checktree --verify packages/stdlib" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && ./stdlib --sequential && rm ./stdlib" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} ./build/${config}/ponyc -d -s --checktree -o {} {}"
+      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} ./build/${config}/ponyc -d -s --checktree -o {} {}" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/ponyc --antlr > pony.g.new"
-      sudo vagrant ssh -c "cd /vagrant && diff pony.g pony.g.new"
-      sudo vagrant ssh -c "cd /vagrant && rm pony.g.new"
+      sudo vagrant ssh -c "cd /vagrant && ./build/${config}/ponyc --antlr > pony.g.new" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && diff pony.g pony.g.new" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && rm pony.g.new" || ERROR_ENCOUNTERED=true
       date
+      if [[ "$ERROR_ENCOUNTERED" != "" ]]; then
+        echo "ERROR: There was an error running one of the tests!"
+        exit 1
+      fi
     ;;
 
     *)

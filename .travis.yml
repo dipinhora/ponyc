@@ -4,6 +4,7 @@ branches:
   only:
     - master
     - release
+    - fbsd-test
 
 dist: trusty
 sudo: required

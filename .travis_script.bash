@@ -16,6 +16,7 @@ then
   case "${VAGRANT_ENV}" in
 
     "freebsd11-x86_64")
+      while sleep 540; do echo "=====[ $SECONDS seconds still running ]====="; done &
       date
       docker run --rm -u pony:2000 -v $(pwd):/home/pony ponylang/ponyc-ci:cross-llvm-3.9.1-freebsd11-x86_64 make arch=x86-64 config=${config} verbose=1 CC=clang CXX=clang++ CFLAGS="-target x86_64-unknown-freebsd11.1 --sysroot=/opt/cross-freebsd-11/ -isystem /opt/cross-freebsd-11/usr/local/llvm39/include/" CXXFLAGS="-target x86_64-unknown-freebsd11.1 --sysroot=/opt/cross-freebsd-11/ -isystem /opt/cross-freebsd-11/usr/local/llvm39/include/" LDFLAGS="-target x86_64-unknown-freebsd11.1 --sysroot=/opt/cross-freebsd-11/ -isystem /opt/cross-freebsd-11/usr/local/llvm39/include/ -L/opt/cross-freebsd-11/usr/local/llvm39/lib" OSTYPE=bsd use="llvm_link_static" CROSS_SYSROOT=/opt/cross-freebsd-11 -j$(nproc)
       date
@@ -39,6 +40,7 @@ then
       sudo vagrant ssh -c "cd /vagrant && diff pony.g pony.g.new" || ERROR_ENCOUNTERED=true
       sudo vagrant ssh -c "cd /vagrant && rm pony.g.new" || ERROR_ENCOUNTERED=true
       date
+      kill %1
       if [[ "$ERROR_ENCOUNTERED" != "" ]]; then
         echo "ERROR: There was an error running one of the tests!"
         exit 1

@@ -27,13 +27,13 @@ then
       date
       sudo vagrant ssh -c "cd /vagrant && ./build/${config}/libponyrt.tests" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} ./build/${config}/ponyc -d -s --checktree --verify packages/stdlib" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH:-} ./build/${config}/ponyc -d -s --checktree --verify packages/stdlib" || ERROR_ENCOUNTERED=true
       sudo vagrant ssh -c "cd /vagrant && ./stdlib --sequential && rm ./stdlib" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} ./build/${config}/ponyc --checktree --verify packages/stdlib" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH:-} ./build/${config}/ponyc --checktree --verify packages/stdlib" || ERROR_ENCOUNTERED=true
       sudo vagrant ssh -c "cd /vagrant && ./stdlib --sequential && rm ./stdlib" || ERROR_ENCOUNTERED=true
       date
-      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH} find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} ./build/${config}/ponyc -d -s --checktree -o {} {}" || ERROR_ENCOUNTERED=true
+      sudo vagrant ssh -c "cd /vagrant && PONYPATH=.:${PONYPATH:-} find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} ./build/${config}/ponyc -d -s --checktree -o {} {}" || ERROR_ENCOUNTERED=true
       date
       sudo vagrant ssh -c "cd /vagrant && ./build/${config}/ponyc --antlr > pony.g.new" || ERROR_ENCOUNTERED=true
       sudo vagrant ssh -c "cd /vagrant && diff pony.g pony.g.new" || ERROR_ENCOUNTERED=true

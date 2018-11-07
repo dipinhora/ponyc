@@ -3,11 +3,8 @@
 
 #include <platform.h>
 
-static const unsigned char the_key[16] = {
-  0xFE, 0x09, 0xD3, 0x22, 0x6B, 0x9C, 0x10, 0x8A,
-  0xE1, 0x35, 0x72, 0xB5, 0xCC, 0x3F, 0x92, 0x9F
-};
-
+// Use the MD5 of the current pony version for the key
+static const unsigned char the_key[16] = { PONY_VERSION_FORMATTED_MD5 };
 
 #ifdef PLATFORM_IS_ILP32
 

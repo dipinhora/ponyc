@@ -97,7 +97,7 @@ struct reach_type_t
   reach_method_names_t methods;
   reach_method_t* bare_method;
   reach_type_cache_t subtypes;
-  uint32_t type_id;
+  uint64_t type_id;
   uint32_t vtable_size;
   bool can_be_boxed;
   bool is_trait;

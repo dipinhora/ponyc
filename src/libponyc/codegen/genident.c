@@ -127,14 +127,14 @@ static LLVMValueRef tuple_element_is_box_unboxed_element(compile_t* c,
   LLVMBasicBlockRef tuple_block = codegen_block(c, "is_tuple_tuple");
   LLVMBasicBlockRef nonbox_block = codegen_block(c, "is_tuple_nonbox");
   LLVMBasicBlockRef post_block = codegen_block(c, "is_tuple_post");
-  LLVMValueRef boxed_mask = LLVMConstInt(c->i32, 3, false);
+  LLVMValueRef boxed_mask = LLVMConstInt(c->i64, 3, false);
 
   LLVMValueRef r_field_typeid = gendesc_typeid(c, r_field_desc);
   LLVMValueRef boxed = LLVMBuildAnd(c->builder, r_field_typeid, boxed_mask,
     "");
   LLVMValueRef box_switch = LLVMBuildSwitch(c->builder, boxed, nonbox_block, 0);
-  LLVMAddCase(box_switch, LLVMConstInt(c->i32, 0, false), num_block);
-  LLVMAddCase(box_switch, LLVMConstInt(c->i32, 2, false), tuple_block);
+  LLVMAddCase(box_switch, LLVMConstInt(c->i64, 0, false), num_block);
+  LLVMAddCase(box_switch, LLVMConstInt(c->i64, 2, false), tuple_block);
 
   LLVMPositionBuilderAtEnd(c->builder, post_block);
   LLVMValueRef phi = LLVMBuildPhi(c->builder, c->i1, "");
@@ -439,7 +439,7 @@ static LLVMValueRef box_is_box(compile_t* c, reach_type_t* left_type,
   LLVMValueRef l_typeid = NULL;
   bool has_unboxed_sub = (sub_kind & SUBTYPE_KIND_UNBOXED) != 0;
   size_t mask_value = has_unboxed_sub ? 3 : 2;
-  LLVMValueRef boxed_mask = LLVMConstInt(c->i32, mask_value, false);
+  LLVMValueRef boxed_mask = LLVMConstInt(c->i64, mask_value, false);
 
   if(sub_kind == SUBTYPE_KIND_NUMERIC)
   {
@@ -455,10 +455,10 @@ static LLVMValueRef box_is_box(compile_t* c, reach_type_t* left_type,
       has_unboxed_sub ? post_block : unreachable_block, 0);
 
     if(num_block != NULL)
-      LLVMAddCase(box_switch, LLVMConstInt(c->i32, 0, false), num_block);
+      LLVMAddCase(box_switch, LLVMConstInt(c->i64, 0, false), num_block);
 
     if(tuple_block != NULL)
-      LLVMAddCase(box_switch, LLVMConstInt(c->i32, 2, false), tuple_block);
+      LLVMAddCase(box_switch, LLVMConstInt(c->i64, 2, false), tuple_block);
   }
 
   LLVMValueRef args[3];
@@ -786,7 +786,7 @@ LLVMValueRef gen_numeric_size_table(compile_t* c)
     if(t->is_trait || (t->underlying == TK_STRUCT))
       continue;
 
-    uint32_t type_id = t->type_id;
+    uint64_t type_id = t->type_id;
     if((type_id % 4) == 0)
     {
       size_t type_size = (size_t)LLVMABISizeOfType(c->target_data,

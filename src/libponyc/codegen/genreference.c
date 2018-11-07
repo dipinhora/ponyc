@@ -346,9 +346,9 @@ static LLVMValueRef gen_digestof_box(compile_t* c, reach_type_t* type,
 
     // Check if it's a boxed value.
     LLVMValueRef type_id = gendesc_typeid(c, desc);
-    LLVMValueRef boxed_mask = LLVMConstInt(c->i32, 1, false);
+    LLVMValueRef boxed_mask = LLVMConstInt(c->i64, 1, false);
     LLVMValueRef is_boxed = LLVMBuildAnd(c->builder, type_id, boxed_mask, "");
-    LLVMValueRef zero = LLVMConstInt(c->i32, 0, false);
+    LLVMValueRef zero = LLVMConstInt(c->i64, 0, false);
     is_boxed = LLVMBuildICmp(c->builder, LLVMIntEQ, is_boxed, zero, "");
     LLVMBuildCondBr(c->builder, is_boxed, box_block, nonbox_block);
     LLVMPositionBuilderAtEnd(c->builder, box_block);

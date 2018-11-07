@@ -125,8 +125,8 @@ static LLVMValueRef* trait_bitmap32(compile_t* c, reach_type_t* t)
 
   while((provide = reach_type_cache_next(&t->subtypes, &i)) != NULL)
   {
-    pony_assert(provide->type_id != (uint32_t)-1);
-    uint32_t index = provide->type_id >> 5;
+    pony_assert(provide->type_id != (uint64_t)-1);
+    uint32_t index = (uint32_t)(provide->type_id >> 5);
     pony_assert(index < c->trait_bitmap_size);
     uint32_t bit = provide->type_id & 31;
     bm[index] |= 1 << bit;
@@ -155,7 +155,7 @@ static LLVMValueRef* trait_bitmap64(compile_t* c, reach_type_t* t)
 
   while((provide = reach_type_cache_next(&t->subtypes, &i)) != NULL)
   {
-    pony_assert(provide->type_id != (uint32_t)-1);
+    pony_assert(provide->type_id != (uint64_t)-1);
     uint64_t index = provide->type_id >> 6;
     pony_assert(index < c->trait_bitmap_size);
     uint64_t bit = provide->type_id & 63;
@@ -329,7 +329,7 @@ void gendesc_basetype(compile_t* c, LLVMTypeRef desc_type)
 {
   LLVMTypeRef params[DESC_LENGTH];
 
-  params[DESC_ID] = c->i32;
+  params[DESC_ID] = c->i64;
   params[DESC_SIZE] = c->i32;
   params[DESC_FIELD_COUNT] = c->i32;
   params[DESC_FIELD_OFFSET] = c->i32;
@@ -380,7 +380,7 @@ void gendesc_type(compile_t* c, reach_type_t* t)
   c_t->desc_type = LLVMStructCreateNamed(c->context, desc_name);
   LLVMTypeRef params[DESC_LENGTH];
 
-  params[DESC_ID] = c->i32;
+  params[DESC_ID] = c->i64;
   params[DESC_SIZE] = c->i32;
   params[DESC_FIELD_COUNT] = c->i32;
   params[DESC_FIELD_OFFSET] = c->i32;
@@ -418,7 +418,7 @@ void gendesc_init(compile_t* c, reach_type_t* t)
   uint32_t event_notify_index = reach_vtable_index(t, c->str__event_notify);
 
   LLVMValueRef args[DESC_LENGTH];
-  args[DESC_ID] = LLVMConstInt(c->i32, t->type_id, false);
+  args[DESC_ID] = LLVMConstInt(c->i64, t->type_id, false);
   args[DESC_SIZE] = LLVMConstInt(c->i32, c_t->abi_size, false);
   args[DESC_FIELD_COUNT] = make_field_count(c, t);
   args[DESC_FIELD_OFFSET] = make_field_offset(c, t);

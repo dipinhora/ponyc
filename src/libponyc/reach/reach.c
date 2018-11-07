@@ -737,7 +737,7 @@ static reach_type_t* add_reach_type(reach_t* r, ast_t* type)
   t->mangle = "o";
   t->ast = set_cap_and_ephemeral(type, TK_REF, TK_NONE);
   t->ast_cap = ast_dup(type);
-  t->type_id = (uint32_t)-1;
+  t->type_id = (uint64_t)-1;
 
   ast_set_scope(t->ast, NULL);
   ast_set_scope(t->ast_cap, NULL);
@@ -763,7 +763,7 @@ static reach_type_t* add_isect_or_union(reach_t* r, ast_t* type,
 
   add_types_to_trait(r, t, opt);
 
-  if(t->type_id == (uint32_t)-1)
+  if(t->type_id == (uint64_t)-1)
     t->type_id = get_new_trait_id(r);
 
   ast_t* child = ast_child(type);
@@ -914,7 +914,7 @@ static reach_type_t* add_nominal(reach_t* r, ast_t* type, pass_opt_t* opt)
     t->bare_method = add_rmethod(r, t, n, TK_AT, NULL, opt, false);
   }
 
-  if(t->type_id == (uint32_t)-1)
+  if(t->type_id == (uint64_t)-1)
   {
     if(t->is_trait && !bare)
       t->type_id = get_new_trait_id(r);
@@ -1506,7 +1506,7 @@ void reach_dump(reach_t* r)
 
   while((t = reach_types_next(&r->types, &i)) != NULL)
   {
-    printf("  %d: %s, %s\n", t->type_id, t->name, t->mangle);
+    printf("  %lu: %s, %s\n", t->type_id, t->name, t->mangle);
     size_t j = HASHMAP_BEGIN;
     reach_method_name_t* n;
 
@@ -1529,6 +1529,8 @@ void reach_dump(reach_t* r)
       printf("    %s\n", t2->name);
     }
   }
+  printf("  Total Type Count: %d\n", r->total_type_count);
+
 }
 
 static void reach_param_serialise_trace(pony_ctx_t* ctx, void* object)

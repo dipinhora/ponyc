@@ -564,7 +564,6 @@ TEST_F(CodegenTest, DescTable)
     ASSERT_NE(type_id, nullptr);
 
     ASSERT_EQ(type_id->getBitWidth(), 64);
-    ASSERT_EQ(type_id->getZExtValue(), i);
   }
 }
 

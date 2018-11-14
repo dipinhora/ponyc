@@ -113,36 +113,6 @@ static LLVMValueRef make_desc_ptr(LLVMValueRef func, LLVMTypeRef type)
   return LLVMConstBitCast(func, type);
 }
 
-static LLVMValueRef* trait_bitmap32(compile_t* c, reach_type_t* t)
-{
-  size_t bm_size = c->trait_bitmap_size * sizeof(uint32_t);
-
-  uint32_t* bm = (uint32_t*)ponyint_pool_alloc_size(bm_size);
-  memset(bm, 0, bm_size);
-
-  size_t i = HASHMAP_BEGIN;
-  reach_type_t* provide;
-
-  while((provide = reach_type_cache_next(&t->subtypes, &i)) != NULL)
-  {
-    pony_assert(provide->type_id != (uint64_t)-1);
-    uint32_t index = (uint32_t)(provide->type_id >> 5);
-    pony_assert(index < c->trait_bitmap_size);
-    uint32_t bit = provide->type_id & 31;
-    bm[index] |= 1 << bit;
-  }
-
-  LLVMValueRef* bitmap = (LLVMValueRef*)ponyint_pool_alloc_size(
-    c->trait_bitmap_size * sizeof(LLVMValueRef));
-
-  for(i = 0; i < c->trait_bitmap_size; i++)
-    bitmap[i] = LLVMConstInt(c->intptr, bm[i], false);
-
-  ponyint_pool_free_size(bm_size, bm);
-
-  return bitmap;
-}
-
 static LLVMValueRef* trait_bitmap64(compile_t* c, reach_type_t* t)
 {
   size_t bm_size = c->trait_bitmap_size * sizeof(uint64_t);
@@ -180,11 +150,7 @@ static LLVMValueRef make_trait_bitmap(compile_t* c, reach_type_t* t)
   if(t->bare_method != NULL)
     return LLVMConstNull(LLVMPointerType(map_type, 0));
 
-  LLVMValueRef* bitmap;
-  if(target_is_ilp32(c->opt->triple))
-    bitmap = trait_bitmap32(c, t);
-  else
-    bitmap = trait_bitmap64(c, t);
+  LLVMValueRef* bitmap = trait_bitmap64(c, t);
 
   LLVMValueRef bitmap_array = LLVMConstArray(c->intptr, bitmap,
     c->trait_bitmap_size);
@@ -446,7 +412,7 @@ void gendesc_init(compile_t* c, reach_type_t* t)
 
 void gendesc_table(compile_t* c)
 {
-  uint32_t len = reach_max_type_id(c->reach);
+  uint32_t len = reach_total_num_types(c->reach);
 
   size_t size = len * sizeof(LLVMValueRef);
   LLVMValueRef* args = (LLVMValueRef*)ponyint_pool_alloc_size(size);
@@ -457,6 +423,8 @@ void gendesc_table(compile_t* c)
 
   reach_type_t* t;
   size_t i = HASHMAP_BEGIN;
+
+  uint32_t table_offset = 0;
 
   while((t = reach_types_next(&c->reach->types, &i)) != NULL)
   {
@@ -471,7 +439,8 @@ void gendesc_table(compile_t* c)
     else
       desc = LLVMConstNull(c->descriptor_ptr);
 
-    args[t->type_id] = desc;
+    args[table_offset] = desc;
+    table_offset++;
   }
 
   LLVMTypeRef type = LLVMArrayType(c->descriptor_ptr, len);
@@ -643,27 +612,19 @@ LLVMValueRef gendesc_istrait(compile_t* c, LLVMValueRef desc, ast_t* type)
 {
   reach_type_t* t = reach_type(c->reach, type);
   pony_assert(t != NULL);
-  LLVMValueRef trait_id = LLVMConstInt(c->intptr, t->type_id, false);
+  LLVMValueRef trait_id = LLVMConstInt(c->i64, t->type_id, false);
 
-  LLVMValueRef shift;
-  LLVMValueRef mask;
-  if(target_is_ilp32(c->opt->triple))
-  {
-    shift = LLVMConstInt(c->intptr, 5, false);
-    mask = LLVMConstInt(c->intptr, 31, false);
-  } else {
-    shift = LLVMConstInt(c->intptr, 6, false);
-    mask = LLVMConstInt(c->intptr, 63, false);
-  }
+  LLVMValueRef shift = LLVMConstInt(c->i64, 6, false);
+  LLVMValueRef mask = LLVMConstInt(c->i64, 63, false);
 
   shift = LLVMConstLShr(trait_id, shift);
   mask = LLVMConstAnd(trait_id, mask);
-  mask = LLVMConstShl(LLVMConstInt(c->intptr, 1, false), mask);
+  mask = LLVMConstShl(LLVMConstInt(c->i64, 1, false), mask);
 
   LLVMValueRef bitmap = desc_field(c, desc, DESC_TRAITS);
 
   LLVMValueRef args[2];
-  args[0] = LLVMConstInt(c->intptr, 0, false);
+  args[0] = LLVMConstInt(c->i64, 0, false);
   args[1] = shift;
 
   LLVMValueRef index = LLVMBuildInBoundsGEP(c->builder, bitmap, args, 2, "");
@@ -679,7 +640,7 @@ LLVMValueRef gendesc_istrait(compile_t* c, LLVMValueRef desc, ast_t* type)
 
   LLVMValueRef has_trait = LLVMBuildAnd(c->builder, index, mask, "");
   has_trait = LLVMBuildICmp(c->builder, LLVMIntNE, has_trait,
-    LLVMConstInt(c->intptr, 0, false), "");
+    LLVMConstInt(c->i64, 0, false), "");
 
   return has_trait;
 }

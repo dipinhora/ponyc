@@ -210,6 +210,9 @@ PONY_API bool pony_start(bool library, int* exit_code,
   if(language_init.init_network)
     ponyint_os_sockets_final();
 
+  if(language_init.init_serialisation)
+    ponyint_serialise_final();
+
   int ec = pony_get_exitcode();
 #ifdef USE_VALGRIND
   ANNOTATE_HAPPENS_BEFORE(&initialised);
@@ -241,6 +244,9 @@ PONY_API int pony_stop()
 
   if(language_init.init_network)
     ponyint_os_sockets_final();
+
+  if(language_init.init_serialisation)
+    ponyint_serialise_final();
 
   int ec = pony_get_exitcode();
 #ifdef USE_VALGRIND

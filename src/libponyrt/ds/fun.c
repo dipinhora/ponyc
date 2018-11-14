@@ -134,6 +134,11 @@ PONY_API uint64_t ponyint_hash_block64(const void* p, size_t len)
   return siphash24(the_key, (const char*)p, len);
 }
 
+uint64_t ponyint_hash_str64(const char* str)
+{
+  return siphash24(the_key, str, strlen(str));
+}
+
 size_t ponyint_hash_str(const char* str)
 {
 #ifdef PLATFORM_IS_ILP32

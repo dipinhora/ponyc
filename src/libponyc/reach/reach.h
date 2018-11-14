@@ -145,7 +145,7 @@ reach_method_name_t* reach_method_name(reach_type_t* t,
 
 uint32_t reach_vtable_index(reach_type_t* t, const char* name);
 
-uint32_t reach_max_type_id(reach_t* r);
+uint32_t reach_total_num_types(reach_t* r);
 
 void reach_dump(reach_t* r);
 

@@ -104,7 +104,7 @@ static void serialise(compile_t* c, reach_type_t* t, LLVMValueRef ctx,
 void genserialise_typeid(compile_t* c, reach_type_t* t, LLVMValueRef offset)
 {
   // Write the type id instead of the descriptor.
-  LLVMValueRef value = LLVMConstInt(c->intptr, t->type_id, false);
+  LLVMValueRef value = LLVMConstInt(c->i64, t->type_id, false);
   LLVMValueRef loc = LLVMBuildBitCast(c->builder, offset,
     LLVMPointerType(c->intptr, 0), "");
   LLVMBuildStore(c->builder, value, loc);
@@ -137,7 +137,7 @@ static void serialise_bare_interface(compile_t* c, reach_type_t* t,
     LLVMValueRef test = LLVMBuildICmp(c->builder, LLVMIntEQ, obj,
       ((compile_type_t*)sub->c_type)->instance, "");
     LLVMBuildCondBr(c->builder, test, post_block, next_block);
-    LLVMValueRef value = LLVMConstInt(c->intptr, sub->type_id, false);
+    LLVMValueRef value = LLVMConstInt(c->i64, sub->type_id, false);
     LLVMAddIncoming(phi, &value, &current_block, 1);
     LLVMPositionBuilderAtEnd(c->builder, next_block);
     sub = next;
@@ -146,7 +146,7 @@ static void serialise_bare_interface(compile_t* c, reach_type_t* t,
   }
 
   LLVMBuildBr(c->builder, post_block);
-  LLVMValueRef value = LLVMConstInt(c->intptr, sub->type_id, false);
+  LLVMValueRef value = LLVMConstInt(c->i64, sub->type_id, false);
   LLVMAddIncoming(phi, &value, &current_block, 1);
 
   LLVMMoveBasicBlockAfter(post_block, current_block);

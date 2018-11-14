@@ -786,12 +786,11 @@ LLVMValueRef gen_numeric_size_table(compile_t* c)
     if(t->is_trait || (t->underlying == TK_STRUCT))
       continue;
 
-    uint64_t type_id = t->type_id;
-    if((type_id % 4) == 0)
+    if(t->can_be_boxed)
     {
       size_t type_size = (size_t)LLVMABISizeOfType(c->target_data,
         ((compile_type_t*)t->c_type)->mem_type);
-      args[type_id >> 2] = LLVMConstInt(c->i32, type_size, false);
+      args[count] = LLVMConstInt(c->i32, type_size, false);
       count++;
     }
   }

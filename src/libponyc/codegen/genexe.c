@@ -50,7 +50,7 @@ static LLVMValueRef make_lang_features_init(compile_t* c)
 
   LLVMTypeRef desc_ptr_ptr = LLVMPointerType(c->descriptor_ptr, 0);
 
-  uint32_t desc_table_size = reach_max_type_id(c->reach);
+  uint32_t desc_table_size = reach_total_num_types(c->reach);
 
   LLVMTypeRef f_params[4];
   f_params[0] = boolean;

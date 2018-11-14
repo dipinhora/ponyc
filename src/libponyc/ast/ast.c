@@ -8,6 +8,7 @@
 #include "../pass/pass.h"
 #include "../pkg/program.h"
 #include "../pkg/package.h"
+#include "../../libponyrt/sched/scheduler.h"
 #include "../../libponyrt/gc/serialise.h"
 #include "../../libponyrt/mem/pool.h"
 #include "ponyassert.h"
@@ -2283,6 +2284,8 @@ static void ast_serialise(pony_ctx_t* ctx, void* object, void* buf,
   ast_t* ast = (ast_t*)object;
   ast_t* dst = (ast_t*)((uintptr_t)buf + offset);
 
+//  ast_print(ast, 80);
+
   dst->t = (token_t*)pony_serialise_offset(ctx, ast->t);
   ast_serialise_data(ctx, ast, dst);
   dst->symtab = (symtab_t*)pony_serialise_offset(ctx, ast->symtab);
@@ -2339,4 +2342,34 @@ static pony_type_t ast_pony =
 pony_type_t* ast_pony_type()
 {
   return &ast_pony;
+}
+
+static void* s_alloc_fn(pony_ctx_t* ctx, size_t size)
+{
+  (void)ctx;
+  return ponyint_pool_alloc_size(size);
+}
+
+
+static void s_throw_fn()
+{
+  pony_assert(false);
+}
+
+
+uint64_t ast_type_id(ast_t* type)
+{
+  pony_ctx_t ctx;
+  memset(&ctx, 0, sizeof(pony_ctx_t));
+  ponyint_array_t array;
+  memset(&array, 0, sizeof(ponyint_array_t));
+
+  pony_serialise(&ctx, type, ast_pony_type(), &array,
+    s_alloc_fn, s_throw_fn);
+
+  uint64_t hash = ponyint_hash_block64(array.ptr, array.size);
+
+  ponyint_pool_free_size(array.size, array.ptr);
+
+  return hash;
 }

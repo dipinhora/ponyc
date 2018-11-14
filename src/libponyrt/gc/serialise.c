@@ -18,8 +18,9 @@
 
 PONY_EXTERN_C_BEGIN
 
-static size_t desc_table_size = 0;
-static pony_type_t** desc_table = NULL;
+static size_t _desc_table_size = 0;
+static pony_type_t** _desc_table = NULL;
+static ponyint_descriptors_t* desc_map = NULL;
 
 PONY_EXTERN_C_END
 
@@ -49,6 +50,30 @@ static void serialise_free(serialise_t* p)
 
 DEFINE_HASHMAP(ponyint_serialise, ponyint_serialise_t,
   serialise_t, serialise_hash, serialise_cmp, serialise_free);
+
+struct descriptor_t
+{
+  uint64_t type_id;
+  pony_type_t* address;
+};
+
+static size_t descriptor_hash(descriptor_t* p)
+{
+  return ponyint_hash_int64(p->type_id);
+}
+
+static bool descriptor_cmp(descriptor_t* a, descriptor_t* b)
+{
+  return a->type_id == b->type_id;
+}
+
+static void descriptor_free(descriptor_t* p)
+{
+  POOL_FREE(descriptor_t, p);
+}
+
+DEFINE_HASHMAP(ponyint_descriptors, ponyint_descriptors_t,
+  descriptor_t, descriptor_hash, descriptor_cmp, descriptor_free);
 
 static void recurse(pony_ctx_t* ctx, void* p, void* f)
 {
@@ -83,18 +108,54 @@ static void custom_deserialise(pony_ctx_t* ctx)
 
 bool ponyint_serialise_setup(pony_type_t** table, size_t table_size)
 {
+/*
 #ifndef PONY_NDEBUG
   for(uint32_t i = 0; i < table_size; i++)
   {
-    if(table[i] != NULL)
-      pony_assert(table[i]->id == i);
+    pony_assert(table[i] != NULL);
   }
 #endif
+*/
+  _desc_table = table;
+  _desc_table_size = table_size;
 
-  desc_table = table;
-  desc_table_size = table_size;
+  // create desc_map
+  desc_map = POOL_ALLOC(ponyint_descriptors_t);
+  ponyint_descriptors_init(desc_map, table_size);
+
+  // fill desc_map
+  for (size_t i = 0; i < table_size; i++)
+  {
+    pony_type_t* t = _desc_table[i];
+    if(t != NULL)
+    {
+      descriptor_t* d = POOL_ALLOC(descriptor_t);
+      d->type_id = t->id;
+      d->address = t;
+      ponyint_descriptors_put(desc_map, d);
+    }
+  }
 
   return true;
+}
+
+void ponyint_serialise_final()
+{
+  ponyint_descriptors_destroy(desc_map);
+  POOL_FREE(ponyint_descriptors_t, desc_map);
+  desc_map = NULL;
+}
+
+static pony_type_t* get_descriptor(uint64_t type_id)
+{
+  descriptor_t k;
+  k.type_id = type_id;
+  size_t index = HASHMAP_UNKNOWN;
+  descriptor_t* d = ponyint_descriptors_get(desc_map, &k, &index);
+  if(d != NULL)
+    return d->address;
+  else
+    return NULL;
 }
 
 void ponyint_serialise_object(pony_ctx_t* ctx, void* p, pony_type_t* t,
@@ -191,6 +252,9 @@ PONY_API size_t pony_serialise_offset(pony_ctx_t* ctx, void* p)
       return ALL_BITS;
   }
 
+  // TODO: FIND OUT WHEN/HOW THIS CAN HAPPEN!!!!!! If not possible normally, make this into an error/assert! If possible, figure out how to handle 64 bit type_id's and return types since the pointers are no longer able to hold the type_id + high bit twiddles.
+  pony_assert(false);
+
   // If we are not in the map, we are an untraced primitive. Return the type id
   // with the high bit set.
   pony_type_t* t = *(pony_type_t**)p;
@@ -244,15 +308,16 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
   // primitive, or an unserialised field in an opaque object.
   if((offset & HIGH_BIT) != 0)
   {
+    // TODO: NOTE: this section will currently never get executed because the logic in `pony_serialise_offset` has been changed to throw an assert instead of using this HIGH_BIT stuff
     offset &= ~HIGH_BIT;
 
-    if(offset > desc_table_size)
+    if(offset > _desc_table_size)
       return NULL;
 
     // Return the global instance, if there is one. It's ok to return null if
     // there is no global instance, as this will then be an unserialised
     // field in an opaque object.
-    t = desc_table[offset];
+    t = _desc_table[offset];
     return t->instance;
   }
 
@@ -277,8 +342,8 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
     }
 
     // Turn the type id into a descriptor pointer.
-    uintptr_t id = *(uintptr_t*)((uintptr_t)ctx->serialise_buffer + offset);
-    t = desc_table[id];
+    uint64_t id = *(uint64_t*)((uintptr_t)ctx->serialise_buffer + offset);
+    t = get_descriptor(id);
   }
 
   // If it's a primitive, return the global instance.

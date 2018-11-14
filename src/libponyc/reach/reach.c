@@ -699,33 +699,33 @@ static void add_fields(reach_t* r, reach_type_t* t, pass_opt_t* opt)
 }
 
 // Type IDs are assigned as:
-// - Object type IDs:  1, 3, 5, 7, 9, ...
-// - Numeric type IDs: 0, 4, 8, 12, 16, ...
-// - Tuple type IDs:   2, 6, 10, 14, 18, ...
-// This allows to quickly check whether a type is unboxed or not.
-// Trait IDs use their own incremental numbering.
+// - Object type IDs, Numeric type IDs, Tuple type IDs: 64 bit siphash
+// - Trait IDs use their own incremental numbering.
 
-static uint32_t get_new_trait_id(reach_t* r)
+static uint64_t get_new_trait_id(reach_t* r)
 {
   return r->trait_type_count++;
 }
 
-static uint32_t get_new_object_id(reach_t* r)
+static uint64_t get_new_object_id(reach_t* r, reach_type_t* t)
 {
   r->total_type_count++;
-  return (r->object_type_count++ * 2) + 1;
+  r->object_type_count++;
+  return ponyint_hash_str64(t->name);
 }
 
-static uint32_t get_new_numeric_id(reach_t* r)
+static uint64_t get_new_numeric_id(reach_t* r, reach_type_t* t)
 {
   r->total_type_count++;
-  return r->numeric_type_count++ * 4;
+  r->numeric_type_count++;
+  return ponyint_hash_str64(t->name);
 }
 
-static uint32_t get_new_tuple_id(reach_t* r)
+static uint64_t get_new_tuple_id(reach_t* r, reach_type_t* t)
 {
   r->total_type_count++;
-  return (r->tuple_type_count++ * 4) + 2;
+  r->tuple_type_count++;
+  return ponyint_hash_str64(t->name);
 }
 
 static reach_type_t* add_reach_type(reach_t* r, ast_t* type)
@@ -763,9 +763,13 @@ static reach_type_t* add_isect_or_union(reach_t* r, ast_t* type,
 
   add_types_to_trait(r, t, opt);
 
-  if(t->type_id == (uint64_t)-1)
-    t->type_id = get_new_trait_id(r);
 
+  if(t->type_id == (uint64_t)-1)
+{
+//ast_print(type, 80);
+//ast_printverbose(type);
+    t->type_id = get_new_trait_id(r);
+}
   ast_t* child = ast_child(type);
 
   while(child != NULL)
@@ -787,9 +791,12 @@ static reach_type_t* add_tuple(reach_t* r, ast_t* type, pass_opt_t* opt)
   if(t != NULL)
     return t;
 
+//ast_print(type, 80);
+//ast_printverbose(type);
+
   t = add_reach_type(r, type);
   t->underlying = TK_TUPLETYPE;
-  t->type_id = get_new_tuple_id(r);
+  t->type_id = get_new_tuple_id(r, t);
   t->can_be_boxed = true;
 
   t->field_count = (uint32_t)ast_childcount(t->ast);
@@ -916,12 +923,16 @@ static reach_type_t* add_nominal(reach_t* r, ast_t* type, pass_opt_t* opt)
 
   if(t->type_id == (uint64_t)-1)
   {
+//ast_print(type, 80);
+//ast_printverbose(type);
+//printf("reach type name: %s, mangled name: %s\n", t->name, t->mangle);
+
     if(t->is_trait && !bare)
       t->type_id = get_new_trait_id(r);
     else if(t->can_be_boxed)
-      t->type_id = get_new_numeric_id(r);
+      t->type_id = get_new_numeric_id(r, t);
     else if(t->underlying != TK_STRUCT)
-      t->type_id = get_new_object_id(r);
+      t->type_id = get_new_object_id(r, t);
   }
 
   if(ast_id(def) != TK_PRIMITIVE)
@@ -1480,21 +1491,9 @@ uint32_t reach_vtable_index(reach_type_t* t, const char* name)
   return m->vtable_index;
 }
 
-uint32_t reach_max_type_id(reach_t* r)
+uint32_t reach_total_num_types(reach_t* r)
 {
-  uint32_t object_id_max = (r->object_type_count * 2) + 1;
-  uint32_t numeric_id_max = r->numeric_type_count * 4;
-  uint32_t tuple_id_max = (r->tuple_type_count * 4) + 2;
-
-  uint32_t len = object_id_max;
-
-  if(len < numeric_id_max)
-    len = numeric_id_max;
-
-  if(len < tuple_id_max)
-    len = tuple_id_max;
-
-  return len;
+  return r->total_type_count;
 }
 
 void reach_dump(reach_t* r)

@@ -1515,7 +1515,7 @@ void reach_dump(reach_t* r)
 
   while((t = reach_types_next(&r->types, &i)) != NULL)
   {
-    printf("  %lu: %s, %s\n", t->type_id, t->name, t->mangle);
+    printf("  %llu: %s, %s\n", t->type_id, t->name, t->mangle);
     size_t j = HASHMAP_BEGIN;
     reach_method_name_t* n;
 

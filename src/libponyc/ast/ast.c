@@ -1979,6 +1979,8 @@ static void ast_signature_serialise(pony_ctx_t* ctx, void* object, void* buf,
 static pony_type_t ast_signature_pony =
 {
   0,
+  0,
+  0,
   sizeof(ast_signature_t),
   0,
   0,
@@ -2056,6 +2058,8 @@ static void ast_nominal_pkg_id_signature_serialise(pony_ctx_t* ctx,
 
 static pony_type_t ast_nominal_pkg_id_signature_pony =
 {
+  0,
+  0,
   0,
   sizeof(ast_signature_t),
   0,
@@ -2320,6 +2324,8 @@ static void ast_deserialise(pony_ctx_t* ctx, void* object)
 
 static pony_type_t ast_pony =
 {
+  0,
+  0,
   0,
   sizeof(ast_t),
   0,

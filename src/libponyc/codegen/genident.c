@@ -127,14 +127,14 @@ static LLVMValueRef tuple_element_is_box_unboxed_element(compile_t* c,
   LLVMBasicBlockRef tuple_block = codegen_block(c, "is_tuple_tuple");
   LLVMBasicBlockRef nonbox_block = codegen_block(c, "is_tuple_nonbox");
   LLVMBasicBlockRef post_block = codegen_block(c, "is_tuple_post");
-  LLVMValueRef boxed_mask = LLVMConstInt(c->i64, 3, false);
+  LLVMValueRef boxed_mask = LLVMConstInt(c->i16, (IS_NUMERIC_BIT | IS_TUPLE_BIT), false);
 
-  LLVMValueRef r_field_typeid = gendesc_typeid(c, r_field_desc);
-  LLVMValueRef boxed = LLVMBuildAnd(c->builder, r_field_typeid, boxed_mask,
+  LLVMValueRef r_field_isbits = gendesc_isbits(c, r_field_desc);
+  LLVMValueRef boxed = LLVMBuildAnd(c->builder, r_field_isbits, boxed_mask,
     "");
   LLVMValueRef box_switch = LLVMBuildSwitch(c->builder, boxed, nonbox_block, 0);
-  LLVMAddCase(box_switch, LLVMConstInt(c->i64, 0, false), num_block);
-  LLVMAddCase(box_switch, LLVMConstInt(c->i64, 2, false), tuple_block);
+  LLVMAddCase(box_switch, LLVMConstInt(c->i16, IS_NUMERIC_BIT, false), num_block);
+  LLVMAddCase(box_switch, LLVMConstInt(c->i16, IS_TUPLE_BIT, false), tuple_block);
 
   LLVMPositionBuilderAtEnd(c->builder, post_block);
   LLVMValueRef phi = LLVMBuildPhi(c->builder, c->i1, "");
@@ -436,10 +436,10 @@ static LLVMValueRef box_is_box(compile_t* c, reach_type_t* left_type,
 
   LLVMPositionBuilderAtEnd(c->builder, box_block);
   LLVMValueRef l_desc = NULL;
-  LLVMValueRef l_typeid = NULL;
+  LLVMValueRef l_isbits = NULL;
   bool has_unboxed_sub = (sub_kind & SUBTYPE_KIND_UNBOXED) != 0;
-  size_t mask_value = has_unboxed_sub ? 3 : 2;
-  LLVMValueRef boxed_mask = LLVMConstInt(c->i64, mask_value, false);
+  size_t mask_value = has_unboxed_sub ? (IS_NUMERIC_BIT | IS_TUPLE_BIT) : IS_TUPLE_BIT;
+  LLVMValueRef boxed_mask = LLVMConstInt(c->i16, mask_value, false);
 
   if(sub_kind == SUBTYPE_KIND_NUMERIC)
   {
@@ -448,17 +448,17 @@ static LLVMValueRef box_is_box(compile_t* c, reach_type_t* left_type,
     LLVMBuildBr(c->builder, tuple_block);
   } else {
     l_desc = gendesc_fetch(c, l_value);
-    l_typeid = gendesc_typeid(c, l_desc);
-    LLVMValueRef left_boxed = LLVMBuildAnd(c->builder, l_typeid, boxed_mask,
+    l_isbits = gendesc_isbits(c, l_desc);
+    LLVMValueRef left_boxed = LLVMBuildAnd(c->builder, l_isbits, boxed_mask,
       "");
     LLVMValueRef box_switch = LLVMBuildSwitch(c->builder, left_boxed,
       has_unboxed_sub ? post_block : unreachable_block, 0);
 
     if(num_block != NULL)
-      LLVMAddCase(box_switch, LLVMConstInt(c->i64, 0, false), num_block);
+      LLVMAddCase(box_switch, LLVMConstInt(c->i16, IS_NUMERIC_BIT, false), num_block);
 
     if(tuple_block != NULL)
-      LLVMAddCase(box_switch, LLVMConstInt(c->i64, 2, false), tuple_block);
+      LLVMAddCase(box_switch, LLVMConstInt(c->i16, IS_TUPLE_BIT, false), tuple_block);
   }
 
   LLVMValueRef args[3];
@@ -478,16 +478,7 @@ static LLVMValueRef box_is_box(compile_t* c, reach_type_t* left_type,
     // Get the machine word size and memcmp without unboxing.
     LLVMPositionBuilderAtEnd(c->builder, bothnum_block);
 
-    if(l_typeid == NULL)
-      l_typeid = gendesc_typeid(c, l_desc);
-
-    LLVMValueRef num_sizes = LLVMBuildBitCast(c->builder, c->numeric_sizes,
-      c->void_ptr, "");
-    args[0] = LLVMBuildZExt(c->builder, l_typeid, c->intptr, "");
-    LLVMValueRef size = LLVMBuildInBoundsGEP(c->builder, num_sizes, args, 1,
-      "");
-    size = LLVMBuildBitCast(c->builder, size, LLVMPointerType(c->i32, 0), "");
-    size = LLVMBuildLoad(c->builder, size, "");
+    LLVMValueRef size = gendesc_numericsize(c, l_desc);
     LLVMSetAlignment(size, 4);
     LLVMValueRef one = LLVMConstInt(c->i32, 1, false);
     args[0] = LLVMBuildInBoundsGEP(c->builder, l_value, &one, 1, "");
@@ -786,8 +777,10 @@ LLVMValueRef gen_numeric_size_table(compile_t* c)
     if(t->is_trait || (t->underlying == TK_STRUCT))
       continue;
 
-    if(t->can_be_boxed)
+    if(t->is_bits & IS_NUMERIC_BIT)
     {
+//printf("can be boxed: reach type name: %s, mangled name: %s\n", t->name, t->mangle);
+
       size_t type_size = (size_t)LLVMABISizeOfType(c->target_data,
         ((compile_type_t*)t->c_type)->mem_type);
       args[count] = LLVMConstInt(c->i32, type_size, false);

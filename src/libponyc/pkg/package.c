@@ -1387,6 +1387,8 @@ static void package_signature_serialise(pony_ctx_t* ctx, void* object,
 static pony_type_t package_dep_signature_pony =
 {
   0,
+  0,
+  0,
   sizeof(package_signature_t),
   0,
   0,
@@ -1414,6 +1416,8 @@ pony_type_t* package_dep_signature_pony_type()
 
 static pony_type_t package_signature_pony =
 {
+  0,
+  0,
   0,
   sizeof(package_signature_t),
   0,
@@ -1492,6 +1496,8 @@ static void package_group_signature_serialise(pony_ctx_t* ctx, void* object,
 static pony_type_t package_group_dep_signature_pony =
 {
   0,
+  0,
+  0,
   sizeof(const char*),
   0,
   0,
@@ -1519,6 +1525,8 @@ pony_type_t* package_group_dep_signature_pony_type()
 
 static pony_type_t package_group_signature_pony =
 {
+  0,
+  0,
   0,
   sizeof(const char*),
   0,
@@ -1668,6 +1676,8 @@ static void package_deserialise(pony_ctx_t* ctx, void* object)
 static pony_type_t package_pony =
 {
   0,
+  0,
+  0,
   sizeof(package_t),
   0,
   0,
@@ -1739,6 +1749,8 @@ static void package_group_deserialise(pony_ctx_t* ctx, void* object)
 
 static pony_type_t package_group_pony =
 {
+  0,
+  0,
   0,
   sizeof(package_group_t),
   0,

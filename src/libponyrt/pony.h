@@ -133,6 +133,8 @@ typedef void (*pony_partial_fn)(void* data);
 typedef const struct _pony_type_t
 {
   uint64_t id;
+  uint16_t is_bits;
+  uint16_t numeric_size;
   uint32_t size;
   uint32_t field_count;
   uint32_t field_offset;

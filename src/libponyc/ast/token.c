@@ -399,6 +399,8 @@ static void token_signature_serialise(pony_ctx_t* ctx, void* object, void* buf,
 static pony_type_t token_signature_pony =
 {
   0,
+  0,
+  0,
   sizeof(token_signature_t),
   0,
   0,
@@ -450,6 +452,8 @@ static void token_docstring_signature_serialise(pony_ctx_t* ctx, void* object,
 
 static pony_type_t token_docstring_signature_pony =
 {
+  0,
+  0,
   0,
   sizeof(token_signature_t),
   0,
@@ -537,6 +541,8 @@ static void token_deserialise(pony_ctx_t* ctx, void* object)
 
 static pony_type_t token_pony =
 {
+  0,
+  0,
   0,
   sizeof(token_t),
   0,

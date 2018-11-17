@@ -9,6 +9,10 @@
 
 PONY_EXTERN_C_BEGIN
 
+#define IS_BOXED_BIT 0x1
+#define IS_NUMERIC_BIT 0x2
+#define IS_TUPLE_BIT 0x4
+
 typedef struct reach_method_t reach_method_t;
 typedef struct reach_method_name_t reach_method_name_t;
 typedef struct reach_field_t reach_field_t;
@@ -101,6 +105,7 @@ struct reach_type_t
   uint32_t vtable_size;
   bool can_be_boxed;
   bool is_trait;
+  uint16_t is_bits;
 
   uint32_t field_count;
   reach_field_t* fields;

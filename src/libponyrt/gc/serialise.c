@@ -119,6 +119,7 @@ bool ponyint_serialise_setup(pony_type_t** table, size_t table_size)
   _desc_table = table;
   _desc_table_size = table_size;
 
+  // TODO: replace desc_map with a static function mapping type_id's to indexes into the _desc_table to maintain low overhead/high performance
   // create desc_map
   desc_map = POOL_ALLOC(ponyint_descriptors_t);
   ponyint_descriptors_init(desc_map, table_size);
@@ -253,7 +254,7 @@ PONY_API size_t pony_serialise_offset(pony_ctx_t* ctx, void* p)
   }
 
   // TODO: FIND OUT WHEN/HOW THIS CAN HAPPEN!!!!!! If not possible normally, make this into an error/assert! If possible, figure out how to handle 64 bit type_id's and return types since the pointers are no longer able to hold the type_id + high bit twiddles.
-  pony_assert(false);
+//  pony_assert(false);
 
   // If we are not in the map, we are an untraced primitive. Return the type id
   // with the high bit set.

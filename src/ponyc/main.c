@@ -71,6 +71,8 @@ static bool compile_package(const char* path, pass_opt_t* opt,
 
 int main(int argc, char* argv[])
 {
+  printf("size of pony_type_t: %lu\n", sizeof(pony_type_t));
+
   stringtab_init();
 
   pass_opt_t opt;

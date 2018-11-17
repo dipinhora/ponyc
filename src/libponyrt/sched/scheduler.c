@@ -15,6 +15,8 @@
 #define PONY_SCHED_BATCH 100
 #define PONY_SCHED_BLOCK_THRESHOLD 1000000
 
+pony_static_assert(sizeof(pony_type_t) == (size_t)128, "pony_type_t size isn't 128");
+
 static DECLARE_THREAD_FN(run_thread);
 
 typedef enum

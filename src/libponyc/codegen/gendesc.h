@@ -18,6 +18,10 @@ LLVMValueRef gendesc_fetch(compile_t* c, LLVMValueRef object);
 
 LLVMValueRef gendesc_typeid(compile_t* c, LLVMValueRef desc);
 
+LLVMValueRef gendesc_isbits(compile_t* c, LLVMValueRef desc);
+
+LLVMValueRef gendesc_numericsize(compile_t* c, LLVMValueRef desc);
+
 LLVMValueRef gendesc_instance(compile_t* c, LLVMValueRef desc);
 
 LLVMValueRef gendesc_trace(compile_t* c, LLVMValueRef desc);

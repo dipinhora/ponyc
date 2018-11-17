@@ -11,24 +11,26 @@
 #include <string.h>
 
 #define DESC_ID 0
-#define DESC_SIZE 1
-#define DESC_FIELD_COUNT 2
-#define DESC_FIELD_OFFSET 3
-#define DESC_INSTANCE 4
-#define DESC_TRACE 5
-#define DESC_SERIALISE_TRACE 6
-#define DESC_SERIALISE 7
-#define DESC_DESERIALISE 8
-#define DESC_CUSTOM_SERIALISE_SPACE 9
-#define DESC_CUSTOM_DESERIALISE 10
-#define DESC_DISPATCH 11
-#define DESC_FINALISE 12
-#define DESC_EVENT_NOTIFY 13
-#define DESC_TRAITS 14
-#define DESC_FIELDS 15
-#define DESC_VTABLE 16
+#define DESC_ISBITS 1
+#define DESC_NUMERICSIZE 2
+#define DESC_SIZE 3
+#define DESC_FIELD_COUNT 4
+#define DESC_FIELD_OFFSET 5
+#define DESC_INSTANCE 6
+#define DESC_TRACE 7
+#define DESC_SERIALISE_TRACE 8
+#define DESC_SERIALISE 9
+#define DESC_DESERIALISE 10
+#define DESC_CUSTOM_SERIALISE_SPACE 11
+#define DESC_CUSTOM_DESERIALISE 12
+#define DESC_DISPATCH 13
+#define DESC_FINALISE 14
+#define DESC_EVENT_NOTIFY 15
+#define DESC_TRAITS 16
+#define DESC_FIELDS 17
+#define DESC_VTABLE 18
 
-#define DESC_LENGTH 17
+#define DESC_LENGTH 19
 
 static LLVMValueRef make_unbox_function(compile_t* c, reach_type_t* t,
   reach_method_t* m)
@@ -296,6 +298,8 @@ void gendesc_basetype(compile_t* c, LLVMTypeRef desc_type)
   LLVMTypeRef params[DESC_LENGTH];
 
   params[DESC_ID] = c->i64;
+  params[DESC_ISBITS] = c->i16;
+  params[DESC_NUMERICSIZE] = c->i16;
   params[DESC_SIZE] = c->i32;
   params[DESC_FIELD_COUNT] = c->i32;
   params[DESC_FIELD_OFFSET] = c->i32;
@@ -347,6 +351,8 @@ void gendesc_type(compile_t* c, reach_type_t* t)
   LLVMTypeRef params[DESC_LENGTH];
 
   params[DESC_ID] = c->i64;
+  params[DESC_ISBITS] = c->i16;
+  params[DESC_NUMERICSIZE] = c->i16;
   params[DESC_SIZE] = c->i32;
   params[DESC_FIELD_COUNT] = c->i32;
   params[DESC_FIELD_OFFSET] = c->i32;
@@ -385,6 +391,15 @@ void gendesc_init(compile_t* c, reach_type_t* t)
 
   LLVMValueRef args[DESC_LENGTH];
   args[DESC_ID] = LLVMConstInt(c->i64, t->type_id, false);
+  args[DESC_ISBITS] = LLVMConstInt(c->i16, t->is_bits, false);
+  size_t numeric_size = 0;
+  if(t->is_bits & IS_NUMERIC_BIT)
+  {
+    numeric_size = (size_t)LLVMABISizeOfType(c->target_data, c_t->mem_type);
+    pony_assert(numeric_size < 65535);
+    pony_assert(numeric_size > 0);
+  }
+  args[DESC_NUMERICSIZE] = LLVMConstInt(c->i16, (uint16_t)numeric_size, false);
   args[DESC_SIZE] = LLVMConstInt(c->i32, c_t->abi_size, false);
   args[DESC_FIELD_COUNT] = make_field_count(c, t);
   args[DESC_FIELD_OFFSET] = make_field_offset(c, t);
@@ -428,6 +443,8 @@ void gendesc_table(compile_t* c)
 
   while((t = reach_types_next(&c->reach->types, &i)) != NULL)
   {
+    pony_assert((t->is_bits & (IS_NUMERIC_BIT | IS_TUPLE_BIT)) != (IS_NUMERIC_BIT | IS_TUPLE_BIT));
+
     if(t->is_trait || (t->underlying == TK_STRUCT))
       continue;
 
@@ -484,6 +501,16 @@ LLVMValueRef gendesc_fetch(compile_t* c, LLVMValueRef object)
 LLVMValueRef gendesc_typeid(compile_t* c, LLVMValueRef desc)
 {
   return desc_field(c, desc, DESC_ID);
+}
+
+LLVMValueRef gendesc_isbits(compile_t* c, LLVMValueRef desc)
+{
+  return desc_field(c, desc, DESC_ISBITS);
+}
+
+LLVMValueRef gendesc_numericsize(compile_t* c, LLVMValueRef desc)
+{
+  return desc_field(c, desc, DESC_NUMERICSIZE);
 }
 
 LLVMValueRef gendesc_instance(compile_t* c, LLVMValueRef desc)

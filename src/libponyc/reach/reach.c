@@ -12,6 +12,7 @@
 #include "ponyassert.h"
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 DEFINE_STACK(reach_method_stack, reach_method_stack_t, reach_method_t);
 
@@ -1515,7 +1516,7 @@ void reach_dump(reach_t* r)
 
   while((t = reach_types_next(&r->types, &i)) != NULL)
   {
-    printf("  %llu: %s, %s\n", t->type_id, t->name, t->mangle);
+    printf("  %" PRIu64 ": %s, %s\n", t->type_id, t->name, t->mangle);
     size_t j = HASHMAP_BEGIN;
     reach_method_name_t* n;
 

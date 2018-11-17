@@ -457,6 +457,7 @@ void gendesc_table(compile_t* c)
       desc = LLVMConstNull(c->descriptor_ptr);
 
     args[table_offset] = desc;
+    t->desc_table_offset = table_offset;
     table_offset++;
   }
 

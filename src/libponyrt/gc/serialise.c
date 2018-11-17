@@ -18,8 +18,8 @@
 
 PONY_EXTERN_C_BEGIN
 
-static size_t _desc_table_size = 0;
-static pony_type_t** _desc_table = NULL;
+static size_t desc_table_size = 0;
+static pony_type_t** desc_table = NULL;
 static ponyint_descriptors_t* desc_map = NULL;
 
 PONY_EXTERN_C_END
@@ -57,9 +57,13 @@ struct descriptor_t
   pony_type_t* address;
 };
 
-static uint64_t descriptor_hash(descriptor_t* p)
+static size_t descriptor_hash(descriptor_t* p)
 {
+#ifdef PLATFORM_IS_ILP32
+  return ponyint_halfhash_int64(p->type_id);
+#else
   return ponyint_hash_int64(p->type_id);
+#endif
 }
 
 static bool descriptor_cmp(descriptor_t* a, descriptor_t* b)
@@ -116,10 +120,10 @@ bool ponyint_serialise_setup(pony_type_t** table, size_t table_size)
   }
 #endif
 */
-  _desc_table = table;
-  _desc_table_size = table_size;
+  desc_table = table;
+  desc_table_size = table_size;
 
-  // TODO: replace desc_map with a static function mapping type_id's to indexes into the _desc_table to maintain low overhead/high performance
+  // TODO: replace desc_map with a static function mapping type_id's to indexes into the desc_table to maintain low overhead/high performance
   // create desc_map
   desc_map = POOL_ALLOC(ponyint_descriptors_t);
   ponyint_descriptors_init(desc_map, table_size);
@@ -127,7 +131,7 @@ bool ponyint_serialise_setup(pony_type_t** table, size_t table_size)
   // fill desc_map
   for (size_t i = 0; i < table_size; i++)
   {
-    pony_type_t* t = _desc_table[i];
+    pony_type_t* t = desc_table[i];
     if(t != NULL)
     {
       descriptor_t* d = POOL_ALLOC(descriptor_t);
@@ -147,8 +151,12 @@ void ponyint_serialise_final()
   desc_map = NULL;
 }
 
+//uint32_t get_offset_for_type_id(uint64_t type_id);
+
 static pony_type_t* get_descriptor(uint64_t type_id)
 {
+//  uint32_t offset = get_offset_for_type_id(type_id);
+//  (void) offset;
   descriptor_t k;
   k.type_id = type_id;
   size_t index = HASHMAP_UNKNOWN;
@@ -312,13 +320,13 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
     // TODO: NOTE: this section will currently never get executed because the logic in `pony_serialise_offset` has been changed to throw an assert instead of using this HIGH_BIT stuff
     offset &= ~HIGH_BIT;
 
-    if(offset > _desc_table_size)
+    if(offset > desc_table_size)
       return NULL;
 
     // Return the global instance, if there is one. It's ok to return null if
     // there is no global instance, as this will then be an unserialised
     // field in an opaque object.
-    t = _desc_table[offset];
+    t = desc_table[offset];
     return t->instance;
   }
 

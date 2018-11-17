@@ -183,7 +183,6 @@ typedef struct compile_t
   LLVMValueRef primitives_init;
   LLVMValueRef primitives_final;
   LLVMValueRef desc_table;
-  LLVMValueRef numeric_sizes;
 
   LLVMTypeRef void_type;
   LLVMTypeRef i1;

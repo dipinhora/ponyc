@@ -106,6 +106,7 @@ struct reach_type_t
   bool can_be_boxed;
   bool is_trait;
   uint16_t is_bits;
+  uint32_t desc_table_offset;
 
   uint32_t field_count;
   reach_field_t* fields;

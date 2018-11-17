@@ -749,6 +749,7 @@ static reach_type_t* add_reach_type(reach_t* r, ast_t* type)
   t->ast = set_cap_and_ephemeral(type, TK_REF, TK_NONE);
   t->ast_cap = ast_dup(type);
   t->type_id = (uint64_t)-1;
+  t->desc_table_offset = (uint32_t)-1;
 
   ast_set_scope(t->ast, NULL);
   ast_set_scope(t->ast_cap, NULL);
@@ -1525,6 +1526,7 @@ void reach_dump(reach_t* r)
     printf("    is_boxed: %s\n", (t->is_bits & IS_BOXED_BIT)?"true":"false");
     printf("    is_numeric: %s\n", (t->is_bits & IS_NUMERIC_BIT)?"true":"false");
     printf("    is_tuple: %s\n", (t->is_bits & IS_TUPLE_BIT)?"true":"false");
+    printf("    desc_table_offset: %u\n", t->desc_table_offset);
 
     printf("    vtable: %d\n", t->vtable_size);
 
@@ -1921,6 +1923,7 @@ static void reach_type_serialise(pony_ctx_t* ctx, void* object, void* buf,
   dst->can_be_boxed = t->can_be_boxed;
   dst->is_trait = t->is_trait;
   dst->is_bits = t->is_bits;
+  dst->desc_table_offset = t->desc_table_offset;
 
   dst->field_count = t->field_count;
   dst->fields = (reach_field_t*)pony_serialise_offset(ctx, t->fields);

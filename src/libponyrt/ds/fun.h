@@ -31,6 +31,8 @@ size_t ponyint_hash_str(const char* str);
 
 size_t ponyint_hash_ptr(const void* p);
 
+uint32_t ponyint_halfhash_int64(uint64_t key);
+
 uint64_t ponyint_hash_int64(uint64_t key);
 
 uint32_t ponyint_hash_int32(uint32_t key);

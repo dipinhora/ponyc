@@ -2,11 +2,6 @@ version: "{build}"
 
 image: Visual Studio 2017
 
-branches:
-  only:
-    - master
-    - release
-
 environment:
   matrix:
   - llvm: 3.9.1

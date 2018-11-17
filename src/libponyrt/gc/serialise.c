@@ -57,7 +57,7 @@ struct descriptor_t
   pony_type_t* address;
 };
 
-static size_t descriptor_hash(descriptor_t* p)
+static uint64_t descriptor_hash(descriptor_t* p)
 {
   return ponyint_hash_int64(p->type_id);
 }

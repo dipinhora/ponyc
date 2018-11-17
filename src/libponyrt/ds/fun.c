@@ -64,7 +64,7 @@ static uint32_t halfsiphash24(const unsigned char* key, const char* in,
 
 uint32_t ponyint_halfhash_int64(uint64_t key)
 {
-  return halfsiphash24(the_key, &key, sizeof(key));
+  return halfsiphash24(the_key, (char*)&key, sizeof(key));
 }
 
 #endif

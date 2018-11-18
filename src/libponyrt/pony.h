@@ -82,7 +82,7 @@ typedef void (*pony_trace_fn)(pony_ctx_t* ctx, void* p);
  * A serialise function must not raise errors.
  */
 typedef void (*pony_serialise_fn)(pony_ctx_t* ctx, void* p, void* addr,
-  size_t offset, int m);
+  uint64_t offset, int m);
 
 /** Serialise Space function.
  *

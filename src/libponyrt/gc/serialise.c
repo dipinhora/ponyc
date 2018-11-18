@@ -27,7 +27,7 @@ PONY_EXTERN_C_END
 struct serialise_t
 {
   uintptr_t key;
-  uintptr_t value;
+  uint64_t value;
   pony_type_t* t;
   int mutability;
   bool block;
@@ -104,7 +104,7 @@ static void custom_deserialise(pony_ctx_t* ctx)
   {
     if (s->t != NULL && s->t->custom_deserialise != NULL)
     {
-      s->t->custom_deserialise((void *)(s->value),
+      s->t->custom_deserialise((void *)((uintptr_t)s->value),
         (void*)((uintptr_t)ctx->serialise_buffer + s->key + s->t->size));
     }
   }
@@ -256,7 +256,7 @@ PONY_API size_t pony_serialise_offset(pony_ctx_t* ctx, void* p)
   if(s != NULL)
   {
     if(s->block || (s->t != NULL && s->t->serialise != NULL))
-      return s->value;
+      return (uintptr_t)s->value;
     else
       return ALL_BITS;
   }
@@ -337,7 +337,7 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
   serialise_t* s = ponyint_serialise_get(&ctx->serialise, &k, &index);
 
   if(s != NULL)
-    return (void*)s->value;
+    return (void*)((uintptr_t)s->value);
 
   // If we haven't been passed a type descriptor, read one.
   if(t == NULL)
@@ -422,7 +422,7 @@ PONY_API void* pony_deserialise_raw(pony_ctx_t* ctx, uintptr_t offset,
   serialise_t* s = ponyint_serialise_get(&ctx->serialise, &k, &index);
 
   if(s != NULL)
-    return (void*)s->value;
+    return (void*)((uintptr_t)s->value);
 
   void* object = ds_fn((void*)((uintptr_t)ctx->serialise_buffer + offset),
     ctx->serialise_size - offset);

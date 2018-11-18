@@ -215,7 +215,7 @@ static void init_runtime(compile_t* c)
   params[0] = c->void_ptr;
   params[1] = c->object_ptr;
   params[2] = c->void_ptr;
-  params[3] = c->intptr;
+  params[3] = c->i64;
   params[4] = c->i32;
   c->serialise_type = LLVMFunctionType(c->void_type, params, 5, false);
   c->serialise_fn = LLVMPointerType(c->serialise_type, 0);

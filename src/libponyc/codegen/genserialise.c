@@ -106,7 +106,7 @@ void genserialise_typeid(compile_t* c, reach_type_t* t, LLVMValueRef offset)
   // Write the type id instead of the descriptor.
   LLVMValueRef value = LLVMConstInt(c->i64, t->type_id, false);
   LLVMValueRef loc = LLVMBuildBitCast(c->builder, offset,
-    LLVMPointerType(c->intptr, 0), "");
+    LLVMPointerType(c->i64, 0), "");
   LLVMBuildStore(c->builder, value, loc);
 }
 

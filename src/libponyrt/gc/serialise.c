@@ -317,7 +317,7 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
   // primitive, or an unserialised field in an opaque object.
   if((offset & HIGH_BIT) != 0)
   {
-    // TODO: NOTE: this section will currently never get executed because the logic in `pony_serialise_offset` has been changed to throw an assert instead of using this HIGH_BIT stuff
+    // TODO: NOTE: this section needs changing because uintptr_t can't safely hold u64 + high bit twiddles
     offset &= ~HIGH_BIT;
 
     if(offset > desc_table_size)
@@ -343,7 +343,7 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
   if(t == NULL)
   {
     // Make sure we have space to read a type id.
-    if((offset + sizeof(uintptr_t)) > ctx->serialise_size)
+    if((offset + sizeof(uint64_t)) > ctx->serialise_size)
     {
       serialise_cleanup(ctx);
       ctx->serialise_throw();

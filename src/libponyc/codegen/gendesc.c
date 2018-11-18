@@ -314,7 +314,7 @@ void gendesc_basetype(compile_t* c, LLVMTypeRef desc_type)
   params[DESC_FINALISE] = c->final_fn;
   params[DESC_EVENT_NOTIFY] = c->i32;
   params[DESC_TRAITS] = LLVMPointerType(
-    LLVMArrayType(c->intptr, 0), 0);
+    LLVMArrayType(c->i64, 0), 0);
   params[DESC_FIELDS] = LLVMPointerType(
     LLVMArrayType(c->field_descriptor, 0), 0);
   params[DESC_VTABLE] = LLVMArrayType(c->void_ptr, 0);
@@ -367,7 +367,7 @@ void gendesc_type(compile_t* c, reach_type_t* t)
   params[DESC_FINALISE] = c->final_fn;
   params[DESC_EVENT_NOTIFY] = c->i32;
   params[DESC_TRAITS] = LLVMPointerType(
-    LLVMArrayType(c->intptr, c->trait_bitmap_size), 0);
+    LLVMArrayType(c->i64, c->trait_bitmap_size), 0);
   params[DESC_FIELDS] = LLVMPointerType(
     LLVMArrayType(c->field_descriptor, fields), 0);
   params[DESC_VTABLE] = LLVMArrayType(c->void_ptr, vtable_size);

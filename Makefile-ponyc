@@ -948,7 +948,7 @@ benchmark: all
 	$(SILENT)(PONY_BUILD_DIR)/libponyrt.benchmarks
 
 stdlib-debug: all
-	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -V 4 -d -s --checktree --verify packages/stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree --verify packages/stdlib
 
 stdlib: all
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
@@ -968,7 +968,7 @@ test-core: all
 test: test-core test-stdlib test-examples
 
 test-examples: all
-	$(SILENT)PONYPATH=.:$(PONYPATH) find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} $(PONY_BUILD_DIR)/ponyc $(cross_args) -V 4 -d -s --checktree -o {} {}
+	$(SILENT)PONYPATH=.:$(PONYPATH) find examples/*/* -name '*.pony' -print | xargs -n 1 dirname  | sort -u | grep -v ffi- | xargs -n 1 -I {} $(PONY_BUILD_DIR)/ponyc $(cross_args) -d -s --checktree -o {} {}
 
 check-version: all
 	$(SILENT)$(PONY_BUILD_DIR)/ponyc --version

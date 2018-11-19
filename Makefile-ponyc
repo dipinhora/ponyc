@@ -951,7 +951,7 @@ stdlib-debug: all
 	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -V 4 -d -s --checktree --verify packages/stdlib
 
 stdlib: all
-	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) -V 4 --checktree --verify packages/stdlib
+	$(SILENT)PONYPATH=.:$(PONYPATH) $(PONY_BUILD_DIR)/ponyc $(cross_args) --checktree --verify packages/stdlib
 
 test-stdlib-debug: stdlib-debug
 	$(SILENT)$(cross_runner) ./stdlib --sequential

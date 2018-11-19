@@ -1561,7 +1561,7 @@ static void reach_param_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void reach_param_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -1646,7 +1646,7 @@ static void reach_method_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void reach_method_serialise(pony_ctx_t* ctx, void* object, void* buf,
-   size_t offset, int mutability)
+   uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -1759,7 +1759,7 @@ static void reach_method_name_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void reach_method_name_serialise(pony_ctx_t* ctx, void* object,
-  void* buf, size_t offset, int mutability)
+  void* buf, uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -1822,7 +1822,7 @@ static void reach_field_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void reach_field_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -1900,7 +1900,7 @@ static void reach_type_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void reach_type_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -2007,7 +2007,7 @@ static void reach_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void reach_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 

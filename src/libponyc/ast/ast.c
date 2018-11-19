@@ -1955,7 +1955,7 @@ static void ast_signature_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void ast_signature_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -2033,7 +2033,7 @@ static void ast_nominal_pkg_id_signature_serialise_trace(pony_ctx_t* ctx,
 }
 
 static void ast_nominal_pkg_id_signature_serialise(pony_ctx_t* ctx,
-  void* object, void* buf, size_t offset, int mutability)
+  void* object, void* buf, uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -2281,7 +2281,7 @@ static void ast_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void ast_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 

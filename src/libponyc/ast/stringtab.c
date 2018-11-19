@@ -118,7 +118,7 @@ void stringtab_done()
 }
 
 static void string_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)ctx;
   (void)mutability;
@@ -193,7 +193,7 @@ static void strlist_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void strlist_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 

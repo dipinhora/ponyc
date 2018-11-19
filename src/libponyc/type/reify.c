@@ -505,7 +505,7 @@ static void deferred_reification_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void deferred_reification_serialise(pony_ctx_t* ctx, void* object,
-  void* buf, size_t offset, int mutability)
+  void* buf, uint64_t offset, int mutability)
 {
   (void)mutability;
 

@@ -1370,7 +1370,7 @@ static void package_signature_serialise_trace(pony_ctx_t* ctx,
 
 
 static void package_signature_serialise(pony_ctx_t* ctx, void* object,
-  void* buf, size_t offset, int mutability)
+  void* buf, uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -1473,7 +1473,7 @@ static void package_group_signature_serialise_trace(pony_ctx_t* ctx,
 
 
 static void package_group_signature_serialise(pony_ctx_t* ctx, void* object,
-  void* buf, size_t offset, int mutability)
+  void* buf, uint64_t offset, int mutability)
 {
   (void)ctx;
   (void)mutability;
@@ -1625,7 +1625,7 @@ static void package_serialise_trace(pony_ctx_t* ctx, void* object)
 
 
 static void package_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 
@@ -1715,7 +1715,7 @@ static void package_group_serialise_trace(pony_ctx_t* ctx, void* object)
 
 
 static void package_group_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)ctx;
   (void)mutability;

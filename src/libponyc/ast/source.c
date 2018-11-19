@@ -87,7 +87,7 @@ static void source_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void source_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)mutability;
 

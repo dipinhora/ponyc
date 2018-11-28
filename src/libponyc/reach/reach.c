@@ -2,6 +2,7 @@
 #include "subtype.h"
 #include "../ast/astbuild.h"
 #include "../codegen/genname.h"
+#include "../codegen/genopt.h"
 #include "../pass/expr.h"
 #include "../type/assemble.h"
 #include "../type/cap.h"
@@ -701,7 +702,9 @@ static void add_fields(reach_t* r, reach_type_t* t, pass_opt_t* opt)
 
 // Type IDs are assigned as:
 // - `Pointer`s always get -1
-// - Object type IDs, Numeric type IDs, Tuple type IDs: 64 bit siphash
+// - Object type IDs, Numeric type IDs, Tuple type IDs:
+//   - 64 bit siphash (for 64 bit platforms)
+//   - Incremental numbers (for 32 bit platforms; TODO: fix this to be 64 bit siphash instead)
 // - Trait IDs use their own incremental numbering.
 
 static uint64_t get_new_trait_id(reach_t* r)
@@ -709,32 +712,56 @@ static uint64_t get_new_trait_id(reach_t* r)
   return r->trait_type_count++;
 }
 
-static uint64_t get_new_object_id(reach_t* r, reach_type_t* t)
+static uint64_t get_new_object_id(reach_t* r, reach_type_t* t, pass_opt_t* opt)
 {
   r->total_type_count++;
   r->object_type_count++;
   t->is_bits |= IS_BOXED_BIT;
-  uint64_t hash = ponyint_hash_str64(t->name);
+
+  uint64_t hash = 0;
+
+  if(target_is_ilp32(opt->triple))
+    hash = r->total_type_count;
+  else
+    // TODO: ideally should be hashing AST tree for type and not just name
+    hash = ponyint_hash_str64(t->name);
+
   pony_assert(hash != ((uint64_t)-1)); // -1 is for `Pointer`s
   return hash;
 }
 
-static uint64_t get_new_numeric_id(reach_t* r, reach_type_t* t)
+static uint64_t get_new_numeric_id(reach_t* r, reach_type_t* t, pass_opt_t* opt)
 {
   r->total_type_count++;
   r->numeric_type_count++;
   t->is_bits |= IS_NUMERIC_BIT;
-  uint64_t hash = ponyint_hash_str64(t->name);
+
+  uint64_t hash = 0;
+
+  if(target_is_ilp32(opt->triple))
+    hash = r->total_type_count;
+  else
+    // TODO: ideally should be hashing AST tree for type and not just name
+    hash = ponyint_hash_str64(t->name);
+
   pony_assert(hash != ((uint64_t)-1)); // -1 is for `Pointer`s
   return hash;
 }
 
-static uint64_t get_new_tuple_id(reach_t* r, reach_type_t* t)
+static uint64_t get_new_tuple_id(reach_t* r, reach_type_t* t, pass_opt_t* opt)
 {
   r->total_type_count++;
   r->tuple_type_count++;
   t->is_bits |= IS_TUPLE_BIT;
-  uint64_t hash = ponyint_hash_str64(t->name);
+
+  uint64_t hash = 0;
+
+  if(target_is_ilp32(opt->triple))
+    hash = r->total_type_count;
+  else
+    // TODO: ideally should be hashing AST tree for type and not just name
+    hash = ponyint_hash_str64(t->name);
+
   pony_assert(hash != ((uint64_t)-1)); // -1 is for `Pointer`s
   return hash;
 }
@@ -777,11 +804,8 @@ static reach_type_t* add_isect_or_union(reach_t* r, ast_t* type,
 
 
   if(t->type_id == (uint64_t)-1)
-{
-//ast_print(type, 80);
-//ast_printverbose(type);
     t->type_id = get_new_trait_id(r);
-}
+
   ast_t* child = ast_child(type);
 
   while(child != NULL)
@@ -803,12 +827,9 @@ static reach_type_t* add_tuple(reach_t* r, ast_t* type, pass_opt_t* opt)
   if(t != NULL)
     return t;
 
-//ast_print(type, 80);
-//ast_printverbose(type);
-
   t = add_reach_type(r, type);
   t->underlying = TK_TUPLETYPE;
-  t->type_id = get_new_tuple_id(r, t);
+  t->type_id = get_new_tuple_id(r, t, opt);
   t->can_be_boxed = true;
 
   t->field_count = (uint32_t)ast_childcount(t->ast);
@@ -935,16 +956,12 @@ static reach_type_t* add_nominal(reach_t* r, ast_t* type, pass_opt_t* opt)
 
   if(t->type_id == (uint64_t)-1)
   {
-//ast_print(type, 80);
-//ast_printverbose(type);
-//printf("reach type name: %s, mangled name: %s\n", t->name, t->mangle);
-
     if(t->is_trait && !bare)
       t->type_id = get_new_trait_id(r);
     else if(t->can_be_boxed)
-      t->type_id = get_new_numeric_id(r, t);
+      t->type_id = get_new_numeric_id(r, t, opt);
     else if(t->underlying != TK_STRUCT)
-      t->type_id = get_new_object_id(r, t);
+      t->type_id = get_new_object_id(r, t, opt);
   }
 
   if(ast_id(def) != TK_PRIMITIVE)

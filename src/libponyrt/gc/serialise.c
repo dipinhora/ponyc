@@ -193,8 +193,12 @@ PONY_API size_t pony_serialise_offset(pony_ctx_t* ctx, void* p)
       return ALL_BITS;
   }
 
-  // TODO: FIND OUT WHEN/HOW THIS CAN HAPPEN!!!!!! If not possible normally, make this into an error/assert! If possible, figure out how to handle 64 bit type_id's and return types since the pointers are no longer able to hold the type_id + high bit twiddles.
-//  pony_assert(false);
+  // TODO: FIND OUT WHEN/HOW THIS CAN HAPPEN!!!!!!
+  // If not possible normally, make this into an error/assert!
+  // If possible, figure out how to handle 64 bit type_id's and return types
+  // since the pointers are no longer able to hold the type_id + high bit
+  // twiddles.
+  // See TODO in pony_deserialise_offset for related issue
 
   // If we are not in the map, we are an untraced primitive. Return the type id
   // with the high bit set.
@@ -249,7 +253,9 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
   // primitive, or an unserialised field in an opaque object.
   if((offset & HIGH_BIT) != 0)
   {
-    // TODO: NOTE: this section needs changing because uintptr_t can't safely hold u64 + high bit twiddles
+    // TODO: NOTE: this section needs changing because uintptr_t can't safely
+    // hold u64 + high bit twiddles
+    // See TODO in pony_serialise_offset for related issue
     offset &= ~HIGH_BIT;
 
     if(offset > desc_table_size)

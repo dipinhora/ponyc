@@ -217,8 +217,6 @@ pony_type_t* ast_nominal_pkg_id_signature_pony_type();
 
 pony_type_t* ast_pony_type();
 
-uint64_t ast_type_id(ast_t* type);
-
 #if defined(PLATFORM_IS_POSIX_BASED) && defined(__cplusplus)
 }
 #endif

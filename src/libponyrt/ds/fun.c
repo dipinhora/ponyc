@@ -62,11 +62,6 @@ static uint32_t halfsiphash24(const unsigned char* key, const char* in,
   return v0 ^ v1 ^ v2 ^ v3;
 }
 
-uint32_t ponyint_halfhash_int64(uint64_t key)
-{
-  return halfsiphash24(the_key, (char*)&key, sizeof(key));
-}
-
 #endif
 
 #define ROTL64(x, b) (uint64_t)(((x) << (b)) | ((x) >> (64 - (b))))

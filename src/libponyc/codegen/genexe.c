@@ -53,7 +53,7 @@ static LLVMValueRef make_lang_features_init(compile_t* c)
 
   uint32_t desc_table_size = reach_total_num_types(c->reach);
 
-  LLVMTypeRef f_params[4];
+  LLVMTypeRef f_params[5];
   f_params[0] = boolean;
   f_params[1] = boolean;
   f_params[2] = desc_ptr_ptr;

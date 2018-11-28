@@ -511,7 +511,7 @@ static void deferred_reification_serialise(pony_ctx_t* ctx, void* object,
 
   deferred_reification_t* d = (deferred_reification_t*)object;
   deferred_reification_t* dst =
-    (deferred_reification_t*)((uintptr_t)buf + offset);
+    (deferred_reification_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->ast = (ast_t*)pony_serialise_offset(ctx, d->ast);
   dst->type_typeparams = (ast_t*)pony_serialise_offset(ctx, d->type_typeparams);

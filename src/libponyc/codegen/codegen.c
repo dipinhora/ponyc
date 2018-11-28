@@ -217,7 +217,7 @@ static void init_runtime(compile_t* c)
   c->trace_fn = LLVMPointerType(c->trace_type, 0);
 
   // serialise
-  // void (*)(i8*, __object*, i8*, intptr, i32)
+  // void (*)(i8*, __object*, i8*, i64, i32)
   params[0] = c->void_ptr;
   params[1] = c->object_ptr;
   params[2] = c->void_ptr;

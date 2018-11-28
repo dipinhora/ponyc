@@ -1583,7 +1583,7 @@ static void reach_param_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   reach_param_t* p = (reach_param_t*)object;
-  reach_param_t* dst = (reach_param_t*)((uintptr_t)buf + offset);
+  reach_param_t* dst = (reach_param_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->name = (const char*)pony_serialise_offset(ctx, (char*)p->name);
   dst->ast = (ast_t*)pony_serialise_offset(ctx, p->ast);
@@ -1668,7 +1668,7 @@ static void reach_method_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   reach_method_t* m = (reach_method_t*)object;
-  reach_method_t* dst = (reach_method_t*)((uintptr_t)buf + offset);
+  reach_method_t* dst = (reach_method_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->name = (const char*)pony_serialise_offset(ctx, (char*)m->name);
   dst->mangled_name = (const char*)pony_serialise_offset(ctx,
@@ -1781,7 +1781,7 @@ static void reach_method_name_serialise(pony_ctx_t* ctx, void* object,
   (void)mutability;
 
   reach_method_name_t* n = (reach_method_name_t*)object;
-  reach_method_name_t* dst = (reach_method_name_t*)((uintptr_t)buf + offset);
+  reach_method_name_t* dst = (reach_method_name_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->id = n->id;
   dst->cap = n->cap;
@@ -1844,7 +1844,7 @@ static void reach_field_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   reach_field_t* f = (reach_field_t*)object;
-  reach_field_t* dst = (reach_field_t*)((uintptr_t)buf + offset);
+  reach_field_t* dst = (reach_field_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->ast = (ast_t*)pony_serialise_offset(ctx, f->ast);
   dst->type = (reach_type_t*)pony_serialise_offset(ctx, f->type);
@@ -1922,7 +1922,7 @@ static void reach_type_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   reach_type_t* t = (reach_type_t*)object;
-  reach_type_t* dst = (reach_type_t*)((uintptr_t)buf + offset);
+  reach_type_t* dst = (reach_type_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->name = (const char*)pony_serialise_offset(ctx, (char*)t->name);
   dst->mangle = (const char*)pony_serialise_offset(ctx, (char*)t->mangle);
@@ -2029,7 +2029,7 @@ static void reach_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   reach_t* r = (reach_t*)object;
-  reach_t* dst = (reach_t*)((uintptr_t)buf + offset);
+  reach_t* dst = (reach_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   reach_types_serialise(ctx, &r->types, buf, offset + offsetof(reach_t, types),
     PONY_TRACE_MUTABLE);

@@ -92,7 +92,7 @@ static void source_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   source_t* source = (source_t*)object;
-  source_t* dst = (source_t*)((uintptr_t)buf + offset);
+  source_t* dst = (source_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->file = (const char*)pony_serialise_offset(ctx, (char*)source->file);
   dst->m = (char*)pony_serialise_offset(ctx, source->m);

@@ -363,7 +363,7 @@ static void program_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   program_t* program = (program_t*)object;
-  program_t* dst = (program_t*)((uintptr_t)buf + offset);
+  program_t* dst = (program_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->package_groups = (package_group_list_t*)pony_serialise_offset(ctx,
     program->package_groups);

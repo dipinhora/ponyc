@@ -125,7 +125,7 @@ static void string_serialise(pony_ctx_t* ctx, void* object, void* buf,
 
   const char* string = (const char*)object;
 
-  memcpy((void*)((uintptr_t)buf + offset), object, strlen(string) + 1);
+  memcpy((void*)((uintptr_t)buf + (uintptr_t)offset), object, strlen(string) + 1);
 }
 
 static __pony_thread_local struct _pony_type_t string_pony =
@@ -198,7 +198,7 @@ static void strlist_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   strlist_t* list = (strlist_t*)object;
-  strlist_t* dst = (strlist_t*)((uintptr_t)buf + offset);
+  strlist_t* dst = (strlist_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->contents.data = (void*)pony_serialise_offset(ctx, list->contents.data);
   dst->contents.next = (list_t*)pony_serialise_offset(ctx, list->contents.next);

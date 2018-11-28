@@ -369,7 +369,7 @@ static void token_signature_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   token_t* token = (token_t*)object;
-  token_signature_t* dst = (token_signature_t*)((uintptr_t)buf + offset);
+  token_signature_t* dst = (token_signature_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   memset(dst, 0, sizeof(token_signature_t));
 
@@ -443,7 +443,7 @@ static void token_docstring_signature_serialise(pony_ctx_t* ctx, void* object,
   (void)object;
   (void)mutability;
 
-  token_signature_t* dst = (token_signature_t*)((uintptr_t)buf + offset);
+  token_signature_t* dst = (token_signature_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   memset(dst, 0, sizeof(token_signature_t));
 
@@ -495,7 +495,7 @@ static void token_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   token_t* token = (token_t*)object;
-  token_t* dst = (token_t*)((uintptr_t)buf + offset);
+  token_t* dst = (token_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->id = token->id;
 

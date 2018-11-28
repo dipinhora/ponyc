@@ -48,7 +48,7 @@ static void hash_elem_serialise_trace(pony_ctx_t* ctx, void* object)
 }
 
 static void hash_elem_serialise(pony_ctx_t* ctx, void* object, void* buf,
-  size_t offset, int mutability)
+  uint64_t offset, int mutability)
 {
   (void)ctx;
   (void)mutability;

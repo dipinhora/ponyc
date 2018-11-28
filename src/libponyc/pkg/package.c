@@ -1375,7 +1375,7 @@ static void package_signature_serialise(pony_ctx_t* ctx, void* object,
   (void)mutability;
 
   package_t* package = (package_t*)object;
-  package_signature_t* dst = (package_signature_t*)((uintptr_t)buf + offset);
+  package_signature_t* dst = (package_signature_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->filename = (const char*)pony_serialise_offset(ctx,
     (char*)package->filename);
@@ -1479,7 +1479,7 @@ static void package_group_signature_serialise(pony_ctx_t* ctx, void* object,
   (void)mutability;
 
   package_group_t* group = (package_group_t*)object;
-  package_group_t* dst = (package_group_t*)((uintptr_t)buf + offset);
+  package_group_t* dst = (package_group_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   if(group->signature != NULL)
   {
@@ -1630,7 +1630,7 @@ static void package_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   package_t* package = (package_t*)object;
-  package_t* dst = (package_t*)((uintptr_t)buf + offset);
+  package_t* dst = (package_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->path = (const char*)pony_serialise_offset(ctx, (char*)package->path);
   dst->qualified_name = (const char*)pony_serialise_offset(ctx,
@@ -1721,7 +1721,7 @@ static void package_group_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   package_group_t* group = (package_group_t*)object;
-  package_group_t* dst = (package_group_t*)((uintptr_t)buf + offset);
+  package_group_t* dst = (package_group_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   uintptr_t ptr_offset = pony_serialise_offset(ctx, group->signature);
   dst->signature = (char*)ptr_offset;

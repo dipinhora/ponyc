@@ -3,6 +3,7 @@
 #include "gendesc.h"
 #include "genfun.h"
 #include "genname.h"
+#include "genopt.h"
 #include "genprim.h"
 #include "ponyassert.h"
 #include "../../libponyrt/mem/pool.h"
@@ -104,10 +105,20 @@ static void serialise(compile_t* c, reach_type_t* t, LLVMValueRef ctx,
 void genserialise_typeid(compile_t* c, reach_type_t* t, LLVMValueRef offset)
 {
   // Write the type id instead of the descriptor.
-  LLVMValueRef value = LLVMConstInt(c->i64, t->type_id, false);
-  LLVMValueRef loc = LLVMBuildBitCast(c->builder, offset,
-    LLVMPointerType(c->i64, 0), "");
-  LLVMBuildStore(c->builder, value, loc);
+  if(target_is_ilp32(c->opt->triple))
+  {
+    LLVMValueRef value = LLVMConstInt(c->intptr, t->type_id, false);
+    LLVMValueRef loc = LLVMBuildBitCast(c->builder, offset,
+      LLVMPointerType(c->intptr, 0), "");
+    LLVMBuildStore(c->builder, value, loc);
+  }
+  else
+  {
+    LLVMValueRef value = LLVMConstInt(c->i64, t->type_id, false);
+    LLVMValueRef loc = LLVMBuildBitCast(c->builder, offset,
+      LLVMPointerType(c->i64, 0), "");
+    LLVMBuildStore(c->builder, value, loc);
+  }
 }
 
 static void serialise_bare_interface(compile_t* c, reach_type_t* t,

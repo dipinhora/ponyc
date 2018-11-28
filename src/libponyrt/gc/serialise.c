@@ -281,7 +281,11 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
   if(t == NULL)
   {
     // Make sure we have space to read a type id.
+#ifdef PLATFORM_IS_ILP32
+    if((offset + sizeof(uintptr_t)) > ctx->serialise_size)
+#else
     if((offset + sizeof(uint64_t)) > ctx->serialise_size)
+#endif
     {
       serialise_cleanup(ctx);
       ctx->serialise_throw();
@@ -289,7 +293,12 @@ PONY_API void* pony_deserialise_offset(pony_ctx_t* ctx, pony_type_t* t,
     }
 
     // Turn the type id into a descriptor pointer.
+#ifdef PLATFORM_IS_ILP32
+    // TODO: remove this ifdef once serialisation of 64 bit type_id's works for 32 bit platforms
+    uint64_t id = *(uintptr_t*)((uintptr_t)ctx->serialise_buffer + offset);
+#else
     uint64_t id = *(uint64_t*)((uintptr_t)ctx->serialise_buffer + offset);
+#endif
     t = get_descriptor(id);
   }
 

@@ -357,7 +357,7 @@ static void symbol_serialise(pony_ctx_t* ctx, void* object, void* buf,
   (void)mutability;
 
   symbol_t* sym = (symbol_t*)object;
-  symbol_t* dst = (symbol_t*)((uintptr_t)buf + offset);
+  symbol_t* dst = (symbol_t*)((uintptr_t)buf + (uintptr_t)offset);
 
   dst->name = (const char*)pony_serialise_offset(ctx, (char*)sym->name);
   dst->def = (ast_t*)pony_serialise_offset(ctx, sym->def);

@@ -21,10 +21,6 @@ typedef void* (*deserialise_raw_fn)(void* buf, size_t remaining_size);
 
 typedef struct serialise_t serialise_t;
 
-typedef struct descriptor_t descriptor_t;
-
-DECLARE_HASHMAP(ponyint_descriptors, ponyint_descriptors_t, descriptor_t);
-
 DECLARE_HASHMAP(ponyint_serialise, ponyint_serialise_t, serialise_t);
 
 bool ponyint_serialise_setup(pony_type_t** table, size_t table_size,

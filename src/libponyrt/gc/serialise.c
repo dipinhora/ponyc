@@ -20,7 +20,7 @@ PONY_EXTERN_C_BEGIN
 
 static size_t desc_table_size = 0;
 static pony_type_t** desc_table = NULL;
-static ponyint_descriptors_t* desc_map = NULL;
+static desc_offset_lookup_fn desc_table_offset_lookup_fn = NULL;
 
 PONY_EXTERN_C_END
 
@@ -50,34 +50,6 @@ static void serialise_free(serialise_t* p)
 
 DEFINE_HASHMAP(ponyint_serialise, ponyint_serialise_t,
   serialise_t, serialise_hash, serialise_cmp, serialise_free);
-
-struct descriptor_t
-{
-  uint64_t type_id;
-  pony_type_t* address;
-};
-
-static size_t descriptor_hash(descriptor_t* p)
-{
-#ifdef PLATFORM_IS_ILP32
-  return ponyint_halfhash_int64(p->type_id);
-#else
-  return ponyint_hash_int64(p->type_id);
-#endif
-}
-
-static bool descriptor_cmp(descriptor_t* a, descriptor_t* b)
-{
-  return a->type_id == b->type_id;
-}
-
-static void descriptor_free(descriptor_t* p)
-{
-  POOL_FREE(descriptor_t, p);
-}
-
-DEFINE_HASHMAP(ponyint_descriptors, ponyint_descriptors_t,
-  descriptor_t, descriptor_hash, descriptor_cmp, descriptor_free);
 
 static void recurse(pony_ctx_t* ctx, void* p, void* f)
 {
@@ -110,61 +82,21 @@ static void custom_deserialise(pony_ctx_t* ctx)
   }
 }
 
-bool ponyint_serialise_setup(pony_type_t** table, size_t table_size)
+bool ponyint_serialise_setup(pony_type_t** table, size_t table_size,
+  desc_offset_lookup_fn desc_table_offset_lookup)
 {
-/*
-#ifndef PONY_NDEBUG
-  for(uint32_t i = 0; i < table_size; i++)
-  {
-    pony_assert(table[i] != NULL);
-  }
-#endif
-*/
   desc_table = table;
   desc_table_size = table_size;
-
-  // TODO: replace desc_map with a static function mapping type_id's to indexes into the desc_table to maintain low overhead/high performance
-  // create desc_map
-  desc_map = POOL_ALLOC(ponyint_descriptors_t);
-  ponyint_descriptors_init(desc_map, table_size);
-
-  // fill desc_map
-  for (size_t i = 0; i < table_size; i++)
-  {
-    pony_type_t* t = desc_table[i];
-    if(t != NULL)
-    {
-      descriptor_t* d = POOL_ALLOC(descriptor_t);
-      d->type_id = t->id;
-      d->address = t;
-      ponyint_descriptors_put(desc_map, d);
-    }
-  }
+  desc_table_offset_lookup_fn = desc_table_offset_lookup;
 
   return true;
 }
 
-void ponyint_serialise_final()
-{
-  ponyint_descriptors_destroy(desc_map);
-  POOL_FREE(ponyint_descriptors_t, desc_map);
-  desc_map = NULL;
-}
-
-//uint32_t get_offset_for_type_id(uint64_t type_id);
-
 static pony_type_t* get_descriptor(uint64_t type_id)
 {
-//  uint32_t offset = get_offset_for_type_id(type_id);
-//  (void) offset;
-  descriptor_t k;
-  k.type_id = type_id;
-  size_t index = HASHMAP_UNKNOWN;
-  descriptor_t* d = ponyint_descriptors_get(desc_map, &k, &index);
-  if(d != NULL)
-    return d->address;
-  else
-    return NULL;
+  uint32_t offset = desc_table_offset_lookup_fn(type_id);
+  pony_assert(offset < desc_table_size);
+  return desc_table[offset];
 }
 
 void ponyint_serialise_object(pony_ctx_t* ctx, void* p, pony_type_t* t,

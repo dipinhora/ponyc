@@ -472,6 +472,57 @@ void gendesc_table(compile_t* c)
   ponyint_pool_free_size(size, args);
 }
 
+void gendesc_table_lookup(compile_t* c)
+{
+  reach_type_t* t;
+  size_t i = HASHMAP_BEGIN;
+
+  LLVMValueRef desc_lkp_fn = codegen_addfun(c, "__DescOffsetLookupFn", c->descriptor_offset_lookup_type, false);
+  LLVMSetFunctionCallConv(desc_lkp_fn, LLVMCCallConv);
+  LLVMSetLinkage(desc_lkp_fn, LLVMExternalLinkage);
+  codegen_startfun(c, desc_lkp_fn, NULL, NULL, NULL, false);
+
+  LLVMBasicBlockRef unreachable = codegen_block(c, "unreachable");
+
+  // Read the type ID.
+  LLVMValueRef type_id = LLVMGetParam(desc_lkp_fn, 0);
+
+  // switch based on type_id
+  LLVMValueRef type_switch = LLVMBuildSwitch(c->builder, type_id, unreachable, 0);
+
+  // Mark the default case as unreachable.
+  LLVMPositionBuilderAtEnd(c->builder, unreachable);
+
+  LLVMValueRef ret = LLVMConstInt(c->i32, (uint32_t)-1, false);
+  LLVMBuildRet(c->builder, ret);
+
+  while((t = reach_types_next(&c->reach->types, &i)) != NULL)
+  {
+    pony_assert((t->is_bits & (IS_NUMERIC_BIT | IS_TUPLE_BIT)) != (IS_NUMERIC_BIT | IS_TUPLE_BIT));
+
+    if(t->is_trait || (t->underlying == TK_STRUCT))
+      continue;
+
+    pony_assert(t->type_id != (uint64_t)-1);
+    // TODO: add in LLVM logic for building switch/case with returns for each case
+    LLVMBasicBlockRef type_block = codegen_block(c, genname_type_with_id("type", t->type_id));
+
+    LLVMAddCase(type_switch, LLVMConstInt(c->i64, t->type_id, false), type_block);
+
+    LLVMPositionBuilderAtEnd(c->builder, type_block);
+
+    ret = LLVMConstInt(c->i32, t->desc_table_offset, false);
+    LLVMBuildRet(c->builder, ret);
+  }
+
+  // Mark the default case as unreachable.
+  LLVMPositionBuilderAtEnd(c->builder, unreachable);
+
+  codegen_finishfun(c);
+
+  c->desc_table_offset_lookup_fn = make_desc_ptr(desc_lkp_fn, c->descriptor_offset_lookup_type);
+}
+
 static LLVMValueRef desc_field(compile_t* c, LLVMValueRef desc, int index)
 {
   LLVMValueRef ptr = LLVMBuildStructGEP(c->builder, desc, index, "");

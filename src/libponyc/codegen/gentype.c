@@ -907,6 +907,7 @@ bool gentypes(compile_t* c)
   }
 
   gendesc_table(c);
+  gendesc_table_lookup(c);
 
   if(c->opt->verbosity >= VERBOSITY_INFO)
     fprintf(stderr, " Data types\n");

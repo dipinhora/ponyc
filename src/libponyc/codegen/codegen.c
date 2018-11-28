@@ -203,6 +203,12 @@ static void init_runtime(compile_t* c)
   c->msg_ptr = LLVMPointerType(c->msg_type, 0);
   LLVMStructSetBody(c->msg_type, params, 2, false);
 
+  // descriptor_offset_lookup
+  // uint32_t (*)(i64)
+  params[0] = c->i64;
+  c->descriptor_offset_lookup_type = LLVMFunctionType(c->i32, params, 1, false);
+  c->descriptor_offset_lookup_fn = LLVMPointerType(c->descriptor_offset_lookup_type, 0);
+
   // trace
   // void (*)(i8*, __object*)
   params[0] = c->void_ptr;

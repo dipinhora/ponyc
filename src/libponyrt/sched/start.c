@@ -183,7 +183,7 @@ PONY_API bool pony_start(bool library, int* exit_code,
 
     if(language_init.init_serialisation &&
       !ponyint_serialise_setup(language_init.descriptor_table,
-        language_init.descriptor_table_size))
+        language_init.descriptor_table_size, language_init.desc_table_offset_lookup))
     {
       atomic_store_explicit(&running, NOT_RUNNING, memory_order_relaxed);
       return false;
@@ -209,9 +209,6 @@ PONY_API bool pony_start(bool library, int* exit_code,
 
   if(language_init.init_network)
     ponyint_os_sockets_final();
-
-  if(language_init.init_serialisation)
-    ponyint_serialise_final();
 
   int ec = pony_get_exitcode();
 #ifdef USE_VALGRIND
@@ -244,9 +241,6 @@ PONY_API int pony_stop()
 
   if(language_init.init_network)
     ponyint_os_sockets_final();
-
-  if(language_init.init_serialisation)
-    ponyint_serialise_final();
 
   int ec = pony_get_exitcode();
 #ifdef USE_VALGRIND

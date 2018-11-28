@@ -115,6 +115,29 @@ static LLVMValueRef make_desc_ptr(LLVMValueRef func, LLVMTypeRef type)
   return LLVMConstBitCast(func, type);
 }
 
+static LLVMValueRef* trait_bitmap32(compile_t* c, reach_type_t* t)
+{
+  size_t bm_size = c->trait_bitmap_size * sizeof(uint32_t);
+   uint32_t* bm = (uint32_t*)ponyint_pool_alloc_size(bm_size);
+  memset(bm, 0, bm_size);
+   size_t i = HASHMAP_BEGIN;
+  reach_type_t* provide;
+   while((provide = reach_type_cache_next(&t->subtypes, &i)) != NULL)
+  {
+    pony_assert(provide->type_id != (uint64_t)-1);
+    uint32_t index = (uint32_t)provide->type_id >> 5;
+    pony_assert(index < c->trait_bitmap_size);
+    uint32_t bit = (uint32_t)provide->type_id & 31;
+    bm[index] |= 1 << bit;
+  }
+   LLVMValueRef* bitmap = (LLVMValueRef*)ponyint_pool_alloc_size(
+    c->trait_bitmap_size * sizeof(LLVMValueRef));
+   for(i = 0; i < c->trait_bitmap_size; i++)
+    bitmap[i] = LLVMConstInt(c->intptr, bm[i], false);
+   ponyint_pool_free_size(bm_size, bm);
+   return bitmap;
+}
+
 static LLVMValueRef* trait_bitmap64(compile_t* c, reach_type_t* t)
 {
   size_t bm_size = c->trait_bitmap_size * sizeof(uint64_t);
@@ -152,7 +175,11 @@ static LLVMValueRef make_trait_bitmap(compile_t* c, reach_type_t* t)
   if(t->bare_method != NULL)
     return LLVMConstNull(LLVMPointerType(map_type, 0));
 
-  LLVMValueRef* bitmap = trait_bitmap64(c, t);
+  LLVMValueRef* bitmap;
+  if(target_is_ilp32(c->opt->triple))
+    bitmap = trait_bitmap32(c, t);
+  else
+    bitmap = trait_bitmap64(c, t);
 
   LLVMValueRef bitmap_array = LLVMConstArray(c->intptr, bitmap,
     c->trait_bitmap_size);

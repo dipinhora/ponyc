@@ -246,8 +246,8 @@ static void try_gc(pony_ctx_t* ctx, pony_actor_t* actor)
 static size_t throttled_batch_size(uint64_t throttle_mute_bitfield)
 {
   uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
-  uint32_t extra_throttled_msgs_sent = (throttle_mute_bitfield &
-    EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT;
+  uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
+    EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
 
   return PONY_ACTOR_DEFAULT_BATCH >> (size_t)((mute_map_count +
     extra_throttled_msgs_sent) * actor_throttlefactor);

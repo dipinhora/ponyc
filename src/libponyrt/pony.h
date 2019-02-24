@@ -189,7 +189,7 @@ typedef struct pony_language_features_init_t
 #if INTPTR_MAX == INT64_MAX
 #  define PONY_ACTOR_PAD_SIZE 264
 #elif INTPTR_MAX == INT32_MAX
-#  define PONY_ACTOR_PAD_SIZE 168
+#  define PONY_ACTOR_PAD_SIZE 176
 #endif
 
 typedef struct pony_actor_pad_t

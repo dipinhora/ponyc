@@ -32,6 +32,7 @@ static bool actor_noblock = false;
 
 // default actor throttle factor to ensure muting occurs after 10 msgs sent
 static double actor_throttlefactor = (PONY_ACTOR_MUTING_MSGS_NO_SCALING) / 10.0;
+static uint32_t actor_msgs_til_mute = 10;
 
 // The flags of a given actor cannot be mutated from more than one actor at
 // once, so these operations need not be atomic RMW.
@@ -242,15 +243,14 @@ static void try_gc(pony_ctx_t* ctx, pony_actor_t* actor)
   DTRACE1(GC_END, (uintptr_t)ctx->scheduler);
 }
 
-// calculate throttling adjusted batch size
-static size_t throttled_batch_size(uint64_t throttle_mute_bitfield)
+// check if the actor should be muted
+static bool should_be_muted(uint64_t throttle_mute_bitfield)
 {
   uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
   uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
     EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
 
-  return PONY_ACTOR_DEFAULT_BATCH >> (size_t)((mute_map_count +
-    extra_throttled_msgs_sent) * actor_throttlefactor);
+  return (mute_map_count + extra_throttled_msgs_sent) >= actor_msgs_til_mute;
 }
 
 // check if an actor is muted
@@ -260,8 +260,8 @@ static bool is_muted(pony_actor_t* actor)
     memory_order_relaxed) > MUTED_BIT;
 }
 
-// return new batch size; if it's 0, we muted
-static size_t maybe_mute(pony_actor_t* actor)
+// true if muted; false otherwise
+static bool maybe_mute(pony_actor_t* actor)
 {
   // if we become muted as a result of handling a message, bail out now.
   // we aren't set to "muted" at this point. setting to muted during a
@@ -290,18 +290,15 @@ static size_t maybe_mute(pony_actor_t* actor)
   uint64_t throttle_mute_bitfield = atomic_load_explicit(
     &actor->throttle_mute_bitfield, memory_order_relaxed);
 
-  size_t new_batch = 0;
-
   do
   {
     // if we're already muted our batch must be 0
     if(throttle_mute_bitfield > MUTED_BIT)
-      return 0;
+      return true;
 
-    new_batch = throttled_batch_size(throttle_mute_bitfield);
-
-    if(new_batch > 0)
-      return new_batch;
+    // if we shouldn't be muted
+    if(!should_be_muted(throttle_mute_bitfield))
+      return false;
 
   }
   while(!atomic_compare_exchange_weak_explicit(&actor->throttle_mute_bitfield,
@@ -309,9 +306,7 @@ static size_t maybe_mute(pony_actor_t* actor)
     memory_order_relaxed, memory_order_relaxed));
 
   // we successfully muted the actor
-  // new_batch == 0
-  pony_assert(new_batch == 0);
-  return new_batch;
+  return true;
 }
 
 static bool batch_limit_reached(pony_actor_t* actor, bool polling, size_t batch)
@@ -342,12 +337,19 @@ bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
     batch = PONY_ACTOR_DEFAULT_BATCH << 1;
   else
   {
-    // get batch size and mute if we should have been muted
-    batch = maybe_mute(actor);
+    uint64_t throttle_mute_bitfield = atomic_load_explicit(
+      &actor->throttle_mute_bitfield, memory_order_relaxed);
 
-    // if batch is 0, we were muted
-    if(batch == 0)
+    // if we should be muted
+    if(should_be_muted(throttle_mute_bitfield))
       return false;
+
+    uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
+    uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
+      EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
+
+    batch = PONY_ACTOR_DEFAULT_BATCH >> (size_t)((mute_map_count +
+      extra_throttled_msgs_sent) * actor_throttlefactor);
   }
 
   // ensure batch > 0
@@ -373,8 +375,8 @@ bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
       app++;
       try_gc(ctx, actor);
 
-      // maybe mute actor; returns 0 if mute occurs
-      if(maybe_mute(actor) == 0)
+      // maybe mute actor; returns true if mute occurs
+      if(maybe_mute(actor))
         return false;
 
       // if we've reached our batch limit
@@ -400,8 +402,8 @@ bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
       app++;
       try_gc(ctx, actor);
 
-      // maybe mute actor; returns 0 if mute occurs
-      if(maybe_mute(actor) == 0)
+      // maybe mute actor; returns true if mute occurs
+      if(maybe_mute(actor))
         return false;
 
       // if we've reached our batch limit
@@ -571,6 +573,8 @@ void ponyint_actor_setmsgstilmute(size_t msgs_til_mute)
 
   actor_throttlefactor = (PONY_ACTOR_MUTING_MSGS_NO_SCALING) /
     ((double)msgs_til_mute);
+
+  actor_msgs_til_mute = (uint32_t)msgs_til_mute;
 }
 
 PONY_API pony_actor_t* pony_create(pony_ctx_t* ctx, pony_type_t* type)
@@ -1001,7 +1005,7 @@ bool ponyint_maybe_unmute_actor(pony_actor_t* actor)
     // check if we should be unmuted or not based on throttled batch size
     // we implicitly change extra_throttled_msgs_set = 0 by only using
     // mute_map_count and if we're current muted
-    if((throttled_batch_size(mute_map_count) > 0) && (old_muted_bit > 0))
+    if(!should_be_muted(mute_map_count) && (old_muted_bit > 0))
       needs_unmuting = true;
     else
       needs_unmuting = false;

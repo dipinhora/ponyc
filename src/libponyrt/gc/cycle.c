@@ -51,6 +51,18 @@ DECLARE_HASHMAP(ponyint_viewrefmap, viewrefmap_t, viewref_t);
 DEFINE_HASHMAP(ponyint_viewrefmap, viewrefmap_t, viewref_t, viewref_hash,
   viewref_cmp, viewref_free);
 
+#ifdef USE_MEMTRACK
+static size_t viewrefmap_total_mem_size(viewrefmap_t* map)
+{
+  return ponyint_viewrefmap_mem_size(map) + (ponyint_viewrefmap_size(map) * sizeof(viewref_t));
+}
+
+static size_t viewrefmap_total_alloc_size(viewrefmap_t* map)
+{
+  return ponyint_viewrefmap_alloc_size(map) + (ponyint_viewrefmap_size(map) * sizeof(viewref_t));
+}
+#endif
+
 enum
 {
   COLOR_BLACK,
@@ -81,12 +93,20 @@ static bool view_cmp(view_t* a, view_t* b)
   return a->actor == b->actor;
 }
 
+#ifdef USE_MEMTRACK
+static void track_mem_view_free(view_t* view);
+#endif
+
 static void view_free(view_t* view)
 {
   view->view_rc--;
 
   if(view->view_rc == 0)
   {
+#ifdef USE_MEMTRACK
+    track_mem_view_free(view);
+#endif
+
     ponyint_viewrefmap_destroy(&view->map);
 
     if(view->delta != NULL)
@@ -120,8 +140,15 @@ static bool perceived_cmp(perceived_t* a, perceived_t* b)
   return a->token == b->token;
 }
 
+#ifdef USE_MEMTRACK
+static void track_mem_perceived_free(perceived_t* per);
+#endif
+
 static void perceived_free(perceived_t* per)
 {
+#ifdef USE_MEMTRACK
+  track_mem_perceived_free(per);
+#endif
   ponyint_viewmap_destroy(&per->map);
   POOL_FREE(perceived_t, per);
 }
@@ -151,9 +178,40 @@ typedef struct detector_t
 
   size_t created;
   size_t destroyed;
+
+#ifdef USE_MEMTRACK
+  size_t mem_used;
+  size_t mem_allocated;
+#endif
 } detector_t;
 
 static pony_actor_t* cycle_detector;
+
+#ifdef USE_MEMTRACK
+static void track_mem_view_free(view_t* view)
+{
+  detector_t* d = (detector_t*)cycle_detector;
+  d->mem_used -= sizeof(view_t);
+  d->mem_allocated -= POOL_ALLOC_SIZE(view_t);
+  d->mem_used -= viewrefmap_total_mem_size(&view->map);
+  d->mem_allocated -= viewrefmap_total_alloc_size(&view->map);
+
+  if(view->delta != NULL)
+  {
+    d->mem_used -= ponyint_deltamap_total_mem_size(view->delta);
+    d->mem_allocated -= ponyint_deltamap_total_alloc_size(view->delta);
+  }
+}
+
+static void track_mem_perceived_free(perceived_t* per)
+{
+  detector_t* d = (detector_t*)cycle_detector;
+  d->mem_used -= sizeof(perceived_t);
+  d->mem_allocated -= POOL_ALLOC_SIZE(perceived_t);
+  d->mem_used -= ponyint_viewmap_mem_size(&per->map);
+  d->mem_allocated -= ponyint_viewmap_alloc_size(&per->map);
+}
+#endif
 
 static view_t* get_view(detector_t* d, pony_actor_t* actor, bool create)
 {
@@ -172,10 +230,22 @@ static view_t* get_view(detector_t* d, pony_actor_t* actor, bool create)
     view->actor = actor;
     view->view_rc = 1;
 
+#ifdef USE_MEMTRACK
+    d->mem_used += sizeof(view_t);
+    d->mem_allocated += POOL_ALLOC_SIZE(view_t);
+    size_t mem_size_before = ponyint_viewmap_mem_size(&d->views);
+    size_t alloc_size_before = ponyint_viewmap_alloc_size(&d->views);
+#endif
     // didn't find it in the map but index is where we can put the
     // new one without another search
     ponyint_viewmap_putindex(&d->views, view, index);
     d->created++;
+#ifdef USE_MEMTRACK
+    size_t mem_size_after = ponyint_viewmap_mem_size(&d->views);
+    size_t alloc_size_after = ponyint_viewmap_alloc_size(&d->views);
+    d->mem_used += (mem_size_after - mem_size_before);
+    d->mem_allocated += (alloc_size_after - alloc_size_before);
+#endif
   }
 
   return view;
@@ -218,10 +288,23 @@ static void apply_delta(detector_t* d, view_t* view)
         ref = (viewref_t*)POOL_ALLOC(viewref_t);
         ref->view = find;
 
+#ifdef USE_MEMTRACK
+        d->mem_used += sizeof(viewref_t);
+        d->mem_allocated += POOL_ALLOC_SIZE(viewref_t);
+        size_t mem_size_before = ponyint_viewrefmap_mem_size(&view->map);
+        size_t alloc_size_before = ponyint_viewrefmap_alloc_size(&view->map);
+#endif
         // didn't find it in the map but index is where we can put the
         // new one without another search
         ponyint_viewrefmap_putindex(&view->map, ref, index);
         find->view_rc++;
+
+#ifdef USE_MEMTRACK
+        size_t mem_size_after = ponyint_viewrefmap_mem_size(&view->map);
+        size_t alloc_size_after = ponyint_viewrefmap_alloc_size(&view->map);
+        d->mem_used += (mem_size_after - mem_size_before);
+        d->mem_allocated += (alloc_size_after - alloc_size_before);
+#endif
       }
 
       ref->rc = rc;
@@ -230,6 +313,10 @@ static void apply_delta(detector_t* d, view_t* view)
 
       if(ref != NULL)
       {
+#ifdef USE_MEMTRACK
+        d->mem_used -= sizeof(viewref_t);
+        d->mem_allocated -= POOL_ALLOC_SIZE(viewref_t);
+#endif
         viewref_free(ref);
         view_free(find);
       }
@@ -387,7 +474,21 @@ static bool collect_view(perceived_t* per, view_t* view, size_t rc, int* count)
     pony_assert(view->perceived == NULL);
 
     view->perceived = per;
+
+#ifdef USE_MEMTRACK
+    detector_t* d = (detector_t*)cycle_detector;
+    size_t mem_size_before = ponyint_viewmap_mem_size(&per->map);
+    size_t alloc_size_before = ponyint_viewmap_alloc_size(&per->map);
+#endif
+
     ponyint_viewmap_put(&per->map, view);
+
+#ifdef USE_MEMTRACK
+    size_t mem_size_after = ponyint_viewmap_mem_size(&per->map);
+    size_t alloc_size_after = ponyint_viewmap_alloc_size(&per->map);
+    d->mem_used += (mem_size_after - mem_size_before);
+    d->mem_allocated += (alloc_size_after - alloc_size_before);
+#endif
   }
 
   return mark_black(view, rc, count);
@@ -446,7 +547,24 @@ static bool detect(pony_ctx_t* ctx, detector_t* d, view_t* view)
   per->token = d->next_token++;
   per->ack = 0;
   ponyint_viewmap_init(&per->map, count);
+#ifdef USE_MEMTRACK
+  d->mem_used += sizeof(perceived_t);
+  d->mem_allocated += POOL_ALLOC_SIZE(perceived_t);
+  d->mem_used += ponyint_viewmap_mem_size(&per->map);
+  d->mem_allocated += ponyint_viewmap_alloc_size(&per->map);
+
+  size_t mem_size_before = ponyint_perceivedmap_mem_size(&d->perceived);
+  size_t alloc_size_before = ponyint_perceivedmap_alloc_size(&d->perceived);
+#endif
+
   ponyint_perceivedmap_put(&d->perceived, per);
+
+#ifdef USE_MEMTRACK
+  size_t mem_size_after = ponyint_perceivedmap_mem_size(&d->perceived);
+  size_t alloc_size_after = ponyint_perceivedmap_alloc_size(&d->perceived);
+  d->mem_used += (mem_size_after - mem_size_before);
+  d->mem_allocated += (alloc_size_after - alloc_size_before);
+#endif
 
   int count2 = collect_white(per, view, 0);
 
@@ -627,8 +745,20 @@ static void block(detector_t* d, pony_actor_t* actor,
   // add to the deferred set
   if(!view->deferred)
   {
+#ifdef USE_MEMTRACK
+    size_t mem_size_before = ponyint_viewmap_mem_size(&d->deferred);
+    size_t alloc_size_before = ponyint_viewmap_alloc_size(&d->deferred);
+#endif
+
     ponyint_viewmap_put(&d->deferred, view);
     view->deferred = true;
+
+#ifdef USE_MEMTRACK
+    size_t mem_size_after = ponyint_viewmap_mem_size(&d->deferred);
+    size_t alloc_size_after = ponyint_viewmap_alloc_size(&d->deferred);
+    d->mem_used += (mem_size_after - mem_size_before);
+    d->mem_allocated += (alloc_size_after - alloc_size_before);
+#endif
   }
 }
 
@@ -740,6 +870,14 @@ static void final(pony_ctx_t* ctx, pony_actor_t* self)
     i--;
   }
 
+#ifdef USE_MEMTRACK
+  d->mem_used -= ponyint_viewmap_mem_size(&d->deferred);
+  d->mem_allocated -= ponyint_viewmap_alloc_size(&d->deferred);
+  d->mem_used -= ponyint_viewmap_mem_size(&d->views);
+  d->mem_allocated -= ponyint_viewmap_alloc_size(&d->views);
+  d->mem_used -= ponyint_perceivedmap_mem_size(&d->perceived);
+  d->mem_allocated -= ponyint_perceivedmap_alloc_size(&d->perceived);
+#endif
   ponyint_viewmap_destroy(&d->deferred);
   ponyint_viewmap_destroy(&d->views);
   ponyint_perceivedmap_destroy(&d->perceived);
@@ -839,6 +977,11 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
   {
     case ACTORMSG_CHECKBLOCKED:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msg_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msg_t)));
+#endif
+
       // check for blocked actors/cycles
       check_blocked(ctx, d);
       break;
@@ -846,6 +989,11 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_CREATED:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgp_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
+#endif
+
       pony_msgp_t* m = (pony_msgp_t*)msg;
       actor_created(d, (pony_actor_t*)m->p);
       break;
@@ -853,6 +1001,11 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_DESTROYED:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgp_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
+#endif
+
       pony_msgp_t* m = (pony_msgp_t*)msg;
       actor_destroyed(d, (pony_actor_t*)m->p);
       break;
@@ -860,6 +1013,11 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_BLOCK:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(block_msg_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(block_msg_t)));
+#endif
+
       block_msg_t* m = (block_msg_t*)msg;
       block(d, m->actor, m->rc, m->delta);
       break;
@@ -867,6 +1025,11 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_UNBLOCK:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgp_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
+#endif
+
       pony_msgp_t* m = (pony_msgp_t*)msg;
       unblock(d, (pony_actor_t*)m->p);
       break;
@@ -874,6 +1037,11 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_ACK:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgi_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgi_t)));
+#endif
+
       pony_msgi_t* m = (pony_msgi_t*)msg;
       ack(ctx, d, m->i);
       break;
@@ -980,6 +1148,11 @@ void ponyint_cycle_block(pony_ctx_t* ctx, pony_actor_t* actor, gc_t* gc)
 
   block_msg_t* m = (block_msg_t*)pony_alloc_msg(
     POOL_INDEX(sizeof(block_msg_t)), ACTORMSG_BLOCK);
+
+#ifdef USE_MEMTRACK
+  ctx->mem_used_messages += sizeof(block_msg_t);
+  ctx->mem_used_messages -= ponyint_pool_size(POOL_INDEX(sizeof(block_msg_t)));
+#endif
 
   m->actor = actor;
   m->rc = ponyint_gc_rc(gc);

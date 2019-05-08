@@ -125,17 +125,39 @@ actorref_t* ponyint_actormap_getorput(actormap_t* map, pony_actor_t* actor,
 }
 
 deltamap_t* ponyint_actormap_sweep(pony_ctx_t* ctx, actormap_t* map,
+#ifdef USE_MEMTRACK
+  uint32_t mark, deltamap_t* delta, bool actor_noblock, size_t* mem_used_freed,
+  size_t* mem_allocated_freed)
+#else
   uint32_t mark, deltamap_t* delta, bool actor_noblock)
+#endif
 {
   size_t i = HASHMAP_BEGIN;
   actorref_t* aref;
   bool needs_optimize = false;
 
+#ifdef USE_MEMTRACK
+  size_t objectmap_mem_used_freed = 0;
+  size_t objectmap_mem_allocated_freed = 0;
+#endif
+
   while((aref = ponyint_actormap_next(map, &i)) != NULL)
   {
+#ifdef USE_MEMTRACK
+    objectmap_mem_used_freed += ponyint_objectmap_total_mem_size(&aref->map);
+    objectmap_mem_allocated_freed += ponyint_objectmap_total_alloc_size(&aref->map);
+#endif
+
     if(aref->mark == mark)
     {
+#ifdef USE_MEMTRACK
+      actorref_t* old_aref = aref;
+#endif
       aref = move_unmarked_objects(aref, mark);
+#ifdef USE_MEMTRACK
+      objectmap_mem_used_freed -= ponyint_objectmap_total_mem_size(&old_aref->map);
+      objectmap_mem_allocated_freed -= ponyint_objectmap_total_alloc_size(&old_aref->map);
+#endif
     } else {
       ponyint_actormap_clearindex(map, i);
 
@@ -149,8 +171,25 @@ deltamap_t* ponyint_actormap_sweep(pony_ctx_t* ctx, actormap_t* map,
     send_release(ctx, aref);
   }
 
+#ifdef USE_MEMTRACK
+  *mem_used_freed = objectmap_mem_used_freed;
+  *mem_allocated_freed = objectmap_mem_allocated_freed;
+#endif
+
   if(needs_optimize)
     ponyint_actormap_optimize(map);
 
   return delta;
 }
+
+#ifdef USE_MEMTRACK
+size_t ponyint_actormap_total_mem_size(actormap_t* map)
+{
+  return ponyint_actormap_mem_size(map) + (ponyint_actormap_size(map) * sizeof(actorref_t));
+}
+
+size_t ponyint_actormap_total_alloc_size(actormap_t* map)
+{
+  return ponyint_actormap_alloc_size(map) + (ponyint_actormap_size(map) * POOL_ALLOC_SIZE(actorref_t));
+}
+#endif

@@ -99,6 +99,12 @@ bool ponyint_maybe_unmute_actor(pony_actor_t* actor);
 
 PONY_API void ponyint_destroy(pony_ctx_t* ctx, pony_actor_t* actor);
 
+#ifdef USE_MEMTRACK
+size_t ponyint_actor_used_size(pony_actor_t* actor);
+
+size_t ponyint_actor_alloc_size(pony_actor_t* actor);
+#endif
+
 PONY_EXTERN_C_END
 
 #endif

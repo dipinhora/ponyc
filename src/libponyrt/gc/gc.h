@@ -18,8 +18,15 @@ typedef struct gc_t
   uint32_t mark;
   uint32_t rc_mark;
   size_t rc;
+  // objectmap size is hashmap mem + (entry mem * num entries)
   objectmap_t local;
+#ifdef USE_MEMTRACK
+  // actormap size is hashmap mem + (entry mem * num entries) + size of each objectmap in each entry
+  size_t foreign_actormap_objectmap_mem_used;
+  size_t foreign_actormap_objectmap_mem_allocated;
+#endif
   actormap_t foreign;
+  // deltamap size is hashmap mem + (entry mem * num entries)
   deltamap_t* delta;
 } gc_t;
 

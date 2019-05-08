@@ -262,7 +262,19 @@ static void send_remote_object(pony_ctx_t* ctx, pony_actor_t* actor,
 {
   gc_t* gc = ponyint_actor_gc(ctx->current);
   actorref_t* aref = ponyint_actormap_getorput(&gc->foreign, actor, gc->mark);
+#ifdef USE_MEMTRACK
+  size_t mem_used_before = ponyint_objectmap_total_mem_size(&aref->map);
+  size_t mem_allocated_before = ponyint_objectmap_total_alloc_size(&aref->map);
+#endif
+
   object_t* obj = ponyint_actorref_getorput(aref, p, gc->mark);
+
+#ifdef USE_MEMTRACK
+  size_t mem_used_after = ponyint_objectmap_total_mem_size(&aref->map);
+  size_t mem_allocated_after = ponyint_objectmap_total_alloc_size(&aref->map);
+  gc->foreign_actormap_objectmap_mem_used += (mem_used_after - mem_used_before);
+  gc->foreign_actormap_objectmap_mem_allocated += (mem_allocated_after - mem_allocated_before);
+#endif
 
   if(obj->mark == gc->mark)
     return;
@@ -311,7 +323,19 @@ static void recv_remote_object(pony_ctx_t* ctx, pony_actor_t* actor,
 {
   gc_t* gc = ponyint_actor_gc(ctx->current);
   actorref_t* aref = ponyint_actormap_getorput(&gc->foreign, actor, gc->mark);
+#ifdef USE_MEMTRACK
+  size_t mem_used_before = ponyint_objectmap_total_mem_size(&aref->map);
+  size_t mem_allocated_before = ponyint_objectmap_total_alloc_size(&aref->map);
+#endif
+
   object_t* obj = ponyint_actorref_getorput(aref, p, gc->mark);
+
+#ifdef USE_MEMTRACK
+  size_t mem_used_after = ponyint_objectmap_total_mem_size(&aref->map);
+  size_t mem_allocated_after = ponyint_objectmap_total_alloc_size(&aref->map);
+  gc->foreign_actormap_objectmap_mem_used += (mem_used_after - mem_used_before);
+  gc->foreign_actormap_objectmap_mem_allocated += (mem_allocated_after - mem_allocated_before);
+#endif
 
   if(obj->mark == gc->mark)
     return;
@@ -350,7 +374,19 @@ static void mark_remote_object(pony_ctx_t* ctx, pony_actor_t* actor,
 {
   gc_t* gc = ponyint_actor_gc(ctx->current);
   actorref_t* aref = ponyint_actormap_getorput(&gc->foreign, actor, gc->mark);
+#ifdef USE_MEMTRACK
+  size_t mem_used_before = ponyint_objectmap_total_mem_size(&aref->map);
+  size_t mem_allocated_before = ponyint_objectmap_total_alloc_size(&aref->map);
+#endif
+
   object_t* obj = ponyint_actorref_getorput(aref, p, gc->mark);
+
+#ifdef USE_MEMTRACK
+  size_t mem_used_after = ponyint_objectmap_total_mem_size(&aref->map);
+  size_t mem_allocated_after = ponyint_objectmap_total_alloc_size(&aref->map);
+  gc->foreign_actormap_objectmap_mem_used += (mem_used_after - mem_used_before);
+  gc->foreign_actormap_objectmap_mem_allocated += (mem_allocated_after - mem_allocated_before);
+#endif
 
   if(obj->mark == gc->mark)
     return;
@@ -646,8 +682,24 @@ void ponyint_gc_discardstack(pony_ctx_t* ctx)
 void ponyint_gc_sweep(pony_ctx_t* ctx, gc_t* gc)
 {
   ponyint_objectmap_sweep(&gc->local);
+
+#ifdef USE_MEMTRACK
+  size_t objectmap_mem_used_freed = 0;
+  size_t objectmap_mem_allocated_freed = 0;
+#endif
+
   gc->delta = ponyint_actormap_sweep(ctx, &gc->foreign, gc->mark, gc->delta,
+#ifdef USE_MEMTRACK
+    ponyint_actor_getnoblock(), &objectmap_mem_used_freed,
+    &objectmap_mem_allocated_freed);
+#else
     ponyint_actor_getnoblock());
+#endif
+
+#ifdef USE_MEMTRACK
+  gc->foreign_actormap_objectmap_mem_used -= objectmap_mem_used_freed;
+  gc->foreign_actormap_objectmap_mem_allocated -= objectmap_mem_allocated_freed;
+#endif
 }
 
 bool ponyint_gc_acquire(gc_t* gc, actorref_t* aref)
@@ -728,8 +780,23 @@ void ponyint_gc_sendacquire(pony_ctx_t* ctx)
 
 void ponyint_gc_sendrelease(pony_ctx_t* ctx, gc_t* gc)
 {
+#ifdef USE_MEMTRACK
+  size_t objectmap_mem_used_freed = 0;
+  size_t objectmap_mem_allocated_freed = 0;
+#endif
+
   gc->delta = ponyint_actormap_sweep(ctx, &gc->foreign, gc->mark, gc->delta,
+#ifdef USE_MEMTRACK
+    ponyint_actor_getnoblock(), &objectmap_mem_used_freed,
+    &objectmap_mem_allocated_freed);
+#else
     ponyint_actor_getnoblock());
+#endif
+
+#ifdef USE_MEMTRACK
+  gc->foreign_actormap_objectmap_mem_used -= objectmap_mem_used_freed;
+  gc->foreign_actormap_objectmap_mem_allocated -= objectmap_mem_allocated_freed;
+#endif
 }
 
 void ponyint_gc_sendrelease_manual(pony_ctx_t* ctx)

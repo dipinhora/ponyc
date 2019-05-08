@@ -23,6 +23,16 @@ void ponyint_cpu_relax();
 
 uint64_t ponyint_cpu_tick();
 
+#ifdef USE_MEMTRACK
+/** Get the memory used by the cpu list.
+ */
+size_t ponyint_cpu_mem_size();
+
+/** Get the memory allocated by the cpu list.
+ */
+size_t ponyint_cpu_alloc_size();
+#endif
+
 PONY_EXTERN_C_END
 
 #endif

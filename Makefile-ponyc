@@ -194,6 +194,12 @@ ifdef use
     ALL_CFLAGS += -DUSE_SCHEDULER_SCALING_PTHREADS
     PONY_BUILD_DIR := $(PONY_BUILD_DIR)-scheduler_scaling_pthreads
   endif
+
+  ifneq (,$(filter $(use), memtrack))
+    ALL_CFLAGS += -DUSE_MEMTRACK
+    ALL_CXXFLAGS += -DUSE_MEMTRACK
+    PONY_BUILD_DIR := $(PONY_BUILD_DIR)-memtrack
+  endif
 endif
 
 ifdef config

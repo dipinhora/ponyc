@@ -1042,6 +1042,16 @@ size_t ponyint_pool_index(size_t size)
   return 0;
 }
 
+size_t ponyint_pool_used_size(size_t size)
+{
+  size_t index = ponyint_pool_index(size);
+
+  if(index < POOL_COUNT)
+    return ponyint_pool_size(index);
+
+  return ponyint_pool_adjust_size(size);
+}
+
 size_t ponyint_pool_size(size_t index)
 {
   return (size_t)1 << (POOL_MIN_BITS + index);

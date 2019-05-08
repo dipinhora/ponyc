@@ -24,6 +24,36 @@
 static uint32_t avail_cpu_count;
 static uint32_t* avail_cpu_list;
 static uint32_t avail_cpu_size;
+#ifdef USE_MEMTRACK
+static size_t mem_allocated;
+static size_t mem_used;
+#endif
+#endif
+
+#ifdef USE_MEMTRACK
+/** Get the memory used by the cpu list.
+ */
+size_t ponyint_cpu_mem_size()
+{
+#if defined(PLATFORM_IS_LINUX)
+  return mem_used
+    + sizeof(avail_cpu_count) + sizeof(avail_cpu_list) + sizeof(avail_cpu_size) + sizeof(mem_used) + sizeof(mem_allocated);
+#else
+  return 0;
+#endif
+}
+
+/** Get the memory allocated by the cpu list.
+ */
+size_t ponyint_cpu_alloc_size()
+{
+#if defined(PLATFORM_IS_LINUX)
+  return mem_allocated
+    + sizeof(avail_cpu_count) + sizeof(avail_cpu_list) + sizeof(avail_cpu_size) + sizeof(mem_used) + sizeof(mem_allocated);
+#else
+  return 0;
+#endif
+}
 #endif
 
 #if defined(PLATFORM_IS_MACOSX) || (defined(PLATFORM_IS_BSD) && !defined(PLATFORM_IS_OPENBSD))

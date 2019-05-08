@@ -503,6 +503,19 @@ size_t ponyint_hashmap_size(hashmap_t* map)
   return map->count;
 }
 
+size_t ponyint_hashmap_mem_size(hashmap_t* map)
+{
+  size_t bitmap_size = (map->size >> HASHMAP_BITMAP_TYPE_BITS) +
+    ((map->size & HASHMAP_BITMAP_TYPE_MASK)==0?0:1);
+  return (bitmap_size * sizeof(bitmap_t)) +
+    (map->size * sizeof(hashmap_entry_t));
+}
+
+size_t ponyint_hashmap_alloc_size(hashmap_t* map)
+{
+  return ponyint_pool_used_size(ponyint_hashmap_mem_size(map));
+}
+
 void ponyint_hashmap_clearindex(hashmap_t* map, size_t index)
 {
   if(map->size <= index)

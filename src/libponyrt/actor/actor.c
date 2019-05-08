@@ -108,6 +108,11 @@ static bool handle_message(pony_ctx_t* ctx, pony_actor_t* actor,
   {
     case ACTORMSG_ACQUIRE:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgp_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
+#endif
+
       pony_assert(!ponyint_is_cycle(actor));
       pony_msgp_t* m = (pony_msgp_t*)msg;
 
@@ -123,6 +128,11 @@ static bool handle_message(pony_ctx_t* ctx, pony_actor_t* actor,
 
     case ACTORMSG_RELEASE:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgp_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
+#endif
+
       pony_assert(!ponyint_is_cycle(actor));
       pony_msgp_t* m = (pony_msgp_t*)msg;
 
@@ -146,6 +156,11 @@ static bool handle_message(pony_ctx_t* ctx, pony_actor_t* actor,
 
     case ACTORMSG_CONF:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msgi_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgi_t)));
+#endif
+
       pony_assert(!ponyint_is_cycle(actor));
       if(has_flag(actor, FLAG_BLOCKED_SENT))
       {
@@ -159,6 +174,11 @@ static bool handle_message(pony_ctx_t* ctx, pony_actor_t* actor,
 
     case ACTORMSG_ISBLOCKED:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= sizeof(pony_msg_t);
+      ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msg_t)));
+#endif
+
       pony_assert(!ponyint_is_cycle(actor));
       if(has_flag(actor, FLAG_BLOCKED) && !has_flag(actor, FLAG_BLOCKED_SENT))
       {
@@ -212,6 +232,11 @@ static bool handle_message(pony_ctx_t* ctx, pony_actor_t* actor,
 
     default:
     {
+#ifdef USE_MEMTRACK
+      ctx->mem_used_messages -= ponyint_pool_size(msg->index);
+      ctx->mem_allocated_messages -= ponyint_pool_size(msg->index);
+#endif
+
       pony_assert(!ponyint_is_cycle(actor));
       if(has_flag(actor, FLAG_BLOCKED_SENT))
       {
@@ -507,6 +532,12 @@ void ponyint_actor_destroy(pony_actor_t* actor)
   ponyint_gc_destroy(&actor->gc);
   ponyint_heap_destroy(&actor->heap);
 
+#ifdef USE_MEMTRACK
+  pony_ctx_t* ctx = pony_ctx();
+  ctx->mem_used_actors -= actor->type->size;
+  ctx->mem_allocated_actors -= ponyint_pool_used_size(actor->type->size);
+#endif
+
   // Free variable sized actors correctly.
   ponyint_pool_free_size(actor->type->size, actor);
 }
@@ -595,6 +626,11 @@ PONY_API pony_actor_t* pony_create(pony_ctx_t* ctx, pony_type_t* type)
   memset(actor, 0, type->size);
   actor->type = type;
 
+#ifdef USE_MEMTRACK
+  ctx->mem_used_actors += type->size;
+  ctx->mem_allocated_actors += ponyint_pool_used_size(type->size);
+#endif
+
   ponyint_messageq_init(&actor->q);
   ponyint_heap_init(&actor->heap);
   ponyint_gc_done(&actor->gc);
@@ -634,6 +670,12 @@ PONY_API void ponyint_destroy(pony_ctx_t* ctx, pony_actor_t* actor)
 
 PONY_API pony_msg_t* pony_alloc_msg(uint32_t index, uint32_t id)
 {
+#ifdef USE_MEMTRACK
+  pony_ctx_t* ctx = pony_ctx();
+  ctx->mem_used_messages += ponyint_pool_size(index);
+  ctx->mem_allocated_messages += ponyint_pool_size(index);
+#endif
+
   pony_msg_t* msg = (pony_msg_t*)ponyint_pool_alloc(index);
   msg->index = index;
   msg->id = id;
@@ -779,6 +821,11 @@ PONY_API void pony_chain(pony_msg_t* prev, pony_msg_t* next)
 
 PONY_API void pony_send(pony_ctx_t* ctx, pony_actor_t* to, uint32_t id)
 {
+#ifdef USE_MEMTRACK
+  ctx->mem_used_messages += sizeof(pony_msg_t);
+  ctx->mem_used_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msg_t)));
+#endif
+
   pony_msg_t* m = pony_alloc_msg(POOL_INDEX(sizeof(pony_msg_t)), id);
   pony_sendv(ctx, to, m, m, id <= ACTORMSG_APPLICATION_START);
 }
@@ -786,6 +833,11 @@ PONY_API void pony_send(pony_ctx_t* ctx, pony_actor_t* to, uint32_t id)
 PONY_API void pony_sendp(pony_ctx_t* ctx, pony_actor_t* to, uint32_t id,
   void* p)
 {
+#ifdef USE_MEMTRACK
+  ctx->mem_used_messages += sizeof(pony_msgp_t);
+  ctx->mem_used_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
+#endif
+
   pony_msgp_t* m = (pony_msgp_t*)pony_alloc_msg(
     POOL_INDEX(sizeof(pony_msgp_t)), id);
   m->p = p;
@@ -796,6 +848,11 @@ PONY_API void pony_sendp(pony_ctx_t* ctx, pony_actor_t* to, uint32_t id,
 PONY_API void pony_sendi(pony_ctx_t* ctx, pony_actor_t* to, uint32_t id,
   intptr_t i)
 {
+#ifdef USE_MEMTRACK
+  ctx->mem_used_messages += sizeof(pony_msgi_t);
+  ctx->mem_used_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgi_t)));
+#endif
+
   pony_msgi_t* m = (pony_msgi_t*)pony_alloc_msg(
     POOL_INDEX(sizeof(pony_msgi_t)), id);
   m->i = i;
@@ -1035,3 +1092,15 @@ bool ponyint_maybe_unmute_actor(pony_actor_t* actor)
   // whether we unmuted or not
   return needs_unmuting;
 }
+
+#ifdef USE_MEMTRACK
+size_t ponyint_actor_mem_size(pony_actor_t* actor)
+{
+  return actor->type->size;
+}
+
+size_t ponyint_actor_alloc_size(pony_actor_t* actor)
+{
+  return ponyint_pool_used_size(actor->type->size);
+}
+#endif

@@ -25,6 +25,10 @@ typedef struct heap_t
 
   size_t used;
   size_t next_gc;
+#ifdef USE_MEMTRACK
+  size_t allocated;
+  size_t overhead;
+#endif
 } heap_t;
 
 uint32_t ponyint_heap_index(size_t size);
@@ -104,6 +108,28 @@ void ponyint_heap_endgc(heap_t* heap);
 pony_actor_t* ponyint_heap_owner(chunk_t* chunk);
 
 size_t ponyint_heap_size(chunk_t* chunk);
+
+#ifdef USE_MEMTRACK
+/** Get the static memory used by the heap subsystem.
+ */
+size_t ponyint_heap_static_mem_size();
+
+/** Get the static memory allocated by the heap subsystem.
+ */
+size_t ponyint_heap_static_alloc_size();
+
+/** Get the memory used by the heap.
+ */
+size_t ponyint_heap_mem_size(heap_t* heap);
+
+/** Get the memory overhead used by the heap.
+ */
+size_t ponyint_heap_overhead_size(heap_t* heap);
+
+/** Get the memory allocated by the heap.
+ */
+size_t ponyint_heap_alloc_size(heap_t* heap);
+#endif
 
 PONY_EXTERN_C_END
 

@@ -12,6 +12,8 @@
 #include <string.h>
 #include "mutemap.h"
 
+#include <stdio.h>
+
 #define PONY_SCHED_BLOCK_THRESHOLD 1000000
 
 static DECLARE_THREAD_FN(run_thread);
@@ -1286,8 +1288,17 @@ bool ponyint_sched_add_mutemap(pony_ctx_t* ctx, pony_actor_t* sender,
   {
     ponyint_muteset_putindex(&mref->value, sender, index2);
 
+//    size_t mset_alloc = ponyint_muteset_alloc_size(&mref->value);
+//    if(mset_alloc > 100000)
+//      printf("sched %u receiver %p muteset size is %lu, count is %lu\n", sched->index, recv, mset_alloc,  ponyint_muteset_size(&mref->value));
+
     return true;
   }
+
+//  size_t mmap_alloc = ponyint_mutemap_alloc_size(&sched->mute_mapping);
+//  if(mmap_alloc > 100000)
+//    printf("sched %u mutemap size is %lu, count is %lu\n", sched->index, mmap_alloc, ponyint_mutemap_size(&sched->mute_mapping));
+
   return false;
 }
 
@@ -1295,9 +1306,6 @@ void ponyint_sched_start_global_unmute(uint32_t from, pony_actor_t* actor)
 {
   send_msg_all_active(from, SCHED_UNMUTE_ACTOR, (intptr_t)actor);
 }
-
-DECLARE_STACK(ponyint_actorstack, actorstack_t, pony_actor_t);
-DEFINE_STACK(ponyint_actorstack, actorstack_t, pony_actor_t);
 
 bool ponyint_sched_unmute_senders(pony_ctx_t* ctx, pony_actor_t* actor)
 {

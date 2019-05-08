@@ -11,6 +11,8 @@
 #include <string.h>
 #include <dtrace.h>
 
+#include <stdio.h>
+
 #ifdef USE_VALGRIND
 #include <valgrind/helgrind.h>
 #endif
@@ -31,7 +33,6 @@ static bool actor_noblock = false;
 #define PONY_ACTOR_MUTING_MSGS_NO_SCALING 32 - __pony_clz(PONY_ACTOR_DEFAULT_BATCH)
 
 // default actor throttle factor to ensure muting occurs after 10 msgs sent
-static double actor_throttlefactor = (PONY_ACTOR_MUTING_MSGS_NO_SCALING) / 10.0;
 static uint32_t actor_msgs_til_mute = 10;
 
 // The flags of a given actor cannot be mutated from more than one actor at
@@ -240,6 +241,9 @@ static void try_gc(pony_ctx_t* ctx, pony_actor_t* actor)
   ponyint_mark_done(ctx);
   ponyint_heap_endgc(&actor->heap);
 
+//  if(actor->heap.used > 100000)
+//    printf("%p heap used: %ld\n", actor, actor->heap.used);
+
   DTRACE1(GC_END, (uintptr_t)ctx->scheduler);
 }
 
@@ -348,8 +352,16 @@ bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
     uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
       EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
 
-    batch = PONY_ACTOR_DEFAULT_BATCH >> (size_t)((mute_map_count +
-      extra_throttled_msgs_sent) * actor_throttlefactor);
+    batch = (size_t)(PONY_ACTOR_DEFAULT_BATCH * (((double)(actor_msgs_til_mute - (mute_map_count +
+      extra_throttled_msgs_sent))) / ((double)actor_msgs_til_mute)));
+
+    // batch should never be 0 at this point
+    if(batch == 0)
+      batch = 1;
+
+//    if(batch != PONY_ACTOR_DEFAULT_BATCH)
+//      printf("%p Batch size is: %ld\n", actor, batch);
+
   }
 
   // ensure batch > 0
@@ -570,9 +582,6 @@ void ponyint_actor_setmsgstilmute(size_t msgs_til_mute)
 
   if(msgs_til_mute > PONY_ACTOR_DEFAULT_BATCH)
     msgs_til_mute = PONY_ACTOR_DEFAULT_BATCH;
-
-  actor_throttlefactor = (PONY_ACTOR_MUTING_MSGS_NO_SCALING) /
-    ((double)msgs_til_mute);
 
   actor_msgs_til_mute = (uint32_t)msgs_til_mute;
 }

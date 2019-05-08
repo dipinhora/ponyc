@@ -45,10 +45,12 @@ typedef struct pony_ctx_t
 #ifdef USE_MEMTRACK
   size_t mem_used;
   size_t mem_allocated;
-  int64_t mem_used_messages;
-  int64_t mem_allocated_messages;
   int64_t mem_used_actors;
   int64_t mem_allocated_actors;
+#endif
+#ifdef USE_MEMTRACK_MESSAGES
+  int64_t mem_used_messages;
+  int64_t mem_allocated_messages;
 #endif
 
   void* serialise_buffer;

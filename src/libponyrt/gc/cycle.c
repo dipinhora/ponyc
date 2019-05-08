@@ -977,7 +977,7 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
   {
     case ACTORMSG_CHECKBLOCKED:
     {
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
       ctx->mem_used_messages -= sizeof(pony_msg_t);
       ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msg_t)));
 #endif
@@ -989,7 +989,7 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_CREATED:
     {
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
       ctx->mem_used_messages -= sizeof(pony_msgp_t);
       ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
 #endif
@@ -1001,7 +1001,7 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_DESTROYED:
     {
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
       ctx->mem_used_messages -= sizeof(pony_msgp_t);
       ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
 #endif
@@ -1013,7 +1013,7 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_BLOCK:
     {
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
       ctx->mem_used_messages -= sizeof(block_msg_t);
       ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(block_msg_t)));
 #endif
@@ -1025,7 +1025,7 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_UNBLOCK:
     {
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
       ctx->mem_used_messages -= sizeof(pony_msgp_t);
       ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgp_t)));
 #endif
@@ -1037,7 +1037,7 @@ static void cycle_dispatch(pony_ctx_t* ctx, pony_actor_t* self,
 
     case ACTORMSG_ACK:
     {
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
       ctx->mem_used_messages -= sizeof(pony_msgi_t);
       ctx->mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgi_t)));
 #endif
@@ -1149,7 +1149,7 @@ void ponyint_cycle_block(pony_ctx_t* ctx, pony_actor_t* actor, gc_t* gc)
   block_msg_t* m = (block_msg_t*)pony_alloc_msg(
     POOL_INDEX(sizeof(block_msg_t)), ACTORMSG_BLOCK);
 
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
   ctx->mem_used_messages += sizeof(block_msg_t);
   ctx->mem_used_messages -= ponyint_pool_size(POOL_INDEX(sizeof(block_msg_t)));
 #endif

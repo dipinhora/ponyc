@@ -148,7 +148,7 @@ static void send_msg(uint32_t from, uint32_t to, sched_msg_t msg, intptr_t arg)
   pony_msgi_t* m = (pony_msgi_t*)pony_alloc_msg(
     POOL_INDEX(sizeof(pony_msgi_t)), msg);
   
-#ifdef USE_MEMTRACK
+#ifdef USE_MEMTRACK_MESSAGES
   this_scheduler->ctx.mem_used_messages += sizeof(pony_msgi_t);
   this_scheduler->ctx.mem_used_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgi_t)));
 #endif

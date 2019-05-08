@@ -200,6 +200,12 @@ ifdef use
     ALL_CXXFLAGS += -DUSE_MEMTRACK
     PONY_BUILD_DIR := $(PONY_BUILD_DIR)-memtrack
   endif
+
+  ifneq (,$(filter $(use), memtrack_messages))
+    ALL_CFLAGS += -DUSE_MEMTRACK -DUSE_MEMTRACK_MESSAGES
+    ALL_CXXFLAGS += -DUSE_MEMTRACK -DUSE_MEMTRACK_MESSAGES
+    PONY_BUILD_DIR := $(PONY_BUILD_DIR)-memtrack-messages
+  endif
 endif
 
 ifdef config
@@ -1112,6 +1118,8 @@ help:
 	@echo '   coverage'
 	@echo '   llvm_link_static'
 	@echo '   scheduler_scaling_pthreads'
+	@echo '   memtrack'
+	@echo '   memtrack_messages'
 	@echo
 	@echo 'TARGETS:'
 	@echo '  libponyc               Pony compiler library'

@@ -7,6 +7,7 @@
 #include "../gc/cycle.h"
 #include "../asio/asio.h"
 #include "../mem/pool.h"
+#include "../mem/pagemap.h"
 #include "ponyassert.h"
 #include <dtrace.h>
 #include <string.h>
@@ -15,6 +16,83 @@
 #include <stdio.h>
 
 #define PONY_SCHED_BLOCK_THRESHOLD 1000000
+
+////////////////////////////////////////////////////////////////////////////////
+
+/*
+ * Author:  David Robert Nadeau
+ * Site:    http://NadeauSoftware.com/
+ * License: Creative Commons Attribution 3.0 Unported License
+ *          http://creativecommons.org/licenses/by/3.0/deed.en_US
+ */
+
+#if defined(_WIN32)
+#include <windows.h>
+#include <psapi.h>
+
+#elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
+#include <unistd.h>
+#include <sys/resource.h>
+
+#if defined(__APPLE__) && defined(__MACH__)
+#include <mach/mach.h>
+
+#elif (defined(_AIX) || defined(__TOS__AIX__)) || (defined(__sun__) || defined(__sun) || defined(sun) && (defined(__SVR4) || defined(__svr4__)))
+#include <fcntl.h>
+#include <procfs.h>
+
+#elif defined(__linux__) || defined(__linux) || defined(linux) || defined(__gnu_linux__)
+#include <stdio.h>
+
+#endif
+
+#else
+#error "Cannot define getPeakRSS( ) or getCurrentRSS( ) for an unknown OS."
+#endif
+
+
+/**
+ * Returns the current resident set size (physical memory use) measured
+ * in bytes, or zero if the value cannot be determined on this OS.
+ */
+static size_t getCurrentRSS( )
+{
+#if defined(_WIN32)
+    /* Windows -------------------------------------------------- */
+    PROCESS_MEMORY_COUNTERS info;
+    GetProcessMemoryInfo( GetCurrentProcess( ), &info, sizeof(info) );
+    return (size_t)info.WorkingSetSize;
+
+#elif defined(__APPLE__) && defined(__MACH__)
+    /* OSX ------------------------------------------------------ */
+    struct mach_task_basic_info info;
+    mach_msg_type_number_t infoCount = MACH_TASK_BASIC_INFO_COUNT;
+    if ( task_info( mach_task_self( ), MACH_TASK_BASIC_INFO,
+        (task_info_t)&info, &infoCount ) != KERN_SUCCESS )
+        return (size_t)0L;      /* Can't access? */
+    return (size_t)info.resident_size;
+
+#elif defined(__linux__) || defined(__linux) || defined(linux) || defined(__gnu_linux__)
+    /* Linux ---------------------------------------------------- */
+    long rss = 0L;
+    FILE* fp = NULL;
+    if ( (fp = fopen( "/proc/self/statm", "r" )) == NULL )
+        return (size_t)0L;      /* Can't open? */
+    if ( fscanf( fp, "%*s%ld", &rss ) != 1 )
+    {
+        fclose( fp );
+        return (size_t)0L;      /* Can't read? */
+    }
+    fclose( fp );
+    return (size_t)rss * (size_t)sysconf( _SC_PAGESIZE);
+
+#else
+    /* AIX, BSD, Solaris, and Unknown OS ------------------------ */
+    return (size_t)0L;          /* Unsupported. */
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 static DECLARE_THREAD_FN(run_thread);
 
@@ -44,6 +122,8 @@ static bool use_yield;
 static mpmcq_t inject;
 static __pony_thread_local scheduler_t* this_scheduler;
 
+static PONY_ATOMIC(int64_t) msgs_outstanding;
+
 #if defined(USE_SCHEDULER_SCALING_PTHREADS)
 static pthread_mutex_t sched_mut;
 
@@ -61,6 +141,16 @@ static PONY_ATOMIC(bool) scheduler_count_changing;
 static size_t mem_allocated;
 static size_t mem_used;
 
+
+void ponyint_increment_msgs_outstanding()
+{
+  atomic_fetch_add_explicit(&msgs_outstanding, 1, memory_order_relaxed);
+}
+
+void ponyint_decrement_msgs_outstanding()
+{
+  atomic_fetch_sub_explicit(&msgs_outstanding, 1, memory_order_relaxed);
+}
 
 /** Get the static memory used by the scheduler subsystem.
  */
@@ -295,6 +385,12 @@ static bool read_msg(scheduler_t* sched)
 #endif
     )) != NULL)
   {
+#ifdef USE_MEMTRACK_MESSAGES
+    ponyint_decrement_msgs_outstanding();
+    sched->ctx.num_messages--;
+    sched->ctx.mem_used_messages -= sizeof(pony_msgi_t);
+    sched->ctx.mem_allocated_messages -= ponyint_pool_size(POOL_INDEX(sizeof(pony_msgi_t)));
+#endif
     switch(m->msg.id)
     {
       case SCHED_SUSPEND:
@@ -934,6 +1030,24 @@ static void run(scheduler_t* sched)
     if(ponyint_mutemap_size(&sched->mute_mapping) > 0)
       ponyint_sched_maybe_wakeup(sched->index);
 
+//    if((getCurrentRSS() > 500000000) || (atomic_load_explicit(&msgs_outstanding, memory_order_relaxed) > 500000))
+    if((getCurrentRSS() > 500000000))
+    {
+      if((actor->heap.allocated > 10000000) || (ponyint_objectmap_total_alloc_size(&actor->gc.local) > 10000000) || (actor->gc.foreign_actormap_objectmap_mem_allocated > 10000000))
+        printf("Actor %p, actor size used: %lu, actor size allocated: %lu, heap used: %lu, heap allocated: %lu, heap overhead: %lu, objectmap used: %lu, objectmap allocated: %lu, foreign used: %lu, foreign allocated: %lu, delta used: %lu, delta allocated: %lu\n"
+          , actor, ponyint_actor_mem_size(actor), ponyint_actor_alloc_size(actor), actor->heap.used, actor->heap.allocated, actor->heap.overhead, ponyint_objectmap_total_mem_size(&actor->gc.local), ponyint_objectmap_total_alloc_size(&actor->gc.local), actor->gc.foreign_actormap_objectmap_mem_used, actor->gc.foreign_actormap_objectmap_mem_allocated, actor->gc.delta?ponyint_deltamap_total_mem_size(actor->gc.delta):0, actor->gc.delta?ponyint_deltamap_total_alloc_size(actor->gc.delta):0);
+
+      if((ponyint_pagemap_alloc_size() > 10000000))
+        printf("runtime: pagemap size used: %lu, pagemap size allocated: %lu, sched static used: %lu, sched static allocated: %lu, cpu list used: %lu, cpu lised allocated: %lu\n"
+          , ponyint_pagemap_mem_size(), ponyint_pagemap_alloc_size(), ponyint_sched_static_mem_size(), ponyint_sched_static_alloc_size(), ponyint_cpu_mem_size(), ponyint_cpu_alloc_size());
+
+      if(ponyint_is_cycle(actor))
+        printf("cycle detector used: %lu, cycle detector allocated: %lu\n", ponyint_cycle_mem_size(), ponyint_cycle_alloc_size());
+
+//      if((sched->ctx.mem_allocated > 100000000) || (llabs(sched->ctx.mem_allocated_messages) > 100000000))
+        print_sched_stats();
+    }
+
     // Run the current actor and get the next actor.
     bool reschedule = ponyint_actor_run(&sched->ctx, actor, false);
     pony_actor_t* next = pop_global(sched);
@@ -968,6 +1082,14 @@ static void run(scheduler_t* sched)
       }
     }
   }
+}
+
+void print_sched_stats()
+{
+  pony_ctx_t* ctx = pony_ctx();
+  scheduler_t* sched = ctx->scheduler;
+        printf("sched: %p, index: %d, mem_used: %ld, mem_allocated: %ld, mem_used_actors: %ld, mem_allocated_actors: %ld, mem_used_messages: %ld, mem_allocated_messages: %ld, num_msgs: %ld, msgs_outstanding: %ld, current rss: %lu\n"
+          , sched, sched->index, sched->ctx.mem_used, sched->ctx.mem_allocated, sched->ctx.mem_used_actors, sched->ctx.mem_allocated_actors, sched->ctx.mem_used_messages, sched->ctx.mem_allocated_messages, sched->ctx.num_messages, atomic_load_explicit(&msgs_outstanding, memory_order_relaxed), getCurrentRSS());
 }
 
 static DECLARE_THREAD_FN(run_thread)
@@ -1031,8 +1153,8 @@ static void ponyint_sched_shutdown()
 
   ponyint_pool_free_size(scheduler_count * sizeof(scheduler_t), scheduler);
 #ifdef USE_MEMTRACK
-  mem_used -= scheduler_count * sizeof(scheduler_t);
-  mem_allocated -= ponyint_pool_used_size(scheduler_count * sizeof(scheduler_t));
+  mem_used -= (scheduler_count * sizeof(scheduler_t));
+  mem_allocated -= (ponyint_pool_used_size(scheduler_count * sizeof(scheduler_t)));
 #endif
   scheduler = NULL;
   scheduler_count = 0;
@@ -1074,8 +1196,8 @@ pony_ctx_t* ponyint_sched_init(uint32_t threads, bool noyield, bool nopin,
   scheduler = (scheduler_t*)ponyint_pool_alloc_size(
     scheduler_count * sizeof(scheduler_t));
 #ifdef USE_MEMTRACK
-  mem_used += scheduler_count * sizeof(scheduler_t);
-  mem_allocated += ponyint_pool_used_size(scheduler_count * sizeof(scheduler_t));
+  mem_used += (scheduler_count * sizeof(scheduler_t));
+  mem_allocated += (ponyint_pool_used_size(scheduler_count * sizeof(scheduler_t)));
 #endif
   memset(scheduler, 0, scheduler_count * sizeof(scheduler_t));
 
@@ -1339,17 +1461,25 @@ bool ponyint_sched_add_mutemap(pony_ctx_t* ctx, pony_actor_t* sender,
   {
     mref = ponyint_muteref_alloc(recv);
 #ifdef USE_MEMTRACK
+//      printf("A index: %d, mem_used: %ld, mem_alloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated);
     ctx->mem_used += sizeof(muteref_t);
     ctx->mem_allocated += POOL_ALLOC_SIZE(muteref_t);
-    size_t old_mmap_mem_size = ponyint_mutemap_mem_size(&sched->mute_mapping);
-    size_t old_mmap_alloc_size = ponyint_mutemap_alloc_size(&sched->mute_mapping);
+//      printf("A index: %d, mem_used: %ld, mem_alloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated);
+//      printf("A index: %d, mutemap_mem_total: %lu, mutemap_alloc_total: %lu\n", ctx->scheduler->index, ponyint_mutemap_total_mem_size(&sched->mute_mapping), ponyint_mutemap_total_alloc_size(&sched->mute_mapping));
+    int64_t old_mmap_mem_size = ponyint_mutemap_mem_size(&sched->mute_mapping);
+    int64_t old_mmap_alloc_size = ponyint_mutemap_alloc_size(&sched->mute_mapping);
 #endif
     ponyint_mutemap_putindex(&sched->mute_mapping, mref, index);
 #ifdef USE_MEMTRACK
-    size_t new_mmap_mem_size = ponyint_mutemap_mem_size(&sched->mute_mapping);
-    size_t new_mmap_alloc_size = ponyint_mutemap_alloc_size(&sched->mute_mapping);
-    ctx->mem_used += new_mmap_mem_size - old_mmap_mem_size;
-    ctx->mem_allocated += new_mmap_alloc_size - old_mmap_alloc_size;
+    int64_t new_mmap_mem_size = ponyint_mutemap_mem_size(&sched->mute_mapping);
+    int64_t new_mmap_alloc_size = ponyint_mutemap_alloc_size(&sched->mute_mapping);
+//      printf("B index: %d, mem_used: %ld, mem_alloc: %ld, oldmem: %ld, newmem: %ld, oldalloc: %ld, newalloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated, old_mmap_mem_size, new_mmap_mem_size, old_mmap_alloc_size, new_mmap_alloc_size);
+    ctx->mem_used += (new_mmap_mem_size - old_mmap_mem_size);
+    ctx->mem_allocated += (new_mmap_alloc_size - old_mmap_alloc_size);
+//      printf("B index: %d, mem_used: %ld, mem_alloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated);
+//      printf("B index: %d, mutemap_mem_total: %lu, mutemap_alloc_total: %lu\n", ctx->scheduler->index, ponyint_mutemap_total_mem_size(&sched->mute_mapping), ponyint_mutemap_total_alloc_size(&sched->mute_mapping));
+    pony_assert(ctx->mem_used >= 0);
+    pony_assert(ctx->mem_allocated >= 0);
 #endif
   }
 
@@ -1358,27 +1488,24 @@ bool ponyint_sched_add_mutemap(pony_ctx_t* ctx, pony_actor_t* sender,
   if(r == NULL)
   {
 #ifdef USE_MEMTRACK
-    size_t old_mset_mem_size = ponyint_muteset_mem_size(&mref->value);
-    size_t old_mset_alloc_size = ponyint_muteset_alloc_size(&mref->value);
+    int64_t old_mset_mem_size = ponyint_muteset_mem_size(&mref->value);
+    int64_t old_mset_alloc_size = ponyint_muteset_alloc_size(&mref->value);
 #endif
     ponyint_muteset_putindex(&mref->value, sender, index2);
 #ifdef USE_MEMTRACK
-    size_t new_mset_mem_size = ponyint_muteset_mem_size(&mref->value);
-    size_t new_mset_alloc_size = ponyint_muteset_alloc_size(&mref->value);
-    ctx->mem_used += new_mset_mem_size - old_mset_mem_size;
-    ctx->mem_allocated += new_mset_alloc_size - old_mset_alloc_size;
+    int64_t new_mset_mem_size = ponyint_muteset_mem_size(&mref->value);
+    int64_t new_mset_alloc_size = ponyint_muteset_alloc_size(&mref->value);
+//      printf("C index: %d, mem_used: %ld, mem_alloc: %ld, oldmem: %ld, newmem: %ld, oldalloc: %ld, newalloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated, old_mset_mem_size, new_mset_mem_size, old_mset_alloc_size, new_mset_alloc_size);
+    ctx->mem_used += (new_mset_mem_size - old_mset_mem_size);
+    ctx->mem_allocated += (new_mset_alloc_size - old_mset_alloc_size);
+//      printf("C index: %d, mem_used: %ld, mem_alloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated);
+//      printf("C index: %d, mutemap_mem_total: %lu, mutemap_alloc_total: %lu\n", ctx->scheduler->index, ponyint_mutemap_total_mem_size(&sched->mute_mapping), ponyint_mutemap_total_alloc_size(&sched->mute_mapping));
+    pony_assert(ctx->mem_used >= 0);
+    pony_assert(ctx->mem_allocated >= 0);
 #endif
-
-//    size_t mset_alloc = ponyint_muteset_alloc_size(&mref->value);
-//    if(mset_alloc > 100000)
-//      printf("sched %u receiver %p muteset size is %lu, count is %lu\n", sched->index, recv, mset_alloc,  ponyint_muteset_size(&mref->value));
 
     return true;
   }
-
-//  size_t mmap_alloc = ponyint_mutemap_alloc_size(&sched->mute_mapping);
-//  if(mmap_alloc > 100000)
-//    printf("sched %u mutemap size is %lu, count is %lu\n", sched->index, mmap_alloc, ponyint_mutemap_size(&sched->mute_mapping));
 
   return false;
 }
@@ -1401,8 +1528,10 @@ bool ponyint_sched_unmute_senders(pony_ctx_t* ctx, pony_actor_t* actor)
   if(mref != NULL)
   {
 #ifdef USE_MEMTRACK
-    size_t muted_mem_used = 0;
-    size_t muted_mem_allocated = 0;
+    int64_t muted_mem_used = 0;
+    int64_t muted_mem_allocated = 0;
+    muted_mem_used += ponyint_muteset_mem_size(&mref->value);
+    muted_mem_allocated += ponyint_muteset_alloc_size(&mref->value);
 #endif
 
     size_t i = HASHMAP_UNKNOWN;
@@ -1411,11 +1540,6 @@ bool ponyint_sched_unmute_senders(pony_ctx_t* ctx, pony_actor_t* actor)
     // Find and collect any actors that need to be unmuted
     while((muted = ponyint_muteset_next(&mref->value, &i)) != NULL)
     {
-#ifdef USE_MEMTRACK
-      muted_mem_used += ponyint_muteset_mem_size(&mref->value);
-      muted_mem_allocated += ponyint_muteset_alloc_size(&mref->value);
-#endif
-
       // maybe unmute the actor; this will take care of updating the bitfield
       if(ponyint_maybe_unmute_actor(muted))
       {
@@ -1440,10 +1564,16 @@ bool ponyint_sched_unmute_senders(pony_ctx_t* ctx, pony_actor_t* actor)
     ponyint_muteref_free(mref);
 
 #ifdef USE_MEMTRACK
+//    if(((ctx->mem_used - muted_mem_used) < 0) || ((ctx->mem_allocated - muted_mem_allocated) < 0))
+//      printf("D index: %d, mem_used: %ld, mem_alloc: %ld, muted_mem_used: %ld, muted_mem_alloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated, muted_mem_used, muted_mem_allocated);
     ctx->mem_used -= sizeof(muteref_t);
     ctx->mem_allocated -= POOL_ALLOC_SIZE(muteref_t);
     ctx->mem_used -= muted_mem_used;
     ctx->mem_allocated -= muted_mem_allocated;
+//      printf("D index: %d, mem_used: %ld, mem_alloc: %ld, muted_mem_used: %ld, muted_mem_alloc: %ld\n", ctx->scheduler->index, ctx->mem_used, ctx->mem_allocated, muted_mem_used, muted_mem_allocated);
+//      printf("D index: %d, mutemap_mem_total: %lu, mutemap_alloc_total: %lu\n", ctx->scheduler->index, ponyint_mutemap_total_mem_size(&sched->mute_mapping), ponyint_mutemap_total_alloc_size(&sched->mute_mapping));
+    pony_assert(ctx->mem_used >= 0);
+    pony_assert(ctx->mem_allocated >= 0);
 #endif
   }
 

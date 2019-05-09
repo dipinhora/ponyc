@@ -43,14 +43,15 @@ typedef struct pony_ctx_t
   // Temporary storage for acquire/release of actors/objects for GC; empty when GC not running
   actormap_t acquire;
 #ifdef USE_MEMTRACK
-  size_t mem_used;
-  size_t mem_allocated;
+  int64_t mem_used;
+  int64_t mem_allocated;
   int64_t mem_used_actors;
   int64_t mem_allocated_actors;
 #endif
 #ifdef USE_MEMTRACK_MESSAGES
   int64_t mem_used_messages;
   int64_t mem_allocated_messages;
+  int64_t num_messages;
 #endif
 
   void* serialise_buffer;
@@ -128,6 +129,10 @@ size_t ponyint_sched_static_mem_size();
 /** Get the static memory allocated by the scheduler subsystem.
  */
 size_t ponyint_sched_static_alloc_size();
+
+void ponyint_increment_msgs_outstanding();
+void ponyint_decrement_msgs_outstanding();
+void print_sched_stats();
 #endif
 
 PONY_EXTERN_C_END

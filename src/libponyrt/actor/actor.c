@@ -104,6 +104,11 @@ static void send_unblock(pony_ctx_t* ctx, pony_actor_t* actor)
 static bool handle_message(pony_ctx_t* ctx, pony_actor_t* actor,
   pony_msg_t* msg)
 {
+#ifdef USE_MEMTRACK_MESSAGES
+  ctx->num_messages--;
+  ponyint_decrement_msgs_outstanding();
+#endif
+
   switch(msg->id)
   {
     case ACTORMSG_ACQUIRE:
@@ -265,9 +270,6 @@ static void try_gc(pony_ctx_t* ctx, pony_actor_t* actor)
 
   ponyint_mark_done(ctx);
   ponyint_heap_endgc(&actor->heap);
-
-//  if(actor->heap.used > 100000)
-//    printf("%p heap used: %ld\n", actor, actor->heap.used);
 
   DTRACE1(GC_END, (uintptr_t)ctx->scheduler);
 }
@@ -674,6 +676,8 @@ PONY_API pony_msg_t* pony_alloc_msg(uint32_t index, uint32_t id)
   pony_ctx_t* ctx = pony_ctx();
   ctx->mem_used_messages += ponyint_pool_size(index);
   ctx->mem_allocated_messages += ponyint_pool_size(index);
+  ctx->num_messages++;
+  ponyint_increment_msgs_outstanding();
 #endif
 
   pony_msg_t* msg = (pony_msg_t*)ponyint_pool_alloc(index);
@@ -1102,5 +1106,21 @@ size_t ponyint_actor_mem_size(pony_actor_t* actor)
 size_t ponyint_actor_alloc_size(pony_actor_t* actor)
 {
   return ponyint_pool_used_size(actor->type->size);
+}
+
+void ponyint_actor_print_state(pony_actor_t* actor)
+{
+    uint64_t throttle_mute_bitfield = atomic_load_explicit(
+      &actor->throttle_mute_bitfield, memory_order_relaxed);
+
+    uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
+    uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
+      EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
+
+    size_t batch = (size_t)(PONY_ACTOR_DEFAULT_BATCH * (((double)(actor_msgs_til_mute - (mute_map_count +
+      extra_throttled_msgs_sent))) / ((double)actor_msgs_til_mute)));
+
+
+    printf("actor: %p, batch: %lu, mute_map_count: %u, extra_msgs: %u, muted: %s, should_be_muted: %s, overloaded: %s\n", actor, batch, mute_map_count, extra_throttled_msgs_sent, is_muted(actor) ? "true" : "false", should_be_muted(throttle_mute_bitfield) ? "true" : "false", ponyint_actor_overloaded(actor) ? "true" : "false");
 }
 #endif

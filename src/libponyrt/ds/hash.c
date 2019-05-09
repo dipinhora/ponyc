@@ -513,7 +513,11 @@ size_t ponyint_hashmap_mem_size(hashmap_t* map)
 
 size_t ponyint_hashmap_alloc_size(hashmap_t* map)
 {
-  return ponyint_pool_used_size(ponyint_hashmap_mem_size(map));
+  size_t size = ponyint_hashmap_mem_size(map);
+  if(size == 0)
+    return 0;
+
+  return ponyint_pool_used_size(size);
 }
 
 void ponyint_hashmap_clearindex(hashmap_t* map, size_t index)

@@ -239,8 +239,7 @@ static size_t sweep_small(chunk_t* chunk, chunk_t** avail, chunk_t** full,
       *overhead += sizeof(chunk_t);
       *overhead += __pony_popcount(chunk->slots) * size;
 #endif
-      used += sizeof(block_t) -
-        (__pony_popcount(chunk->slots) * size);
+      used += (sizeof(block_t) - (__pony_popcount(chunk->slots) * size));
 
       // run finalisers for freed slots
       final_small_freed(chunk);

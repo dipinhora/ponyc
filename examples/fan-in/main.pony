@@ -180,6 +180,8 @@ actor Coordinator
       let rate: I64 = (total_msgs.i64() * 1_000_000_000) / run_ns
       _env.out.print(ts.string() + "," + run_ns.string() + "," + rate.string())
 
+      @print_sched_stats[None]()
+
       if _done and (ts == _current_t) then
         _env.out.print("Done with message sending... Waiting for Receiver to work through its backlog...")
       end

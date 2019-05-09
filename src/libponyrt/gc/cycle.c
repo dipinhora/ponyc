@@ -1184,3 +1184,29 @@ bool ponyint_is_cycle(pony_actor_t* actor)
 {
   return actor == cycle_detector;
 }
+
+#ifdef USE_MEMTRACK
+size_t ponyint_cycle_mem_size()
+{
+  detector_t* d = (detector_t*)cycle_detector;
+  return d->mem_used;
+}
+
+size_t ponyint_cycle_alloc_size()
+{
+  detector_t* d = (detector_t*)cycle_detector;
+  return d->mem_allocated;
+}
+
+void ponyint_print_actors_state()
+{
+  detector_t* d = (detector_t*)cycle_detector;
+  size_t i = HASHMAP_BEGIN;
+  view_t* view;
+
+  while((view = ponyint_viewmap_next(&d->views, &i)) != NULL)
+  {
+    ponyint_actor_print_state(view->actor);
+  }
+}
+#endif

@@ -91,10 +91,6 @@ PONY_API void pony_apply_backpressure();
 
 PONY_API void pony_release_backpressure();
 
-void ponyint_maybe_throttle(pony_ctx_t* ctx, pony_actor_t* to);
-
-bool ponyint_triggers_throttling(pony_actor_t* actor);
-
 bool ponyint_maybe_unmute_actor(pony_actor_t* actor);
 
 PONY_API void ponyint_destroy(pony_ctx_t* ctx, pony_actor_t* actor);

@@ -963,6 +963,8 @@ static void run(scheduler_t* sched)
     DTRACE2(ACTOR_SCHEDULED, (uintptr_t)sched, (uintptr_t)actor);
   }
 
+  bool printed = false;
+
   while(true)
   {
     // if we're scheduler 0
@@ -1031,8 +1033,9 @@ static void run(scheduler_t* sched)
       ponyint_sched_maybe_wakeup(sched->index);
 
 //    if((getCurrentRSS() > 500000000) || (atomic_load_explicit(&msgs_outstanding, memory_order_relaxed) > 500000))
-    if((getCurrentRSS() > 500000000))
+    if((getCurrentRSS() > 200000000) && !printed)
     {
+      printed = true;
       if((actor->heap.allocated > 10000000) || (ponyint_objectmap_total_alloc_size(&actor->gc.local) > 10000000) || (actor->gc.foreign_actormap_objectmap_mem_allocated > 10000000))
         printf("Actor %p, actor size used: %lu, actor size allocated: %lu, heap used: %lu, heap allocated: %lu, heap overhead: %lu, objectmap used: %lu, objectmap allocated: %lu, foreign used: %lu, foreign allocated: %lu, delta used: %lu, delta allocated: %lu\n"
           , actor, ponyint_actor_mem_size(actor), ponyint_actor_alloc_size(actor), actor->heap.used, actor->heap.allocated, actor->heap.overhead, ponyint_objectmap_total_mem_size(&actor->gc.local), ponyint_objectmap_total_alloc_size(&actor->gc.local), actor->gc.foreign_actormap_objectmap_mem_used, actor->gc.foreign_actormap_objectmap_mem_allocated, actor->gc.delta?ponyint_deltamap_total_mem_size(actor->gc.delta):0, actor->gc.delta?ponyint_deltamap_total_alloc_size(actor->gc.delta):0);
@@ -1045,6 +1048,7 @@ static void run(scheduler_t* sched)
         printf("cycle detector used: %lu, cycle detector allocated: %lu\n", ponyint_cycle_mem_size(), ponyint_cycle_alloc_size());
 
 //      if((sched->ctx.mem_allocated > 100000000) || (llabs(sched->ctx.mem_allocated_messages) > 100000000))
+        ponyint_print_actors_state();
         print_sched_stats();
     }
 
@@ -1543,7 +1547,8 @@ bool ponyint_sched_unmute_senders(pony_ctx_t* ctx, pony_actor_t* actor)
       // maybe unmute the actor; this will take care of updating the bitfield
       if(ponyint_maybe_unmute_actor(muted))
       {
-        // if we unmuted the actor
+        // if we unmuted the actor; mark it as overloaded
+        ponyint_actor_setoverloaded(muted);
 
         // check if the actor should be rescheduled
         if(!has_flag(actor, FLAG_UNSCHEDULED))

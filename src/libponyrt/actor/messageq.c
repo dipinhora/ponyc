@@ -12,7 +12,7 @@
 
 #ifndef PONY_NDEBUG
 
-static size_t messageq_size_debug(messageq_t* q)
+size_t messageq_size_debug(messageq_t* q)
 {
   pony_msg_t* tail = q->tail;
   size_t count = 0;

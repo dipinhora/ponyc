@@ -275,8 +275,12 @@ static void try_gc(pony_ctx_t* ctx, pony_actor_t* actor)
 }
 
 // check if the actor should be muted
-static bool should_be_muted(uint64_t throttle_mute_bitfield)
+static bool should_be_muted(pony_actor_t* actor, uint64_t throttle_mute_bitfield)
 {
+  // overloaded and under pressure actors shouldn't get muted
+  if(has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE))
+    return false;
+
   uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
   uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
     EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
@@ -318,6 +322,10 @@ static bool maybe_mute(pony_actor_t* actor)
   //   2. We should bail out from running the actor and return false so that
   //   it won't be rescheduled.
 
+  // overloaded and under pressure actors shouldn't get muted
+  if(has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE))
+    return false;
+
   uint64_t throttle_mute_bitfield = atomic_load_explicit(
     &actor->throttle_mute_bitfield, memory_order_relaxed);
 
@@ -328,7 +336,7 @@ static bool maybe_mute(pony_actor_t* actor)
       return true;
 
     // if we shouldn't be muted
-    if(!should_be_muted(throttle_mute_bitfield))
+    if(!should_be_muted(actor, throttle_mute_bitfield))
       return false;
 
   }
@@ -356,40 +364,45 @@ static bool batch_limit_reached(pony_actor_t* actor, bool polling, size_t batch)
   return !has_flag(actor, FLAG_UNSCHEDULED);
 }
 
+static size_t calculate_batch_size(pony_actor_t* actor)
+{
+  uint64_t throttle_mute_bitfield = atomic_load_explicit(
+    &actor->throttle_mute_bitfield, memory_order_relaxed);
+
+  // if we should be muted; return 0
+  if(should_be_muted(actor, throttle_mute_bitfield))
+    return 0;
+
+  uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
+  uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
+    EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
+
+  // if actor is overloaded or under pressure, double batch size before throttling
+  // if actor sent too many messages to muted/overloaded actors,
+  // throttle batch size based on mute_map_count/extra_throttled_msgs_sent
+  uint32_t adjust = has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE)?1:0;
+  size_t batch = (size_t)((PONY_ACTOR_DEFAULT_BATCH << adjust) * (((double)((actor_msgs_til_mute << adjust) - (mute_map_count +
+    extra_throttled_msgs_sent))) / ((double)(actor_msgs_til_mute << adjust))));
+
+  // ensure minimum batch size of 1/4 default batch size for overloaded/under pressure actors
+  if((has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE))
+    && (batch < (PONY_ACTOR_DEFAULT_BATCH >> 2)))
+    batch = PONY_ACTOR_DEFAULT_BATCH >> 2;
+
+  pony_assert(batch < 1000);
+
+  return batch;
+}
+
 bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
 {
   ctx->current = actor;
-  size_t batch = PONY_ACTOR_DEFAULT_BATCH;
 
-  // if actor is overloaded or under pressure, double batch size
-  // if actor sent too many messages to muted/overloaded actors,
-  // throttle batch size based on mute_map_count/extra_throttled_msgs_sent
-  if(has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE))
-    batch = PONY_ACTOR_DEFAULT_BATCH << 1;
-  else
-  {
-    uint64_t throttle_mute_bitfield = atomic_load_explicit(
-      &actor->throttle_mute_bitfield, memory_order_relaxed);
+  size_t batch = calculate_batch_size(actor);
 
-    // if we should be muted
-    if(should_be_muted(throttle_mute_bitfield))
-      return false;
-
-    uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
-    uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
-      EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
-
-    batch = (size_t)(PONY_ACTOR_DEFAULT_BATCH * (((double)(actor_msgs_til_mute - (mute_map_count +
-      extra_throttled_msgs_sent))) / ((double)actor_msgs_til_mute)));
-
-    // batch should never be 0 at this point
-    if(batch == 0)
-      batch = 1;
-
-//    if(batch != PONY_ACTOR_DEFAULT_BATCH)
-//      printf("%p Batch size is: %ld\n", actor, batch);
-
-  }
+  // if we should be muted
+  if(batch == 0)
+    return false;
 
   // ensure batch > 0
   pony_assert(batch);
@@ -462,7 +475,7 @@ bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
   pony_assert(app < batch);
   pony_assert(!is_muted(actor));
 
-  if(has_flag(actor, FLAG_OVERLOADED) && (app < PONY_ACTOR_DEFAULT_BATCH))
+  if(has_flag(actor, FLAG_OVERLOADED) && (app < PONY_ACTOR_DEFAULT_BATCH) && (batch >= PONY_ACTOR_DEFAULT_BATCH))
   {
     // if we were overloaded and didn't process a full batch and we processed
     // less than the default batch amount, set ourselves as
@@ -695,6 +708,68 @@ PONY_API pony_msg_t* pony_alloc_msg_size(size_t size, uint32_t id)
   return pony_alloc_msg((uint32_t)ponyint_pool_index(size), id);
 }
 
+static bool can_be_throttled(pony_actor_t* actor)
+{
+  uint64_t throttle_mute_bitfield = atomic_load_explicit(
+    &actor->throttle_mute_bitfield, memory_order_relaxed);
+  uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
+  uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
+    EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
+
+  uint32_t adjust = has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE)?1:0;
+
+  return (mute_map_count + extra_throttled_msgs_sent) <
+    ((actor_msgs_til_mute << adjust) - adjust);
+}
+
+static bool triggers_throttling(pony_actor_t* actor)
+{
+  return has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE) ||
+    is_muted(actor);
+}
+
+static void increment_throttle_bitmap(pony_actor_t* actor, bool mute_map_added)
+{
+  // ensure we're not muted since a muted actor should never be scheduled
+  pony_assert(!is_muted(actor));
+
+  if(mute_map_added)
+    // increment mute_map_count section of bitfield
+    atomic_fetch_add_explicit(&actor->throttle_mute_bitfield, 1,
+      memory_order_relaxed);
+  else
+  {
+    // increment extra_throttled_msgs_sent section of bitfield
+    uint64_t oldval = atomic_fetch_add_explicit(&actor->throttle_mute_bitfield,
+      (((uint64_t)MUTE_MAP_COUNT_BITS) + 1), memory_order_relaxed);
+
+    (void)oldval;
+    pony_assert(oldval > 0);
+  }
+}
+
+static void maybe_throttle(pony_ctx_t* ctx, pony_actor_t* to)
+{
+  if(ctx->current != NULL)
+  {
+    // only throttle a sender IF:
+    // 1. the receiver is overloaded/under pressure/muted
+    // AND
+    // 2. the sender isn't overloaded or under pressure
+    // AND
+    // 3. we are sending to another actor (as compared to sending to self)
+    //
+    // throttling will eventually result in muting
+    if(triggers_throttling(to) &&
+       can_be_throttled(ctx->current) &&
+       ctx->current != to)
+    {
+      increment_throttle_bitmap(ctx->current,
+        ponyint_sched_add_mutemap(ctx, ctx->current, to));
+    }
+  }
+}
+
 PONY_API void pony_sendv(pony_ctx_t* ctx, pony_actor_t* to, pony_msg_t* first,
   pony_msg_t* last, bool has_app_msg)
 {
@@ -719,7 +794,7 @@ PONY_API void pony_sendv(pony_ctx_t* ctx, pony_actor_t* to, pony_msg_t* first,
   }
 
   if(has_app_msg)
-    ponyint_maybe_throttle(ctx, to);
+    maybe_throttle(ctx, to);
 
   if(ponyint_actor_messageq_push(&to->q, first, last
 #ifdef USE_DYNAMIC_TRACE
@@ -758,7 +833,7 @@ PONY_API void pony_sendv_single(pony_ctx_t* ctx, pony_actor_t* to,
   }
 
   if(has_app_msg)
-    ponyint_maybe_throttle(ctx, to);
+    maybe_throttle(ctx, to);
 
   if(ponyint_actor_messageq_push_single(&to->q, first, last
 #ifdef USE_DYNAMIC_TRACE
@@ -771,48 +846,6 @@ PONY_API void pony_sendv_single(pony_ctx_t* ctx, pony_actor_t* to,
       // if the receiving actor is currently not unscheduled AND it's not
       // muted, schedule it.
       ponyint_sched_add(ctx, to);
-    }
-  }
-}
-
-static void increment_throttle_bitmap(pony_actor_t* actor, bool mute_map_added)
-{
-  // ensure we're not muted since a muted actor should never be scheduled
-  pony_assert(!is_muted(actor));
-
-  if(mute_map_added)
-    // increment mute_map_count section of bitfield
-    atomic_fetch_add_explicit(&actor->throttle_mute_bitfield, 1,
-      memory_order_relaxed);
-  else
-  {
-    // increment extra_throttled_msgs_sent section of bitfield
-    uint64_t oldval = atomic_fetch_add_explicit(&actor->throttle_mute_bitfield,
-      (((uint64_t)MUTE_MAP_COUNT_BITS) + 1), memory_order_relaxed);
-
-    (void)oldval;
-    pony_assert(oldval > 0);
-  }
-}
-
-void ponyint_maybe_throttle(pony_ctx_t* ctx, pony_actor_t* to)
-{
-  if(ctx->current != NULL)
-  {
-    // only throttle a sender IF:
-    // 1. the receiver is overloaded/under pressure/muted
-    // AND
-    // 2. the sender isn't overloaded or under pressure
-    // AND
-    // 3. we are sending to another actor (as compared to sending to self)
-    //
-    // throttling will eventually result in muting
-    if(ponyint_triggers_throttling(to) &&
-       !has_flag(ctx->current, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE) &&
-       ctx->current != to)
-    {
-      increment_throttle_bitmap(ctx->current,
-        ponyint_sched_add_mutemap(ctx, ctx->current, to));
     }
   }
 }
@@ -1011,12 +1044,6 @@ PONY_API void pony_release_backpressure()
     ponyint_sched_start_global_unmute(ctx->scheduler->index, ctx->current);
 }
 
-bool ponyint_triggers_throttling(pony_actor_t* actor)
-{
-  return has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE) ||
-    is_muted(actor);
-}
-
 //
 // Mute/Unmute/Check mute status functions
 //
@@ -1075,7 +1102,7 @@ bool ponyint_maybe_unmute_actor(pony_actor_t* actor)
     // check if we should be unmuted or not based on throttled batch size
     // we implicitly change extra_throttled_msgs_set = 0 by only using
     // mute_map_count and if we're current muted
-    if(!should_be_muted(mute_map_count) && (old_muted_bit > 0))
+    if(!should_be_muted(actor, mute_map_count) && (old_muted_bit > 0))
       needs_unmuting = true;
     else
       needs_unmuting = false;
@@ -1110,17 +1137,12 @@ size_t ponyint_actor_alloc_size(pony_actor_t* actor)
 
 void ponyint_actor_print_state(pony_actor_t* actor)
 {
-    uint64_t throttle_mute_bitfield = atomic_load_explicit(
-      &actor->throttle_mute_bitfield, memory_order_relaxed);
+  uint64_t throttle_mute_bitfield = atomic_load_explicit(
+    &actor->throttle_mute_bitfield, memory_order_relaxed);
+  uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
+  uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
+    EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
 
-    uint32_t mute_map_count = throttle_mute_bitfield & MUTE_MAP_COUNT_BITS;
-    uint32_t extra_throttled_msgs_sent = (uint32_t)((throttle_mute_bitfield &
-      EXTRA_THROTTLED_MSGS_SENT_BITS) >> EXTRA_THROTTLED_MSGS_SENT_SHIFT);
-
-    size_t batch = (size_t)(PONY_ACTOR_DEFAULT_BATCH * (((double)(actor_msgs_til_mute - (mute_map_count +
-      extra_throttled_msgs_sent))) / ((double)actor_msgs_til_mute)));
-
-
-    printf("actor: %p, batch: %lu, mute_map_count: %u, extra_msgs: %u, muted: %s, should_be_muted: %s, overloaded: %s\n", actor, batch, mute_map_count, extra_throttled_msgs_sent, is_muted(actor) ? "true" : "false", should_be_muted(throttle_mute_bitfield) ? "true" : "false", ponyint_actor_overloaded(actor) ? "true" : "false");
+    printf("actor: %p, batch: %lu, mute_map_count: %u, extra_msgs: %u, muted: %s, should_be_muted: %s, overloaded: %s, messageq size: %lu\n", actor, calculate_batch_size(actor), mute_map_count, extra_throttled_msgs_sent, is_muted(actor) ? "true" : "false", should_be_muted(actor, throttle_mute_bitfield) ? "true" : "false", ponyint_actor_overloaded(actor) ? "true" : "false", messageq_size_debug(&actor->q));
 }
 #endif

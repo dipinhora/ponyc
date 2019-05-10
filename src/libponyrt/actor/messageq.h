@@ -16,6 +16,8 @@ typedef struct messageq_t
 
 PONY_EXTERN_C_BEGIN
 
+size_t messageq_size_debug(messageq_t* q);
+
 void ponyint_messageq_init(messageq_t* q);
 
 void ponyint_messageq_destroy(messageq_t* q);

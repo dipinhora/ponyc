@@ -386,10 +386,8 @@ static size_t calculate_batch_size(pony_actor_t* actor)
 
   // ensure minimum batch size of 1/4 default batch size for overloaded/under pressure actors
   if((has_flag(actor, FLAG_OVERLOADED | FLAG_UNDER_PRESSURE))
-    && (batch < (PONY_ACTOR_DEFAULT_BATCH >> 2)))
-    batch = PONY_ACTOR_DEFAULT_BATCH >> 2;
-
-  pony_assert(batch < 1000);
+    && (batch < (PONY_ACTOR_DEFAULT_BATCH >> 4)))
+    batch = PONY_ACTOR_DEFAULT_BATCH >> 4;
 
   return batch;
 }
@@ -402,7 +400,11 @@ bool ponyint_actor_run(pony_ctx_t* ctx, pony_actor_t* actor, bool polling)
 
   // if we should be muted
   if(batch == 0)
+  {
+    maybe_mute(actor);
+    pony_assert(is_muted(actor));
     return false;
+  }
 
   // ensure batch > 0
   pony_assert(batch);

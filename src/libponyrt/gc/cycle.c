@@ -1175,7 +1175,6 @@ void ponyint_cycle_ack(pony_ctx_t* ctx, size_t token)
 void ponyint_cycle_terminate(pony_ctx_t* ctx)
 {
   pony_become(ctx, cycle_detector);
-  ponyint_print_actors_state();
   final(ctx, cycle_detector);
   ponyint_destroy(ctx, cycle_detector);
   cycle_detector = NULL;

@@ -1032,7 +1032,9 @@ static void run(scheduler_t* sched)
     if(ponyint_mutemap_size(&sched->mute_mapping) > 0)
       ponyint_sched_maybe_wakeup(sched->index);
 
+(void)printed;
 //    if((getCurrentRSS() > 500000000) || (atomic_load_explicit(&msgs_outstanding, memory_order_relaxed) > 500000))
+/*
     if((getCurrentRSS() > 200000000) && !printed)
     {
       printed = true;
@@ -1051,7 +1053,7 @@ static void run(scheduler_t* sched)
         ponyint_print_actors_state();
         print_sched_stats();
     }
-
+*/
     // Run the current actor and get the next actor.
     bool reschedule = ponyint_actor_run(&sched->ctx, actor, false);
     pony_actor_t* next = pop_global(sched);
@@ -1547,8 +1549,8 @@ bool ponyint_sched_unmute_senders(pony_ctx_t* ctx, pony_actor_t* actor)
       // maybe unmute the actor; this will take care of updating the bitfield
       if(ponyint_maybe_unmute_actor(muted))
       {
-        // if we unmuted the actor; mark it as overloaded
-        ponyint_actor_setoverloaded(muted);
+//        // if we unmuted the actor; mark it as overloaded
+//        ponyint_actor_setoverloaded(muted);
 
         // check if the actor should be rescheduled
         if(!has_flag(actor, FLAG_UNSCHEDULED))

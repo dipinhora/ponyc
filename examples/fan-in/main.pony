@@ -223,14 +223,20 @@ actor Analyzer
 actor Sender
   let _analyzers: Array[Analyzer] val
   var _done: Bool = false
+  let _rand: Rand = Rand()
 
   new create(analyzers: Array[Analyzer] val) =>
     _analyzers = analyzers
     send_msgs()
 
   be send_msgs() =>
-    for analyzer in _analyzers.values() do
-      analyzer.msg_from_sender()
+//    for analyzer in _analyzers.values() do
+//      analyzer.msg_from_sender()
+//    end
+    try
+      _analyzers(_rand.int_unbiased[USize](_analyzers.size()))?.msg_from_sender()
+    else
+      @printf[I32]("BBBBAAADDDD\n".cstring())
     end
 
     if not _done then

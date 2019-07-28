@@ -1,5 +1,5 @@
 # Determine the operating system
-OSTYPE ?= 
+OSTYPE ?=
 
 ifeq ($(OS),Windows_NT)
   OSTYPE = windows

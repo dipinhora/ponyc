@@ -166,7 +166,7 @@ UNAME_M := $(shell uname -m)
 
 ifeq ($(BITS),64)
   ifneq (,$(filter $(UNAME_M), x86_64 amd64))
-    ifeq (,$(filter $(arch), armv8-a))
+    ifeq (,$(filter $(arch), armv8-a rv64g rv64gc rv64imac rv64ima))
       BUILD_FLAGS += -mcx16
       LINKER_FLAGS += -mcx16
     endif

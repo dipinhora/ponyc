@@ -27,7 +27,7 @@ static LLVMValueRef create_main(compile_t* c, reach_type_t* t,
   args[0] = ctx;
   args[1] = LLVMConstBitCast(((compile_type_t*)t->c_type)->desc,
     c->descriptor_ptr);
-  args[2] = LLVMConstInt(c->i1, 0, false);
+  args[2] = LLVMConstInt(c->i1, 1, false);
   LLVMValueRef actor = gencall_runtime(c, "pony_create", args, 3, "");
 
   args[0] = ctx;

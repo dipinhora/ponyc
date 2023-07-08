@@ -8,6 +8,8 @@
 
 #if defined(USE_POOL_MEMALIGN)
 #  define POOL_USE_MEMALIGN
+#elif defined(USE_POOL_MESSAGE_PASSING)
+#  define POOL_USE_MESSAGE_PASSING
 #else
 #  define POOL_USE_DEFAULT
 #endif
@@ -42,6 +44,11 @@ size_t ponyint_pool_index(size_t size);
 size_t ponyint_pool_used_size(size_t index);
 
 size_t ponyint_pool_adjust_size(size_t size);
+
+#ifdef POOL_USE_MESSAGE_PASSING
+void ponyint_receive_remote_virt_alloc(void* virt_alloc_base, uint32_t scheduler_index);
+void ponyint_save_initial_virt_alloc(uint32_t scheduler_index);
+#endif
 
 #define POOL_INDEX(SIZE) \
   __pony_choose_expr(SIZE <= (1 << (POOL_MIN_BITS + 0)), 0, \

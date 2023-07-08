@@ -244,6 +244,7 @@ PONY_API int pony_init(int argc, char** argv)
 #endif
 
   pony_register_thread();
+  ponyint_save_initial_virt_alloc(pony_scheduler_index());
 
   // Allow override via bare function on Main actor
   Main_runtime_override_defaults_oo(&opt);

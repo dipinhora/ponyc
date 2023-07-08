@@ -9,6 +9,7 @@
 #include "../libponyc/ast/treecheck.h"
 #include <platform.h>
 #include "../libponyrt/mem/pool.h"
+#include "../libponyrt/sched/scheduler.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -71,6 +72,8 @@ static bool compile_package(const char* path, pass_opt_t* opt,
 
 int main(int argc, char* argv[])
 {
+  pony_register_thread();
+  ponyint_save_initial_virt_alloc(pony_scheduler_index());
   stringtab_init();
 
   pass_opt_t opt;

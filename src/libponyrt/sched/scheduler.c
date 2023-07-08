@@ -32,7 +32,10 @@ typedef enum
   SCHED_SUSPEND = 41,
   SCHED_UNMUTE_ACTOR = 50,
   SCHED_NOISY_ASIO = 51,
-  SCHED_UNNOISY_ASIO = 52
+  SCHED_UNNOISY_ASIO = 52,
+#ifdef POOL_USE_MESSAGE_PASSING
+  SCHED_VIRT_ALLOC = 60
+#endif
 } sched_msg_t;
 
 // Scheduler global data.
@@ -427,6 +430,15 @@ static bool read_msg(scheduler_t* sched)
         sched->asio_noisy = false;
         break;
       }
+
+#ifdef POOL_USE_MESSAGE_PASSING
+      case SCHED_VIRT_ALLOC:
+      {
+        // TODO: read info and call with correct arguments
+        ponyint_receive_remote_virt_alloc(NULL, 0);
+        break;
+      }
+#endif
 
       default: {}
     }
@@ -1395,6 +1407,7 @@ PONY_API void pony_register_thread()
   memset(this_scheduler, 0, sizeof(scheduler_t));
   this_scheduler->tid = ponyint_thread_self();
   this_scheduler->index = -1;
+  this_scheduler->ctx.scheduler = this_scheduler;
 }
 
 PONY_API void pony_unregister_thread()

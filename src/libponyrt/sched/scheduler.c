@@ -1902,6 +1902,14 @@ PONY_API pony_ctx_t* pony_ctx()
   return &this_scheduler->ctx;
 }
 
+/**
+ * Gets whether the pinned actor scheduler is suspended or not
+ */
+bool ponyint_get_pinned_actor_scheduler_suspended()
+{
+   return atomic_load_explicit(&pinned_actor_scheduler_suspended, memory_order_relaxed);
+}
+
 // Tell all scheduler threads that asio is noisy
 void ponyint_sched_noisy_asio(int32_t from)
 {
